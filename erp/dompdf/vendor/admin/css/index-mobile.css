@@ -1,0 +1,161 @@
+@import "predefined.css";
+
+
+.phone {
+    display: none;
+}
+
+.dropdown_mobile {
+	width: 100%;
+	position: absolute;
+	z-index: 2;
+	top: 76px;
+	height: auto;
+	border-bottom: 1px solid #e6e6e6;
+}
+
+.dropdown_mobile .nav_items {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #e6e6e6;
+    background-color: white;
+    cursor: pointer;
+}
+.dropdown_mobile .nav_items:hover {
+    background-color: var(--main);
+    color:white;
+}
+
+.dropdown_mobile .last {
+    border: none;
+}
+
+.dropdown_mobile .odd {
+    background-color: var(--footer);
+}
+.dropdown_mobile .odd span {
+    color: white;
+}
+
+.right_phone i {
+    font-size: 20px;
+    color: var(--black);
+}
+
+@media screen and (max-width: 1220px) {
+    .cover {
+        margin: 10px 0px 0px 10px;
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+    }
+}
+
+@media screen and (max-width: 910px) {
+    .only_mobile {
+        display: block;
+    }
+
+    .phone {
+        display: block;
+    }
+
+    .right_phone {
+        display: block;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    .bnav {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 770px) {
+    .sf_items::before {
+        display: none;
+    }
+
+    .main_banner #main_heading_big {
+        display: none;
+    }
+    
+    .main_banner #main_heading_small {
+        display: block;
+    }
+
+    .main_banner .main .search_filters {
+        height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        width: 95%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .search_filters .dropdown_filters {
+        top: 65px;
+    }
+
+    .main_banner .main .search_filters .sf_items {
+        height: 65px;
+        width: calc(135px - 8px);
+    }
+
+    .main_banner .main .search_filters .searchbtn {
+        height: 60px;
+        margin-top: 15px;
+    }
+
+    .about-us {
+        padding-left: 25px;
+        padding-right: 25px;
+        width: calc(100% - 50px);
+    }
+    
+}
+
+@media screen and (max-width: 482px) {
+    .main .llord_act_btns .btns {
+        width: 148px;
+    }
+    .main_banner .main .search_filters {
+        width: 100%;
+    }
+
+    .main_banner .main .search_filters .sf_items {
+        height: 65px;
+        width: calc(120px - 8px);
+    }
+
+    .upper_navigation .left_info {
+        display: none;
+    }
+
+    .cities-in-operation {
+        padding-left: 40px;
+        padding-right: 40px;
+        width: calc(100% - 80px);
+    }
+
+}
+
+@media screen and (max-width: 450px) {
+	.lower_navigation .mobile {
+		display: block;
+	}
+
+	.lower_navigation .bigscreen {
+		display: none;
+	}
+
+}
+
+@media screen and (max-width: 360px) {
+    .main_banner .main .search_filters .sf_items {
+        height: 65px;
+        width: calc(105px - 8px);
+    }
+}

@@ -1,0 +1,7 @@
+load more all things test(in search as well)
+multi language
+added some animation
+always https site
+lossless compression (use defer compress main image)
+URLS fix
+add image compress so website is faster
