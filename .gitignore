@@ -1,2 +1,4 @@
 /assets/*
 !/assets/backend/
+*_ignore*
+erp/addstud.txt
