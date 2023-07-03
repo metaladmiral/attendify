@@ -88,54 +88,54 @@
                                     <div class="col-6">
                                     <div class="form-group">
                                     <label for="exampleInputEmail1" class="form-label">Section</label>
-                                    <select name="" class='form-control' id="">
-                                    <?php
-                                       for($i=65;$i<=74;$i++) {
-                                           $p = 1;
-                                           while($p<=2) {
-                                               ?>
-                                    <option value="<?php echo $i-64; ?><?php echo $p; ?>"><?php echo chr($i); ?><?php echo $p; ?></option>
-                                    <?php
-                                       $p++;
-                                       }
-                                       }
-                                       ?>
+                                    <select name="section" class='form-control' id="">
+                                        <?php
+                                        for($i=65;$i<=74;$i++) {
+                                            $p = 1;
+                                            while($p<=2) {
+                                                ?>
+                                            <option value="<?php echo $i-64; ?>-<?php echo $p; ?>"><?php echo chr($i); ?><?php echo $p; ?></option>
+                                        <?php
+                                        $p++;
+                                        }
+                                        }
+                                        ?>
                                     </select>
                                     </div>
                                     <!--  -->
                                     </div>
                                  </div>
                                  <div class="row">
-                                 <div class="col-6">
-                                 <div class="form-group">
-                                 <label for="exampleInputEmail1" class="form-label">First Name</label>
-                                 <input name="firstname" type="text" class="form-control" placeholder="Enter First Name" required>
-                                 </div>
-                                 </div>
-                                 <div class="col-6">
-                                 <div class="form-group">
-                                 <label for="exampleInputEmail1" class="form-label">Last Name</label>
-                                 <input name="lastname" type="text" class="form-control" placeholder="Enter Last Name" required>
-                                 </div>
-                                 </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="form-label">First Name</label>
+                                            <input name="firstname" type="text" class="form-control" placeholder="Enter First Name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="form-label">Last Name</label>
+                                            <input name="lastname" type="text" class="form-control" placeholder="Enter Last Name" required>
+                                        </div>
+                                    </div>
                                  </div>
                                  <div class="row">
-                                 <div class="col-6">
-                                 <div class="form-group">
-                                 <label for="exampleInputEmail1" class="form-label">Semester</label>
-                                 <select class='form-control' name="semester" placeholder="Select Semester">
-                                 <option value="" selected disabled>Select Semester</option>
-                                 <option value="1">1</option>
-                                 <option value="2">2</option>
-                                 <option value="3">3</option>
-                                 <option value="4">4</option>
-                                 <option value="5">5</option>
-                                 <option value="6">6</option>
-                                 <option value="7">7</option>
-                                 <option value="8">8</option>
-                                 </select>
-                                 </div>
-                                 </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                             <label for="exampleInputEmail1" class="form-label">Semester</label>
+                                            <select class='form-control' name="semester" placeholder="Select Semester">
+                                                <option value="" selected disabled>Select Semester</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Blood Group</label>
@@ -199,10 +199,9 @@
                                  <label for="exampleInputEmail1" class="form-label">Category</label>
                                  <!--<input name="dob" type="date" class="form-control" placeholder="Enter Date of Birth" required>-->
                                  <select name="category" placeholder="Select Category here" class='form-control'>
-                                 <option value="languages">General</option>
-                                 <option value="religions">SC/ST</option>
-                                 <option value="states">OBC</option>
-                                 <option value="regions">Other Backward Castes</option>
+                                 <option value="0">General</option>
+                                 <option value="1">SC/ST</option>
+                                 <option value="2">OBC</option>
                                  </select>
                                  </div>
                                  </div>
@@ -663,7 +662,7 @@
                                  </div>
                                  <div class="col-8">
                                  <div class="form-group">
-                                 <input name="mano" type="number" class="form-control" placeholder="Enter Parent Mobile Number">
+                                 <input name="amno" type="number" class="form-control" placeholder="Enter Parent Mobile Number">
                                  </div>
                                  </div>
                                  </div>
@@ -901,11 +900,11 @@
                                  </div>
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Permanent Address</label>
-                                 <input name="peradd" type="text" class="form-control peradd" placeholder="Enter Permanent Address"  required>
+                                 <input name="permaddr" type="text" class="form-control peradd" placeholder="Enter Permanent Address"  required>
                                  </div>
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Local Address</label>
-                                 <input name="localadd" type="text" class="form-control localadd" placeholder="Enter Local Address"  required>
+                                 <input name="localaddr" type="text" class="form-control localadd" placeholder="Enter Local Address"  required>
                                  </div>
                                  <div class="row">
                                  <div class="col-6">
@@ -965,9 +964,9 @@
                                  <div class="col-4">
                                  <label for="exampleInputEmail1" class="form-label">Hosteler</label>
                                  <select class="form-control" id="inputDistricta" name="hosteler" required>
-                                 <option value="" selected disabled>Hosteler?</option>
-                                 <option value="1">Yes</option>
-                                 <option value="0">No</option>
+                                    <option value="" selected disabled>Hosteler?</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
                                  </select>
                                  </div>
                                  <div class="col-4">
@@ -1006,7 +1005,7 @@
                                         <div class="form-group">
                                             <label for="exampleInputEmail1" class="form-label">Applied for Loan</label>
                                             <!--<input name="parocc" type="text" class="form-control" placeholder="Enter Parent Occupation" required>-->
-                                            <select class="form-control" required>
+                                            <select class="form-control" name='loanstatus' required>
                                                 <option value='' selected disabled>Select Loan Status</option>
                                                 <option value='1'>Yes</option>
                                                 <option value='0'>No</option>
@@ -1016,7 +1015,7 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1" class="form-label">Loan Amount</label>
-                                            <input name="parani" type="text" class="form-control" placeholder="Enter Load Amount">
+                                            <input name="loanamount" type="text" class="form-control" placeholder="Enter Load Amount">
                                         </div>
                                     </div>
                                 </div>
@@ -1046,7 +1045,7 @@
                                           </div>
                                           <div class="form-group">
                                              <label for="exampleInputEmail1" class="form-label">Discipline, Peronal Traits and Progressive Improvement in weak areas</label>
-                                             <textarea name="dptpi" class="form-control" placeholder="Start typing here..." required></textarea>
+                                             <textarea name="personaltraits" class="form-control" placeholder="Start typing here..." required></textarea>
                                           </div>
                                           <div class="row">
                                              <div class="col-4">
@@ -1084,9 +1083,7 @@
 
 
                                  <br>
-                                 <a href="#tab21" data-bs-toggle="tab" class="" aria-selected="false" tabindex="-1" role="tab"><button class="btn btn-primary" onclick="sendForm();">Add Student</button></a>
-                                 &nbsp;&nbsp;&nbsp;
-                                 <button href="#tab21" data-bs-toggle="tab" class="btn btn-primary" aria-selected="false" tabindex="-1" role="tab" onclick="savenext();return false;">Save & Next</button>
+                                 <button class="btn btn-primary" type="submit">Add Student</button>
                                  <div class="modal fade effect-scale hidden" id="loaderModal" style="display: none;" aria-modal="true" role="dialog">
                                  <div class="modal-dialog modal-dialog-centered text-center" role="document">
                                  <div class="modal-content modal-content-demo" style='background: rgba(0,0,0,0);border: none;box-shadow:none;'>
@@ -1455,8 +1452,6 @@
       <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
       <script src="../assets/plugins/datatable/responsive.bootstrap5.min.js"></script>
       <script src="../assets/js/table-data.js"></script>
-      <script>
-         $("#distable").DataTable();
-      </script>
+     
    </body>
 </html>
