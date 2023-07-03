@@ -7,7 +7,7 @@ class db {
     public function mconnect() {
         // main database connection function
         try {
-            $conn = new PDO("mysql:host=localhost;dbname=lgs", "root", "");
+            $conn = new PDO("mysql:host=localhost;dbname=attendify", "root", "");
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $conn;
         }
