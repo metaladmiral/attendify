@@ -1102,68 +1102,7 @@
                             </form>
                                  <button type="button" style='width:0;height:0;font-size: 0.1;opacity:0;position:absolute;' class="modalLoader modal-effect btn btn-primary-light d-grid mb-3" data-bs-effect="effect-scale" data-bs-toggle="modal" data-bs-target="#loaderModal" onclick="return false;">Scale</button>
                                  <button class="modalLoaderClose btn btn-light" style='width:0;height:0;font-size: 0.1;opacity:0;position:absolute;' data-bs-dismiss="modal">a</button>
-                                 <script>
-                                    function sendForm(e=0) {
-                                        if(e!="1"){
-                                            $(".addStudFormBtn")[0].click();
-                                            return 0;
-                                        }
-                                        let fd = new FormData();
-                                        let resp = "1";
-                                        for (let i = 0; i < 24; i++) {
-                                            let name = $(".addStudForm")[0][i].attributes.name.nodeValue;
-                                            let val = $(".addStudForm")[0][i].value;
-                                            fd.set(name, val);
-                                        }
-                                        fd.set('custom', '1');
-                                        var xhttp = new XMLHttpRequest();
-                                        xhttp.onreadystatechange = function() {
-                                            if (this.readyState == 4 && this.status == 200) {
-                                                resp = xhttp.responseText;
-                                            }
-                                        };
-                                        xhttp.open("POST", "../assets/backend/addstud_script.php", false);
-                                        xhttp.send(fd);
-                                    
-                                        return resp;
-                                    
-                                    }
-                                    function savenext() {
-                                        // $('.accountsFire')[0].click();
-                                        let prom = new Promise(function(succ, rej) {
-                                            let resp = sendForm("1");
-                                            if(resp==1) {  rej("1");  } else {  succ(resp); }
-                                        });
-                                    
-                                        prom.then(function(val) {
-                                            let resp = JSON.parse(atob(val));
-                                            $(".studid")[0].value = resp.studid;
-                                            $(".ttfees")[0].innerHTML = resp.totalfee;
-                                    
-                                            swal({
-                                                title: "Hooray!",
-                                                text: "Student has been added!",
-                                                type: "success",
-                                                showCancelButton: true,
-                                                confirmButtonText: 'Exit'
-                                            });
-                                            
-                                            $("#tab21").removeAttr('id');
-                                            $(".tab21")[0].setAttribute('id', 'tab21');
-                                    
-                                            $("#tab22").removeAttr('id');
-                                            $(".tab22")[0].setAttribute('id', 'tab22');
-                                    
-                                            $("#tab23").removeAttr('id');
-                                            $(".tab23")[0].setAttribute('id', 'tab23');
-                                    
-                                            $('.accountsFire')[0].click();
-                                            
-                                        }, function(val){console.log(val);});
-                                        
-                                        
-                                    }
-                                 </script>
+                                
                                  <!-- <a href="javascript:void(0)" class="btn  btn-lg btn-primary">Confirm</a> -->
                               </div>
                               <!-- accounts tab -->
@@ -1371,56 +1310,6 @@
                                              </form>
                                              </div>
                                              </div>
-                                             <script>
-                                                function saveDisp() {
-                                                    let form = $(".disform")[0];
-                                                    let fd=new FormData();
-                                                    for(let i=0;i<=4;i++) {
-                                                        let name =form[i].attributes.name.nodeValue;
-                                                        if(name=="recfile") {
-                                                            fd.set(name, form[i].files[0]);
-                                                        }
-                                                        else {
-                                                            fd.set(name, form[i].value);
-                                                        }
-                                                    }
-                                                    var xhttp = new XMLHttpRequest();
-                                                    xhttp.onreadystatechange = function() {
-                                                        if (this.readyState == 4 && this.status == 200) {
-                                                            let resp = JSON.parse(atob(this.responseText));
-                                                            let table = $("#distable").DataTable();
-                                                            
-                                                            let dtype = resp['distype'];
-                                                            if(dtype=="0") {
-                                                                dtype = "Registered Speed Post";
-                                                            }
-                                                            else if(dtype=="1") {
-                                                                dtype = "By Hand";
-                                                            }
-                                                            else {
-                                                                dtype = "Courier";
-                                                            }
-                                                            if(resp['receipt']=="-") {
-                                                                table.row.add([resp['count'],resp['date'],resp['distype'],resp['trackid'],resp['remarks'],"NA"]).draw(false);
-                                                            }
-                                                            else {
-                                                                table.row.add([resp['count'],resp['date'],resp['distype'],resp['trackid'],resp['remarks'],'<span class="badge bg-success-transparent rounded-pill text-success p-2 px-3"><a href="./disdocs/'+resp['receipt']+'" download><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a></span>']).draw(false);
-                                                            }
-                                                            $(".closeDispModal")[0].click();
-                                                            swal({
-                                                                title: "Hooray!",
-                                                                text: "Dispatch Record is successfully added!",
-                                                                type: "success",
-                                                                showCancelButton: true,
-                                                                confirmButtonText: 'Exit'
-                                                            });
-                                                        }
-                                                    };
-                                                    fd.set("studid", $(".studid")[0].value);
-                                                    xhttp.open("POST", "../assets/backend/addDisp.php");
-                                                    xhttp.send(fd);
-                                                }
-                                             </script>
                                           </div>
                                        </div>
                                     </div>
