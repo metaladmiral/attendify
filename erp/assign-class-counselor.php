@@ -315,7 +315,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
     
     if(isset($_SESSION['succ']))
     {
-        if($_SESSION['succ']==1)  {
+        if($_SESSION['succ']!="1")  {
 
             ?>
             <script>swal({
