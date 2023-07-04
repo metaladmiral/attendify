@@ -335,6 +335,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
             </script>
             <?php
         }
+        unset($_SESSION['succ']);
     }
 
     ?>
