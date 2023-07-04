@@ -48,134 +48,26 @@ $ut = $_SESSION['usertype'];
                 <!-- <li class="sub-category"><h3>UI Kit</h3></li> -->
                 <li class="slide">
                     
-                    <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="0" || $ut=="1") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?> ><i class="side-menu__icon fe fe-users"></i>
-                        <span onclick='window.location = "<?php echo $operationsURLS[1]; ?>" ' class="side-menu__label">Add Student</span><i class="angle fe fe-chevron-right"></i>
+                    <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1" || $ut=="2") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?> ><i class="side-menu__icon fe fe-users"></i>
+                        <span onclick='window.location = "<?php echo $operationsURLS[1]; ?>" ' class="side-menu__label">Add Student</span></i>
                     </a>
-                    <!--<?php if($ut=="0" || $ut=="1") { ?>-->
-                    <!--<ul class="slide-menu">-->
-                    <!--    <li class="panel sidetab-menu">-->
-                    <!--        <div class="panel-body tabs-menu-body p-0 border-0">-->
-                    <!--            <div class="tab-content">-->
-                    <!--                <div class="tab-pane active" id="side1">-->
-                    <!--                    <ul class="sidemenu-list">-->
-                    <!--                        <li class="side-menu-label1"><a href="javascript:void(0)">Operations</a></li>-->
-                    <!--                        <li><a href="operation-dashboard" class="slide-item"> Operations Dashboard</a></li>-->
-                    <!--                        <li><a href="<?php echo $operationsURLS[1]; ?>" class="slide-item"> Add Student</a></li>-->
-                                            <!-- <li><a href="#" class="slide-item"> Student Record & Reports</a></li> -->
-                                            
-                    <!--                    </ul>-->
-                    <!--                </div>-->
-                    <!--            </div>-->
-                    <!--        </div>-->
-                    <!--    </li>-->
-                    <!--</ul>-->
-                    <!--<?php } ?>-->
                 </li>
                 <!-- Operations END -->
                 
-                
+                <?php if($ut=="1") { ?>
                 <li class="slide">
                     <a class="side-menu__item" data-bs-toggle="slide"><i class="side-menu__icon fe fe-layers"></i>
-                        <span class="side-menu__label" onclick="window.location='student-record'">Student Record</span><i class="angle fe fe-chevron-right"></i>
+                        <span class="side-menu__label" onclick="window.location='student-record'">Student Record</span></i>
                     </a>
-                    <!--<?php if($ut=="0" || $ut=="2") { ?>-->
-                    <!--<ul class="slide-menu">-->
-                    <!--    <li class="panel sidetab-menu">-->
-                    <!--        <div class="panel-body tabs-menu-body p-0 border-0">-->
-                    <!--            <div class="tab-content">-->
-                    <!--                <div class="tab-pane active" id="side1">-->
-                    <!--                    <ul class="sidemenu-list">-->
-                    <!--                        <li class="side-menu-label1"><a href="javascript:void(0)">Accounts</a></li>-->
-                    <!--                        <li><a href="accounts-dashboard" class="slide-item"> Accounts Dashboard</a></li>-->
-                                            <!-- <li><a href="#" class="slide-item"> Manage Accounts</a></li> -->
-                    <!--                    </ul>-->
-                    <!--                </div>-->
-                    <!--            </div>-->
-                    <!--        </div>-->
-                    <!--    </li>-->
-                    <!--</ul>-->
-                    <!--<?php } ?>-->
                 </li>
-                <!-- Account ENDS -->
+                <?php } ?> 
                 
-                <!-- <li class="slide"> -->
-                    <!-- <a class="side-menu__item" data-bs-toggle="slide"><i class="side-menu__icon fe fe-message-circle"></i>
-                            <span class="side-menu__label" onclick="student-details">Student Details</span><i class="angle fe fe-chevron-right"></i>
-                    </a> -->
-                    <!--<?php if($ut=="3") { ?>-->
-                    <!--<ul class="slide-menu">-->
-                    <!--    <li class="panel sidetab-menu">-->
-                    <!--        <div class="panel-body tabs-menu-body p-0 border-0">-->
-                    <!--            <div class="tab-content">-->
-                    <!--                <div class="tab-pane active" id="side1">-->
-                    <!--                    <ul class="sidemenu-list">-->
-                    <!--                        <li class="side-menu-label1"><a href="javascript:void(0)">Counselor</a></li>-->
-                    <!--                        <li><a href="counselor-dashboard" class="slide-item"> Counselor Dashboard</a></li>-->
-                                            <!-- <li><a href="#" class="slide-item"> Students Records & Reports</a></li> -->
-                    <!--                    </ul>-->
-                    <!--                </div>-->
-                    <!--            </div>-->
-                    <!--        </div>-->
-                    <!--    </li>-->
-                    <!--</ul>-->
-                    <!--<?php } ?>-->
-                <!-- </li> -->
-                <!-- Counselor ENDS -->
-                
-                <!-- <li class="slide">-->
-                <!--    <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="0" || $ut=="4") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-truck"></i>-->
-                <!--        <span class="side-menu__label">Dispatch</span><i class="angle fe fe-chevron-right"></i>-->
-                <!--    </a>-->
-                <!--    <?php if($ut=="0" || $ut=="4") { ?>-->
-                <!--    <ul class="slide-menu">-->
-                <!--        <li class="panel sidetab-menu">-->
-                <!--            <div class="panel-body tabs-menu-body p-0 border-0">-->
-                <!--                <div class="tab-content">-->
-                <!--                    <div class="tab-pane active" id="side1">-->
-                <!--                        <ul class="sidemenu-list">-->
-                <!--                            <li class="side-menu-label1"><a href="javascript:void(0)">Dispatch</a></li>-->
-                <!--                            <li><a href="dispatch-dashboard" class="slide-item"> Dispatch Dashboard</a></li>-->
-                                            <!-- <li><a href="#" class="slide-item"> Dispatch Records & Reports</a></li> -->
-                <!--                        </ul>-->
-                <!--                    </div>-->
-                <!--                </div>-->
-                <!--            </div>-->
-                <!--        </li>-->
-                <!--    </ul>-->
-                <!--    <?php } ?>-->
-                <!--</li>-->
-                <!-- Dispatch ENDS -->
-                
-                <!--<li class="slide">-->
-                <!--    <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="0" || $ut=="5") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-crosshair"></i>-->
-                <!--        <span class="side-menu__label">Support</span><i class="angle fe fe-chevron-right"></i>-->
-                <!--    </a>-->
-                <!--    <?php if($ut=="0" || $ut=="5") { ?>-->
-                <!--    <ul class="slide-menu">-->
-                <!--        <li class="panel sidetab-menu">-->
-                <!--            <div class="panel-body tabs-menu-body p-0 border-0">-->
-                <!--                <div class="tab-content">-->
-                <!--                    <div class="tab-pane active" id="side1">-->
-                <!--                        <ul class="sidemenu-list">-->
-                <!--                            <li class="side-menu-label1"><a href="javascript:void(0)">Support</a></li>-->
-                <!--                            <li><a href="#" class="slide-item"> Support Dashboard</a></li>-->
-                <!--                            <li><a href="#" class="slide-item"> Manage Support</a></li>-->
-                <!--                            <li><a href="#" class="slide-item"> Support Queries</a></li>-->
-                <!--                        </ul>-->
-                <!--                    </div>-->
-                <!--                </div>-->
-                <!--            </div>-->
-                <!--        </li>-->
-                <!--    </ul>-->
-                <!--    <?php } ?>-->
-                <!--</li>-->
-                <!-- Support ENDS -->
-                
+                <?php if($ut=="1") { ?>
                 <li class="slide">
-                   <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="0") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-database"></i>
+                   <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-database"></i>
                        <span class="side-menu__label">Super Admin</span><i class="angle fe fe-chevron-right"></i>
                    </a>
-                   <?php if($ut=="0") { ?>
+                   <?php if($ut=="1") { ?>
                    <ul class="slide-menu">
                        <li class="panel sidetab-menu">
                            <div class="panel-body tabs-menu-body p-0 border-0">
@@ -197,7 +89,7 @@ $ut = $_SESSION['usertype'];
                    </ul>
                    <?php } ?>
                 </li>
-                
+                <?php } ?> 
                 <!--Super Admin ENDS
                 !-->
                 
