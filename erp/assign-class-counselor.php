@@ -2,6 +2,33 @@
 session_start();
 require_once 'conn.php';
 $conn = new Db;
+
+$showCCStatus = 0;
+
+if(isset($_GET['batch']) && isset($_GET['section'])) {
+    $showCCStatus = 1;
+
+    $batch = $_GET['batch'];
+    $section = $_GET['section'];
+
+    $query = $conn->mconnect()->prepare("SELECT sectionCC FROM `batches` WHERE `batchid`='$batch' ");
+    $query->execute();
+    
+    $assignHistory = $query->fetch(PDO::FETCH_COLUMN);
+    $assignHistory = json_decode($assignHistory, true);
+
+    $assignedCCId = null;
+    if(isset($assignHistory[$section])) {
+        $sectionAssigned = 1;
+        $assignedCCId = $assignHistory[$section];
+
+    }else {
+        $sectionAssigned = 0;
+
+    }
+    
+}
+
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
@@ -56,7 +83,162 @@ $conn = new Db;
                         
                         <!-- BODY CONTENT -->
 
-            
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Select Class Details</h3>
+                                    <div class="card-options">
+                                        <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <form action="">
+                                        
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <select name="batch" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                                            <option value="" disabled selected>Select Batch</option>
+                                                            <?php 
+                                                            $sql = "SELECT * FROM `batches`";
+                                                            $query = $conn->mconnect()->prepare($sql);
+                                                            $query->execute();
+                                                            $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                            foreach ($data as $key => $value) {
+                                                                ?>
+                                                                <option value="<?php echo $value['batchid']; ?>" 
+                                                                <?php if(isset($_GET['batch'])) { if($_GET['batch']==$value["batchid"]) {echo "selected";} } ?>
+                                                                ><?php echo $value['batchLabel']; ?></option>
+                                                            <?php 
+                                                            }
+                                                            ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-6">
+                                                    <select name="section" class='form-control' id="">
+                                                        <option value="" selected disabled>Select Section</option>
+                                                        <?php
+                                                            for($i=65;$i<=74;$i++) {
+                                                                $p = 1;
+                                                                while($p<=2) {
+                                                                    ?>
+                                                                    <option value="<?php echo $i-64; ?>-<?php echo $p; ?>"
+                                                                    <?php if(isset($_GET['section'])) { if(  $_GET['section']==(($i-64)."-".$p) ) {echo "selected";} } ?>
+                                                                    ><?php echo chr($i); ?><?php echo $p; ?></option>
+                                                                <?php
+                                                                    $p++;
+                                                                }
+                                                            }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <button type="submit" class='btn btn-primary'>Get CC Status</button>
+                                        </div>
+                                            
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <?php if($showCCStatus) { ?>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Assign CC</h3>
+                                    <div class="card-options">
+                                        <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                        <a href="javascript:void(0)" class="card-options-remove" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <form action="../assets/backend/changeCounselor" method="POST">
+                                        <input type="hidden" name="batchid" value="<?php echo $_GET['batch']; ?>">
+                                        <input type="hidden" name="sectionid" value="<?php echo $_GET['section']; ?>">
+                                    <?php
+                                    
+                                        if(!$sectionAssigned) {
+                                            ?>
+                                            <b><label for="">CC Assigned: </label></b> <span class='text-danger'>No</span>
+                                            <br>
+                                            <br>
+                                            <label for="">Select Class Counselor (CC): </label>
+                                            <br>
+
+                                            <select name="cc" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                                <option value="" disabled selected>Select CC</option>
+                                                <?php 
+                                                   $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' ";
+                                                   $query = $conn->mconnect()->prepare($sql);
+                                                   $query->execute();
+                                                   $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                   foreach ($data as $key => $value) {
+                                                       ?>
+                                                        <option value="<?php echo $value['uid']; ?>"><?php echo $value['username']; ?> - <?php echo $value['email']; ?> </option>
+                                                    <?php   
+                                                    }
+                                                    ?>
+                                             </select>
+                                            <br>
+                                             <button class='btn btn-primary' type='submit' name='assigncc'>Assign CC</button>
+                                            <?php
+                                        }
+                                        else {
+                                            ?>
+                                            <b><label for="">CC Assigned: </label></b> <span class='text-success'>Yes</span> : <span class='currCCUsername'></span>
+                                            <br>
+                                            <br>
+                                            <label for="">Select Class Counselor (CC): </label>
+                                            <br>
+
+                                            <input type="hidden" value="<?php echo $assignedCCId; ?>" name='prevcc'>
+
+                                                <select name="cc" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                                    <option value="" disabled selected>Select CC</option>
+                                                    <?php 
+                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' ";
+                                                    $query = $conn->mconnect()->prepare($sql);
+                                                    $query->execute();
+                                                    $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                    foreach ($data as $key => $value) {
+                                                            if($assignedCCId==$value["uid"]) {
+                                                                $currCCusername = $value["username"];
+                                                                $currCCEmail = $value["email"];
+                                                                ?>
+                                                                 <option class='text-success' value="<?php echo $value['uid']; ?>"><?php echo $value['username']; ?> - <?php echo $value['email']; ?> &#x2022;</option>
+                                                                <?php
+                                                            }
+                                                            else {
+                                                                ?>
+                                                                <option value="<?php echo $value['uid']; ?>"><?php echo $value['username']; ?> - <?php echo $value['email']; ?></option>
+                                                                <?php
+                                                            }
+                                                        }
+                                                        ?>
+                                                </select>
+
+                                                <br>
+
+                                                <button class='btn btn-primary' type='submit' name="updatecc">Update CC</button>
+
+                                                 <script>
+                                                    document.querySelector(".currCCUsername").innerHTML = "(<?php echo $currCCusername; ?> - <?php echo $currCCEmail; ?>)";
+                                                 </script>       
+
+                                            <?php
+                                        }
+
+                                    ?>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <?php } ?>
+                        
                         <!-- BODY CONTENT END -->
                         
                     </div>
@@ -128,5 +310,34 @@ $conn = new Db;
 
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>
+
+    <?php
+    
+    if(isset($_SESSION['succ']))
+    {
+        if($_SESSION['succ']==1)  {
+
+            ?>
+            <script>swal({
+             title: "Oops!",
+             text: "An error occured. Please contact admin!",
+             type: "warning",
+             showCancelButton: true,
+             confirmButtonText: 'Exit'
+         });</script>
+            <?php
+
+        }
+        else {
+            ?>
+            <script>
+                swal('Hooray!', 'CC Successfully assigned!', 'success');
+            </script>
+            <?php
+        }
+    }
+
+    ?>
+
 </body>
 </html>
