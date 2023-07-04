@@ -1,8 +1,8 @@
 <?php 
 
 // session_start();
-$superadminURLS = array("manage-batches.php", "manage-users.php", "manage-counsellors.php");
-$operationsURLS = array("", "add-student.php");
+$superadminURLS = array("manage-batches", "manage-users", "manage-counsellors", "assign-class-counselor");
+$operationsURLS = array("", "add-student");
 // var_dump($_SESSION);
 
 $ut = $_SESSION['usertype'];
@@ -98,10 +98,10 @@ $ut = $_SESSION['usertype'];
                 </li>
                 <!-- Account ENDS -->
                 
-                <li class="slide">
-                    <a class="side-menu__item" data-bs-toggle="slide"><i class="side-menu__icon fe fe-message-circle"></i>
+                <!-- <li class="slide"> -->
+                    <!-- <a class="side-menu__item" data-bs-toggle="slide"><i class="side-menu__icon fe fe-message-circle"></i>
                             <span class="side-menu__label" onclick="student-details">Student Details</span><i class="angle fe fe-chevron-right"></i>
-                    </a>
+                    </a> -->
                     <!--<?php if($ut=="3") { ?>-->
                     <!--<ul class="slide-menu">-->
                     <!--    <li class="panel sidetab-menu">-->
@@ -119,7 +119,7 @@ $ut = $_SESSION['usertype'];
                     <!--    </li>-->
                     <!--</ul>-->
                     <!--<?php } ?>-->
-                </li>
+                <!-- </li> -->
                 <!-- Counselor ENDS -->
                 
                 <!-- <li class="slide">-->
@@ -185,6 +185,7 @@ $ut = $_SESSION['usertype'];
                                            <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
                                            <li><a href="<?php echo $superadminURLS[0]; ?>" class="slide-item"> Manage Batches</a></li>
                                            <li><a href="<?php echo $superadminURLS[1]; ?>" class="slide-item"> Manage Users</a></li>
+                                           <li><a href="<?php echo $superadminURLS[3]; ?>" class="slide-item"> Assign CC</a></li>
                                             <!-- <l><a href="#" class="slide-item"> Counselor Dashboard</a></l i> -->
                                             <!-- <li><a href="<?php echo $superadminURLS[2]; ?>" class="slide-item"> Add Counseller</a></li> -->
                                            <!-- <li><a href="#" class="slide-item"> Email Setting</a></li> -->
