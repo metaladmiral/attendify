@@ -85,11 +85,8 @@ $conn = new Db;
                                             <select name="usertype" class="form-control" data-placeholder="Choose one" aria-hidden="true" required>
                                                     <!-- <option label="Choose one">
                                                     </option> -->
-                                                    <option value="1">Operations</option>
-                                                    <option value="2">Accounts</option>
-                                                    <option value="3">Counsellor</option>
-                                                    <option value="4">Dispatch</option>
-                                                    <option value="5">Customer Support</option>
+                                                    <option value="1">Superadmin</option>
+                                                    <option value="2">Counselor</option>
                                                 </select>
                                         </div>
                                         
