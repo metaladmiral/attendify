@@ -50,7 +50,7 @@ if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
 
                 unset($prevccAssignHistory[$batchId]);
 
-                $prevccAssignNew = $prevccAssignHistory;
+                $prevccAssignNew = json_encode($prevccAssignHistory);
                 $sql = "UPDATE `users` SET `CC`='$prevccAssignNew' WHERE `uid`='$prevCCId' ";
                 $query = $conn->mconnect()->prepare($sql);
                 $query->execute();
