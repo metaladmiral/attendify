@@ -13,7 +13,7 @@ $conn = new Db;
     <!-- FAVICON -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/brand/favicon.ico">
     <!-- TITLE -->
-    <title>Attendify - Assign Class Counselor CGCcms.in</title>
+    <title>ERP</title>
     <!-- BOOTSTRAP CSS -->
     <link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- STYLE CSS -->
@@ -45,11 +45,11 @@ $conn = new Db;
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Assign Class Counselor</h1>
+                            <h1 class="page-title">Student Record</h1>
                             <div>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="#">Superadmin</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Assign Class Counselor</li>
+                                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                                 </ol>
                             </div>
                         </div>
