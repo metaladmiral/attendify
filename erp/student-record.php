@@ -45,18 +45,121 @@ $conn = new Db;
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Student Record</h1>
+                            <h1 class="page-title">Student Records</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Student Records</li>
                                 </ol>
                             </div>
                         </div>
                         
                         <!-- BODY CONTENT -->
 
-            
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Select Class Details</h3>
+                                    <div class="card-options">
+                                        <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <form action="" onsubmit="getStudentDetails(this);return false;">
+                                        
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <select name="batch" id='batchid' class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                                            <option value="" disabled selected>Select Batch</option>
+                                                            <?php 
+                                                            $sql = "SELECT * FROM `batches`";
+                                                            $query = $conn->mconnect()->prepare($sql);
+                                                            $query->execute();
+                                                            $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                            foreach ($data as $key => $value) {
+                                                                ?>
+                                                                <option value="<?php echo $value['batchid']; ?>" 
+                                                                <?php if(isset($_GET['batch'])) { if($_GET['batch']==$value["batchid"]) {echo "selected";} } ?>
+                                                                ><?php echo $value['batchLabel']; ?></option>
+                                                            <?php 
+                                                            }
+                                                            ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-6">
+                                                    <select name="section" id='sectionid' class='form-control' id="">
+                                                        <option value="" selected disabled>Select Section</option>
+                                                        <?php
+                                                            for($i=65;$i<=74;$i++) {
+                                                                $p = 1;
+                                                                while($p<=2) {
+                                                                    ?>
+                                                                    <option value="<?php echo $i-64; ?>-<?php echo $p; ?>"
+                                                                    <?php if(isset($_GET['section'])) { if(  $_GET['section']==(($i-64)."-".$p) ) {echo "selected";} } ?>
+                                                                    ><?php echo chr($i); ?><?php echo $p; ?></option>
+                                                                <?php
+                                                                    $p++;
+                                                                }
+                                                            }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <button type="submit" class='btn btn-primary'>Get Student Records</button>
+                                        </div>
+                                            
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 student-records" style='display:none;'>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Students Found</h3>
+                                    <div class="card-options">
+                                        <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                        <a href="javascript:void(0)" class="card-options-remove" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="spinner-grow text-primary me-2 loader" style="width: 3rem; height: 3rem;" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <div class="data-records" style='display:none;'>
+                                        <div class=col-12>
+                                            <div class=card>
+                                                <div class=card-body>
+                                                    <div class=table-responsive>
+                                                    <table class="table border text-nowrap text-md-nowrap  table-dark table-striped mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Name</th>
+                                                        <th>Mst 1</th>
+                                                        <th>Assignment 1</th>
+                                                        <th>Mst 2</th>
+                                                        <th>Assignment 2</th>
+                                                        <th>Average Marks</th>
+                                                        <th>Total Attendance</th>
+                                                        <th>Total Internal</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class='student-table-body'>
+                                                </tbody>
+                                            </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- BODY CONTENT END -->
                         
                     </div>
@@ -128,5 +231,98 @@ $conn = new Db;
 
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>
+
+    <script>
+        let studentDetailsOffset = 0;
+        function getStudentDetails(e) {
+
+            $(".student-records")[0].style.display = "block";
+            $(".loader")[0].style.display = "block";
+            
+            let batchid = $("#batchid").val();
+            let sectionid = $("#sectionid").val();
+            
+            let fd = new FormData();
+            fd.set("offset", studentDetailsOffset);
+            fd.set("batchid", batchid);
+            fd.set("sectionid", sectionid);
+
+            fetch('../assets/backend/getStudentRecords', {
+                method: 'POST',
+                body: fd
+            })
+            .then(function (response) {
+                if (response.ok) {
+                    return response.text(); 
+                }
+                throw new Error('Network response was not OK');
+            })
+            .then(function (data) {
+                processStudentDetails(data);
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+        }
+        
+        function processStudentDetails(data) {
+            data = JSON.parse(data);
+            for(const key in data) {
+                data[key].marks = JSON.parse(data[key].marks);
+                
+                let avgMarks = 0;
+                let finalMarks = 0;
+
+                if(data[key].marks.phase1.mst==null) {
+                    data[key].marks.phase1.mst = 0;
+                } 
+                if(data[key].marks.phase1.assign==null) {
+                    data[key].marks.phase1.assign = 0;
+                } 
+
+                if(data[key].marks.phase2.mst==null) {
+                    data[key].marks.phase2.mst = 0;
+                } 
+                if(data[key].marks.phase2.assign==null) {
+                    data[key].marks.phase2.assign = 0;
+                }        
+
+                avgMarks = (data[key].marks.phase1.mst + data[key].marks.phase1.assign + data[key].marks.phase2.mst + data[key].marks.phase2.assign)/4;
+                data[key].marks['avgMarks'] = avgMarks;
+
+                if(data[key].totalattendance>75 && data[key].totalattendance<=80) {
+                    finalMarks += 5;
+                }
+
+                finalMarks += avgMarks;
+
+                data[key]['totalInternal'] = finalMarks;
+
+            }
+            showStudentDetails(data);
+        }
+
+        function showStudentDetails(data) {
+            $(".student-table-body")[0].innerHTML = "";
+            let html = "";
+            for(const key in data) {
+                html += `<tr>
+                <td>${key+1}</td><td>${data[key].name}</td>
+                <td>${data[key].marks.phase1.mst}</td>
+                <td>${data[key].marks.phase1.assign}</td>
+                <td>${data[key].marks.phase2.mst}</td>
+                <td>${data[key].marks.phase2.assign}</td>
+                <td>${data[key].marks.avgMarks}</td>
+                <td>${data[key].totalattendance}</td>
+                <td>${data[key].totalInternal}</td>
+                </tr>`;
+            }
+            $(".loader")[0].style.display = "none";
+            $(".data-records")[0].style.display = "block";
+            $(".student-table-body")[0].innerHTML += html;
+
+        }
+
+    </script>
 </body>
 </html>
