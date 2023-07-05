@@ -41,7 +41,7 @@ $ut = $_SESSION['usertype'];
                 <!--<li class="sub-category"><h3>Main</h3></li> -->
                 <?php if($ut=="2") { ?>
                 <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="#"><i class="side-menu__icon lnr lnr-pie-chart"></i>
+                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="dashboard"><i class="side-menu__icon lnr lnr-pie-chart"></i>
                         <span class="side-menu__label">Dashboard</span>
                     </a>
                 </li>
