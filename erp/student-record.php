@@ -307,7 +307,7 @@ $conn = new Db;
             let html = "";
             for(const key in data) {
                 html += `<tr>
-                <td>${key+1}</td><td>${data[key].name}</td>
+                <td>${parseInt(key)+1}</td><td>${data[key].name}</td>
                 <td>${data[key].marks.phase1.mst}</td>
                 <td>${data[key].marks.phase1.assign}</td>
                 <td>${data[key].marks.phase2.mst}</td>
