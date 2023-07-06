@@ -33,7 +33,13 @@ if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
             $sectionCCHistory = $query->fetch(PDO::FETCH_COLUMN);
             $sectionCCHistory = json_decode($sectionCCHistory, true);
 
+            if(array_search($ccId, $sectionCCHistory)) {
+                $key = array_search($ccId, $sectionCCHistory);
+                unset($sectionCCHistory[$key]);
+            }
+            
             $sectionCCHistory[$sectionId] = $ccId;
+
             $sectionCCNew = json_encode($sectionCCHistory);
 
             $sql = "UPDATE `batches` SET `sectionCC`='$sectionCCNew' WHERE `batchid`='$batchId' ";
