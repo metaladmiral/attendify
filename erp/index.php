@@ -6,6 +6,9 @@ require_once 'conn.php';
 
 $conn = new Db;
 $uid = $_SESSION['uid'];
+if($_SESSION['usertype']=="2") {
+    header('Location: dashboard');
+}
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">

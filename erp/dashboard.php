@@ -116,39 +116,6 @@ foreach ($batchLabelData as $key => $value) {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class='student-table-body'>
-                                                                <tr>
-                                                                    <td>Bella</td>
-                                                                    <td>Chloe</td>
-                                                                    <td>System Developer</td>
-                                                                    <td>2018/03/12</td>
-                                                                    <td>$654,765</td>
-                                                                    <td>b.Chloe@datatables.net</td>
-                                                                    <td>b.Chloe@datatables.net</td>
-                                                                    <td>b.Chloe@datatables.net</td>
-                                                                    <td>b.Chloe@datatables.net</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Donna</td>
-                                                                    <td>Bond</td>
-                                                                    <td>Account Manager</td>
-                                                                    <td>2012/02/21</td>
-                                                                    <td>$543,654</td>
-                                                                    <td>d.bond@datatables.net</td>
-                                                                    <td>d.bond@datatables.net</td>
-                                                                    <td>d.bond@datatables.net</td>
-                                                                    <td>d.bond@datatables.net</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Harry</td>
-                                                                    <td>Carr</td>
-                                                                    <td>Technical Manager</td>
-                                                                    <td>2011/02/87</td>
-                                                                    <td>$86,000</td>
-                                                                    <td>h.carr@datatables.net</td>
-                                                                    <td>h.carr@datatables.net</td>
-                                                                    <td>h.carr@datatables.net</td>
-                                                                    <td>h.carr@datatables.net</td>
-                                                                </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
