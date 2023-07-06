@@ -74,6 +74,7 @@ if($_SESSION['lockscreen']=="1") {
                         </a>
                         <!-- LOGO -->
                         <div class="main-header-center ms-3 d-none d-lg-block">
+                            <?php if($_SESSION['usertype']=='1') { ?>
                             <input type="text" class="form-control" id="" placeholder="Search for results..." onkeyup="search(this.value);">
                             <!-- <input type="text" class="form-control dropdown-toggle show" id="typehead" placeholder="Search for results..." data-bs-toggle="dropdown" aria-expanded="true"> -->
                             <!-- <input type="text" class="form-control" placeholder="Search for results..."> -->
@@ -82,9 +83,10 @@ if($_SESSION['lockscreen']=="1") {
                                 <b><label for="" style='margin:8px;'>Search Results</label></b>
                                 <div class="itms">
 
+                                    </div>
                                 </div>
-                            </div>
                             <button class="btn px-0 pt-2"><i class="fe fe-search" aria-hidden="true"></i></button>
+                            <?php } ?>
                         </div>
                         <div class="d-flex order-lg-2 ms-auto header-right-icons">
                             <!-- SEARCH -->
