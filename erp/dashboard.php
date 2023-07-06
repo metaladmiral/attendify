@@ -2,6 +2,32 @@
 session_start();
 require_once 'conn.php';
 $conn = new Db;
+
+if($_SESSION['usertype']=="1") {
+    http_response_code(404);
+    die();
+}
+
+$sql = $conn->mconnect()->prepare("SELECT CC FROM `users` WHERE `uid`='".$_SESSION['uid']."' ");
+$sql->execute();
+
+$data = json_decode($sql->fetch(PDO::FETCH_COLUMN), true);
+$allBatchesAssigned = array();
+foreach ($data as $key => $value) {
+    array_push($allBatchesAssigned, $key);
+}
+
+$processedBatchsAssigned = "'".implode("', '", $allBatchesAssigned)."'";
+
+$sql = $conn->mconnect()->prepare("SELECT batchLabel, batchid FROM `batches` WHERE `batchid` IN (".$processedBatchsAssigned.") ");
+$sql->execute();
+$batchLabelData = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$batchData = array();
+foreach ($batchLabelData as $key => $value) {
+    $batchData[$value["batchid"]] = $value["batchLabel"];
+}
+
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
@@ -56,6 +82,86 @@ $conn = new Db;
                         
                         <!-- BODY CONTENT -->
 
+                        <?php
+                        
+                        foreach ($data as $key => $value) {
+                            $sectionInfo = explode('-', $value);
+                            ?>
+                            <div class="col-12 <?php echo $key.$value; ?> ">
+                                <div class="card card-collapsed">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>)</h3>
+                                        <div class="card-options">
+                                            <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $value; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="spinner-grow text-primary me-2 loader" style="width: 3rem; height: 3rem;" role="status"></div>
+                                        <div class="col-lg-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered text-nowrap border-bottom" id="basic-datatable">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Name</th>
+                                                                    <th>Mst 1</th>
+                                                                    <th>Assignment 1</th>
+                                                                    <th>Mst 2</th>
+                                                                    <th>Assignment 2</th>
+                                                                    <th>Average Marks</th>
+                                                                    <th>Total Attendance</th>
+                                                                    <th>Total Internal</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class='student-table-body'>
+                                                                <tr>
+                                                                    <td>Bella</td>
+                                                                    <td>Chloe</td>
+                                                                    <td>System Developer</td>
+                                                                    <td>2018/03/12</td>
+                                                                    <td>$654,765</td>
+                                                                    <td>b.Chloe@datatables.net</td>
+                                                                    <td>b.Chloe@datatables.net</td>
+                                                                    <td>b.Chloe@datatables.net</td>
+                                                                    <td>b.Chloe@datatables.net</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Donna</td>
+                                                                    <td>Bond</td>
+                                                                    <td>Account Manager</td>
+                                                                    <td>2012/02/21</td>
+                                                                    <td>$543,654</td>
+                                                                    <td>d.bond@datatables.net</td>
+                                                                    <td>d.bond@datatables.net</td>
+                                                                    <td>d.bond@datatables.net</td>
+                                                                    <td>d.bond@datatables.net</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Harry</td>
+                                                                    <td>Carr</td>
+                                                                    <td>Technical Manager</td>
+                                                                    <td>2011/02/87</td>
+                                                                    <td>$86,000</td>
+                                                                    <td>h.carr@datatables.net</td>
+                                                                    <td>h.carr@datatables.net</td>
+                                                                    <td>h.carr@datatables.net</td>
+                                                                    <td>h.carr@datatables.net</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                        }
+
+                        ?>
             
                         <!-- BODY CONTENT END -->
                         
@@ -67,6 +173,97 @@ $conn = new Db;
         </div>
      <!-- FOOTER -->
     <?php include 'footer.php' ?>
+
+    <script>
+
+        let studentDetailsOffset = 0;
+        function getStudentDetails(e, batchid, sectionid) {
+            if($(e).attr('data-loadedRecords')=="0") {
+                $(e).attr('data-loadedRecords', "1");
+                // $(".student-records")[0].style.display = "block";
+
+                let fd = new FormData();
+                fd.set("offset", studentDetailsOffset);
+                fd.set("batchid", batchid);
+                fd.set("sectionid", sectionid);
+
+                fetch('../assets/backend/getStudentRecords', {
+                    method: 'POST',
+                    body: fd
+                })
+                .then(function (response) {
+                    if (response.ok) {
+                        return response.text(); 
+                    }
+                    throw new Error('Network response was not OK');
+                })
+                .then(function (data) {
+                    processStudentDetails(batchid, sectionid, data);
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        function processStudentDetails(batchid, sectionid, data) {
+            data = JSON.parse(data);
+            for(const key in data) {
+                data[key].marks = JSON.parse(data[key].marks);
+                
+                let avgMarks = 0;
+                let finalMarks = 0;
+
+                if(data[key].marks.phase1.mst==null) {
+                    data[key].marks.phase1.mst = 0;
+                } 
+                if(data[key].marks.phase1.assign==null) {
+                    data[key].marks.phase1.assign = 0;
+                } 
+
+                if(data[key].marks.phase2.mst==null) {
+                    data[key].marks.phase2.mst = 0;
+                } 
+                if(data[key].marks.phase2.assign==null) {
+                    data[key].marks.phase2.assign = 0;
+                }        
+
+                avgMarks = (data[key].marks.phase1.mst + data[key].marks.phase1.assign + data[key].marks.phase2.mst + data[key].marks.phase2.assign)/4;
+                data[key].marks['avgMarks'] = avgMarks;
+
+                if(data[key].totalattendance>75 && data[key].totalattendance<=80) {
+                    finalMarks += 5;
+                }
+
+                finalMarks += avgMarks;
+
+                data[key]['totalInternal'] = finalMarks;
+
+            }
+            showStudentDetails(batchid, sectionid, data);
+        }
+
+        function showStudentDetails(batchid, sectionid, data) {
+            $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = "";
+            let html = "";
+            for(const key in data) {
+                html += `<tr>
+                <td>${key+1}</td><td>${data[key].name}</td>
+                <td>${data[key].marks.phase1.mst}</td>
+                <td>${data[key].marks.phase1.assign}</td>
+                <td>${data[key].marks.phase2.mst}</td>
+                <td>${data[key].marks.phase2.assign}</td>
+                <td>${data[key].marks.avgMarks}</td>
+                <td>${data[key].totalattendance}</td>
+                <td>${data[key].totalInternal}</td>
+                </tr>`;
+            }
+            $("."+batchid+sectionid+" .loader")[0].style.display = "none";
+            $("."+batchid+sectionid+" .student-table-body")[0].innerHTML += html;
+
+        }
+
+    </script>
     <!-- FOOTER END -->
     <!-- BACK-TO-TOP -->
     <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
