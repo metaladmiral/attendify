@@ -41,11 +41,11 @@ if($_SESSION['lockscreen']=="1") {
                 if(resp.length>0) {
                     for (let i = 0; i < resp.length; i++) {
                         const e = resp[i];
-                        let contact = e.contact;
+                        let contact = e.mno;
                         let name = e.name;
                         let studid = e.studid;
-                        let batch = e.batchLabel;
-                        html += "<a href='edit-student.php?sid="+studid+"'><button class='dropdown-item'>"+name+" - "+contact+", "+batch+"</button></a>";
+                        let email = e.studemail;
+                        html += "<a href='edit-student?sid="+studid+"'><button class='dropdown-item'>"+name+" - "+contact+", "+email+"</button></a>";
                     }
                     document.querySelector('.searchCont .itms').innerHTML = html;
                     document.querySelector('.searchCont').classList.remove('hide');
