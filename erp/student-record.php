@@ -287,7 +287,7 @@ $conn = new Db;
                     data[key].marks.phase2.assign = 0;
                 }        
 
-                avgMarks = (data[key].marks.phase1.mst + data[key].marks.phase1.assign + data[key].marks.phase2.mst + data[key].marks.phase2.assign)/4;
+                avgMarks = (parseInt(data[key].marks.phase1.mst) + parseInt(data[key].marks.phase1.assign) + parseInt(data[key].marks.phase2.mst) + parseInt(data[key].marks.phase2.assign))/4;
                 data[key].marks['avgMarks'] = avgMarks;
 
                 if(data[key].totalattendance>75 && data[key].totalattendance<=80) {
