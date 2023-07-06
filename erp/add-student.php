@@ -1007,8 +1007,8 @@
                                             <!--<input name="parocc" type="text" class="form-control" placeholder="Enter Parent Occupation" required>-->
                                             <select class="form-control" name='loanstatus' required>
                                                 <option value='' selected disabled>Select Loan Status</option>
-                                                <option value='1'>Yes</option>
-                                                <option value='0'>No</option>
+                                                <option value='Yes'>Yes</option>
+                                                <option value='No'>No</option>
                                             </select>
                                         </div>
                                     </div>

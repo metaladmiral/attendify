@@ -43,7 +43,7 @@ $parentWorkDetails = json_encode($parentWorkDetails);
 
 $loanStatus = $_POST['loanstatus'];
 $loanAmount = $_POST['loanamount'];
-if($loanStatus=="0") { $loanAmount = "0"; }
+if($loanStatus=="No") { $loanAmount = "0"; }
 $loanDetails = array("loanstatus"=>$loanStatus, "loanamount"=>$loanAmount);
 $loanDetails = json_encode($loanDetails);
 
