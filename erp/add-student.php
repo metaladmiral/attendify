@@ -965,8 +965,8 @@
                                  <label for="exampleInputEmail1" class="form-label">Hosteler</label>
                                  <select class="form-control" id="inputDistricta" name="hosteler" required>
                                     <option value="" selected disabled>Hosteler?</option>
-                                    <option value="1">Yes</option>
-                                    <option value="0">No</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
                                  </select>
                                  </div>
                                  <div class="col-4">
@@ -977,10 +977,10 @@
                                  <label for="exampleInputEmail1" class="form-label">Hostel Name</label>
                                  <select class="form-control" id="inputDistricta" name="hostelname" required>
                                  <option value="" selected disabled>Hostel Name</option>
-                                 <option value="1">New Boys</option>
-                                 <option value="2">Sadbhavna</option>
-                                 <option value="3">Sukhsagar</option>
-                                 <option value="4">Kalpana</option>
+                                 <option value="New Boys">New Boys</option>
+                                 <option value="Sadbhavna">Sadbhavna</option>
+                                 <option value="Sukhsagar">Sukhsagar</option>
+                                 <option value="Kalpana">Kalpana</option>
                                  </select>
                                  </div>
                                  </div>

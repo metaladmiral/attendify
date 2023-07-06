@@ -33,12 +33,13 @@ if($hosteler=="1") {
     $hostelname = "-";
 
 }
-$hostelDetails = array("hosteler"=>$hosteler, "roomno"=>$roomno, $hostelname);
+$hostelDetails = array("hosteler"=>$hosteler, "roomno"=>$roomno, "hostelname"=>$hostelname);
 $hostelDetails = json_encode($hostelDetails);
 
 $parOccupation = $_POST['parocc'];
 $parAnnualIncome = $_POST['parani'];
 $parentWorkDetails = array("parentoccupation"=>$parOccupation, "parannualincome"=>$parAnnualIncome);
+$parentWorkDetails = json_encode($parentWorkDetails);
 
 $loanStatus = $_POST['loanstatus'];
 $loanAmount = $_POST['loanamount'];
