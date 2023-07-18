@@ -101,11 +101,8 @@ header('Location: ../404.php');
                                             <select name="usertype" class="form-control" data-placeholder="Choose one" aria-hidden="true">
                                                     <!-- <option label="Choose one">
                                                     </option> -->
-                                                    <option value="1" <?php echo ($row['usertype']=="1") ? "selected" : ""; ?>>Operations</option>
-                                                    <option value="2" <?php echo ($row['usertype']=="2") ? "selected" : ""; ?>>Accounts</option>
-                                                    <option value="3" <?php echo ($row['usertype']=="3") ? "selected" : ""; ?>>Counsellor</option>
-                                                    <option value="4" <?php echo ($row['usertype']=="4") ? "selected" : ""; ?>>Dispatch</option>
-                                                    <option value="5" <?php echo ($row['usertype']=="5") ? "selected" : ""; ?>>Customer Support</option>
+                                                    <option value="1" <?php echo ($row['usertype']=="1") ? "selected" : ""; ?>>Superadmin</option>
+                                                    <option value="2" <?php echo ($row['usertype']=="2") ? "selected" : ""; ?>>Counselor</option>
                                                 </select>
                                         </div>
                                         

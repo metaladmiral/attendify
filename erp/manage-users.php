@@ -134,20 +134,11 @@ $conn = new Db;
                                                                 $utype="";
                                                                 switch ($value["usertype"]) {
                                                                     case '1':
-                                                                        $utype = "Operations";
+                                                                        $utype = "Superadmin";
                                                                         break;
                                                                     
                                                                     case '2':
-                                                                        $utype = "Accounts";
-                                                                        break;
-                                                                    case '3':
-                                                                        $utype = "Counsellor";
-                                                                        break;
-                                                                    case '4':
-                                                                        $utype = "Dispatch";
-                                                                        break;
-                                                                    case '5':
-                                                                        $utype = "Customer Support";
+                                                                        $utype = "Counselor";
                                                                         break;
                                                                     default:
                                                                         break;
