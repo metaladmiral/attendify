@@ -3,11 +3,6 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
-if($_SESSION['usertype']=="1") {
-    http_response_code(404);
-    die();
-}
-
 $sql = $conn->mconnect()->prepare("SELECT CC FROM `users` WHERE `uid`='".$_SESSION['uid']."' ");
 $sql->execute();
 
