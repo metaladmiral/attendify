@@ -5,20 +5,10 @@ require_once 'conn.php';
 $conn = new Db;
 $uid = $_SESSION['uid'];
 
-if($_SESSION['usertype']==0) {
+if($_SESSION['usertype']==1) {
     $usertype = "Super Admin";
-} else if($_SESSION['usertype']==1) {
-    $usertype = "Operations";
 } else if($_SESSION['usertype']==2) {
-    $usertype = "Accounts";
-} else if($_SESSION['usertype']==3) {
-    $usertype = "Counsellor";
-}
-else if($_SESSION['usertype']==4) {
-    $usertype = "Dispatch";
-}
-else if($_SESSION['usertype']==5) {
-    $usertype = "Customer Support";
+    $usertype = "Counselor";
 }
 
 ?>
