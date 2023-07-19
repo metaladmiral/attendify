@@ -78,49 +78,54 @@ foreach ($batchLabelData as $key => $value) {
                         <!-- BODY CONTENT -->
 
                         <?php
-                        
-                        foreach ($data as $key => $value) {
-                            $sectionInfo = explode('-', $value);
-                            ?>
-                            <div class="col-12 <?php echo $key.$value; ?> ">
-                                <div class="card card-collapsed">
-                                    <div class="card-header">
-                                        <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>)</h3>
-                                        <div class="card-options">
-                                            <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $value; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
+                        if(count($data)) {
+                            foreach ($data as $key => $value) {
+                                $sectionInfo = explode('-', $value);
+                                ?>
+                                <div class="col-12 <?php echo $key.$value; ?> ">
+                                    <div class="card card-collapsed">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>)</h3>
+                                            <div class="card-options">
+                                                <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $value; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="spinner-grow text-primary me-2 loader" style="width: 3rem; height: 3rem;" role="status"></div>
-                                        <div class="col-lg-12">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-bordered text-nowrap border-bottom key-buttons" id="file-datatable">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>ID</th>
-                                                                    <th>Actions</th>
-                                                                    <th>Name</th>
-                                                                    <th>Mst 1</th>
-                                                                    <th>Assignment 1</th>
-                                                                    <th>Mst 2</th>
-                                                                    <th>Assignment 2</th>
-                                                                    <th>Average Marks</th>
-                                                                    <th>Total Attendance</th>
-                                                                    <th>Total Internal</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody class='student-table-body'>
-                                                            </tbody>
-                                                        </table>
+                                        <div class="card-body">
+                                            <div class="spinner-grow text-primary me-2 loader" style="width: 3rem; height: 3rem;" role="status"></div>
+                                            <div class="col-lg-12">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered text-nowrap border-bottom key-buttons" id="file-datatable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>ID</th>
+                                                                        <th>Actions</th>
+                                                                        <th>Name</th>
+                                                                        <th>Mst 1</th>
+                                                                        <th>Assignment 1</th>
+                                                                        <th>Mst 2</th>
+                                                                        <th>Assignment 2</th>
+                                                                        <th>Average Marks</th>
+                                                                        <th>Total Attendance</th>
+                                                                        <th>Total Internal</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class='student-table-body'>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                <?php
+                            }
+                        }else {
+                            ?>
+                            <span class="text-danger">You are not assigned as CC for any sections.</span>
                             <?php
                         }
 
