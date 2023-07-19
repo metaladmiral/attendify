@@ -1,5 +1,4 @@
 <?php 
-
 // session_start();
 $superadminURLS = array("manage-batches", "manage-users", "manage-counsellors", "assign-class-counselor");
 $operationsURLS = array("", "add-student");
@@ -46,10 +45,16 @@ $ut = $_SESSION['usertype'];
                     </a>
                 </li>
                 <?php } ?>
+                <?php if($ut=="1") { ?>
+                <li class="slide">
+                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="dashboard-superadmin"><i class="side-menu__icon lnr lnr-pie-chart"></i>
+                        <span class="side-menu__label">Dashboard</span>
+                    </a>
+                </li>
+                <?php } ?>
 
                 <!-- <li class="sub-category"><h3>UI Kit</h3></li> -->
                 <li class="slide">
-                    
                     <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1" || $ut=="2") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?> ><i class="side-menu__icon fe fe-users"></i>
                         <span onclick='window.location = "<?php echo $operationsURLS[1]; ?>" ' class="side-menu__label">Add Student</span></i>
                     </a>
@@ -57,9 +62,17 @@ $ut = $_SESSION['usertype'];
                 <!-- Operations END -->
                 
                 <?php if($ut=="1") { ?>
-                <li class="slide">
+                <li style="cursor: pointer;" class="slide">
                     <a class="side-menu__item" data-bs-toggle="slide"><i class="side-menu__icon fe fe-layers"></i>
                         <span class="side-menu__label" onclick="window.location='student-record'">Student Record</span></i>
+                    </a>
+                </li>
+                <?php } ?> 
+
+                <?php if($ut=="1") { ?>
+                <li style="cursor: pointer;" class="slide">
+                    <a class="side-menu__item" data-bs-toggle="slide"><i class="side-menu__icon fe fe-layers"></i>
+                        <span class="side-menu__label" onclick="window.location='<?php echo $superadminURLS[3]; ?>'">Assign CC</span></i>
                     </a>
                 </li>
                 <?php } ?> 
@@ -77,9 +90,10 @@ $ut = $_SESSION['usertype'];
                                    <div class="tab-pane active" id="side1">
                                        <ul class="sidemenu-list">
                                            <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
+                                           
                                            <li><a href="<?php echo $superadminURLS[0]; ?>" class="slide-item"> Manage Batches</a></li>
                                            <li><a href="<?php echo $superadminURLS[1]; ?>" class="slide-item"> Manage Users</a></li>
-                                           <li><a href="<?php echo $superadminURLS[3]; ?>" class="slide-item"> Assign CC</a></li>
+                                           
                                             <!-- <l><a href="#" class="slide-item"> Counselor Dashboard</a></l i> -->
                                             <!-- <li><a href="<?php echo $superadminURLS[2]; ?>" class="slide-item"> Add Counseller</a></li> -->
                                            <!-- <li><a href="#" class="slide-item"> Email Setting</a></li> -->

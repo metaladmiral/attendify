@@ -6,6 +6,16 @@
 <!doctype html>
 <html lang="en" dir="ltr">
    <head>
+       <style>
+           input[type=number]{
+    -moz-appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+       </style>
       <!-- META DATA -->
       <meta charset="UTF-8">
       <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
@@ -138,8 +148,20 @@
                                     </div>
                                  <div class="col-6">
                                  <div class="form-group">
-                                 <label for="exampleInputEmail1" class="form-label">Blood Group</label>
-                                 <input name="bloodgrp" type="text" class="form-control" placeholder="Enter Blood Group" required>
+                                    <label for="exampleInputEmail1" class="form-label">Blood Group</label>
+                                    <!-- <input name="bloodgrp" type="text" class="form-control" placeholder="Enter Blood Group" required> -->
+                                    <select name="bloodgrp" class="form-control" required>
+                                       <option value="A+">A+</option>
+                                       <option value="A-">A-</option>
+                                       <option value="B+">B+</option>
+                                       <option value="B-">B-</option>
+                                       <option value="AB+">AB+</option>
+                                       <option value="AB-">AB-</option>
+                                       <option value="O+">O+</option>
+                                       <option value="O-">O-</option>
+                                    </select>
+
+                                    
                                  </div>
                                  </div>
                                  </div>
@@ -152,8 +174,15 @@
                                  </div>
                                  <div class="col-6">
                                  <div class="form-group">
-                                 <label class="form-label">Name of the department/Institute</label>
-                                 <input name="depname" type="text" class="form-control" placeholder="Enter Department" required>
+                                 <label class="form-label">Select Department: </label>
+                                    <!-- <input name="depname" type="text" class="form-control" placeholder="Enter Department" required> -->
+                                    <select name="depname" class="form-control" id="" required>
+                                       <option value="Applied Science">Applied Science</option>
+                                       <option value="CSE">CSE</option>
+                                       <option value="IT">IT </option>
+                                       <option value="AI DS">AI DS </option>
+                                       <option value="AI ML">AI ML </option>
+                                    </select>
                                  </div>
                                  </div>
                                  </div>
@@ -202,6 +231,7 @@
                                  <option value="0">General</option>
                                  <option value="1">SC/ST</option>
                                  <option value="2">OBC</option>
+                                 <option value="3">BC</option>
                                  </select>
                                  </div>
                                  </div>
@@ -971,11 +1001,11 @@
                                  </div>
                                  <div class="col-4">
                                  <label for="exampleInputEmail1" class="form-label">Room No.</label>
-                                 <input name="roomno" type="text" class="form-control roomno" placeholder="Enter Room No."  required>
+                                 <input name="roomno" type="text" class="form-control roomno" placeholder="Enter Room No.">
                                  </div>
                                  <div class="col-4">
                                  <label for="exampleInputEmail1" class="form-label">Hostel Name</label>
-                                 <select class="form-control" id="inputDistricta" name="hostelname" required>
+                                 <select class="form-control" id="inputDistricta" name="hostelname">
                                  <option value="" selected disabled>Hostel Name</option>
                                  <option value="New Boys">New Boys</option>
                                  <option value="Sadbhavna">Sadbhavna</option>
@@ -1022,7 +1052,7 @@
 
                                 
                                           <div class="form-group">
-                                             <label for="exampleInputEmail1" class="form-label">Unhealthy Habits (if any)</label>
+                                             <label for="exampleInputEmail1" class="form-label">Unhealthy Habits (If any)</label>
                                              <textarea name="uhhabits" class="form-control" placeholder="Start typing here..."></textarea>
                                           </div>
                                           <div class="row">
@@ -1040,11 +1070,11 @@
                                              </div>
                                           </div>
                                           <div class="form-group">
-                                             <label for="exampleInputEmail1" class="form-label">Aim of education</label>
+                                             <label for="exampleInputEmail1" class="form-label">Aim of Education</label>
                                              <textarea name="aimoe" class="form-control" placeholder="Start typing here..." required></textarea>
                                           </div>
                                           <div class="form-group">
-                                             <label for="exampleInputEmail1" class="form-label">Discipline, Peronal Traits and Progressive Improvement in weak areas</label>
+                                             <label for="exampleInputEmail1" class="form-label">Discipline, Peronal Traits and Progressive Improvement in Weak Areas</label>
                                              <textarea name="personaltraits" class="form-control" placeholder="Start typing here..." required></textarea>
                                           </div>
                                           <div class="row">
@@ -1075,11 +1105,13 @@
                                                    </select>
                                                 </div>
                                              </div>
+                                             <div class="col-12">
+                                                <div class="form-group">
+                                                   <label for="exampleInputEmail1" class="form-label">Communication Skill at the time of Admission</label>
+                                                   <textarea name="commskilladm" class="form-control" placeholder="Start typing here..." required></textarea>
+                                                </div>
+                                             </div>    
                                           </div>
-                                          <div class="col-lg">
-                                             <label for="exampleInputEmail1" class="form-label">Communication Skill at the time of Admission</label>
-                                             <textarea name="commskilladm" class="form-control" placeholder="Start typing here..." required></textarea>
-                                          </div>    
 
 
                                  <br>
@@ -1373,7 +1405,7 @@
       <script src="../assets/plugins/peitychart/peitychart.init.js"></script>
       <script src="../assets/plugins/notify/js/rainbow.js"></script>
       <script src="../assets/plugins/notify/js/sample.js"></script>
-      <script src="../assets/plugins/notify/js/jquery.growl.js"></script>
+      <!-- <script src="../assets/plugins/notify/js/jquery.growl.js"></script> -->
       <script src="../assets/plugins/notify/js/notifIt.js"></script>
       <!-- SIDEBAR JS -->
       <script src="../assets/plugins/sidebar/sidebar.js"></script>

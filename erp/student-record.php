@@ -135,10 +135,11 @@ $conn = new Db;
                                             <div class=card>
                                                 <div class=card-body>
                                                     <div class=table-responsive>
-                                                    <table class="table border text-nowrap text-md-nowrap  table-dark table-striped mb-0">
+                                                    <table id='file-datatable' class="table border text-nowrap text-md-nowrap  table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
+                                                        <th>Actions</th>
                                                         <th>Name</th>
                                                         <th>Mst 1</th>
                                                         <th>Assignment 1</th>
@@ -307,7 +308,9 @@ $conn = new Db;
             let html = "";
             for(const key in data) {
                 html += `<tr>
-                <td>${parseInt(key)+1}</td><td>${data[key].name}</td>
+                <td>${parseInt(key)+1}</td>
+                <td><i onclick="window.location = 'edit-student.php?sid=${data[key].studid} ' " class="fa fa-edit" data-bs-toggle="tooltip" title="fa fa-edit" style='font-size: 16px;cursor:pointer;'></i></td>
+                <td>${data[key].name}</td>
                 <td>${data[key].marks.phase1.mst}</td>
                 <td>${data[key].marks.phase1.assign}</td>
                 <td>${data[key].marks.phase2.mst}</td>
@@ -320,7 +323,12 @@ $conn = new Db;
             $(".loader")[0].style.display = "none";
             $(".data-records")[0].style.display = "block";
             $(".student-table-body")[0].innerHTML += html;
-
+            $("#file-datatable").DataTable( {
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
+                ]
+            } );
         }
 
     </script>
