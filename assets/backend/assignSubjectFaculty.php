@@ -15,18 +15,24 @@ if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
             $sectionId = $_POST['sectionid'];
             $subjectId = $_POST['subjectid'];
 
+            $sql = "SELECT subjectname from `subjects` WHERE `subjectid`='$subjectId' ";
+            $query = $conn->mconnect()->prepare($sql);
+            $query->execute();
+            $subjectName = $query->fetch(PDO::FETCH_COLUMN);
+
             $sql = "SELECT faculty from `users` WHERE uid='$facultyId' ";
             $query = $conn->mconnect()->prepare($sql);
             $query->execute();
             $facultyAssignHistory = $query->fetch(PDO::FETCH_COLUMN);
             $facultyAssignHistory = json_decode($facultyAssignHistory, true);
 
-            if(isset($facultyAssignHistory[$batchId])) {
-                array_push($facultyAssignHistory[$batchId], $sectionId);
-            }
-            else {
-                $facultyAssignHistory[$batchId] = array($sectionId);
-            }
+            // if(isset($facultyAssignHistory[$batchId])) {
+            //     array_push($facultyAssignHistory[$batchId], $sectionId);
+            // }
+            // else {
+                //     $facultyAssignHistory[$batchId] = array($sectionId);
+                // }
+            $facultyAssignHistory[$batchId][$sectionId] = array($subjectId, $subjectName);
             $facultyAssignNew = json_encode($facultyAssignHistory);
 
             $sql = "UPDATE `users` SET `faculty`='$facultyAssignNew' WHERE `uid`='$facultyId' ";
@@ -62,12 +68,16 @@ if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
                 $prevfacultyAssignHistory = $query->fetch(PDO::FETCH_COLUMN);
                 $prevfacultyAssignHistory = json_decode($prevfacultyAssignHistory, true);
 
-                $prevFacultyArrayInfo = array();
-                foreach ($prevfacultyAssignHistory as $key => $value) {
-                    $inBatchKey = array_search($sectionId, $prevfacultyAssignHistory[$key]);
-                    array_push($prevFacultyArrayInfo, $key, $inBatchKey);
+                // $prevFacultyArrayInfo = array();
+                // foreach ($prevfacultyAssignHistory as $key => $value) {
+                //     $inBatchKey = array_search($sectionId, $prevfacultyAssignHistory[$key]);
+                //     array_push($prevFacultyArrayInfo, $key, $inBatchKey);
+                // }
+                // array_splice($prevfacultyAssignHistory[$prevFacultyArrayInfo[0]], $prevFacultyArrayInfo[1], 1);
+                unset($prevfacultyAssignHistory[$batchId][$sectionId]);
+                if(!count($prevfacultyAssignHistory[$batchId])) {
+                    unset($prevfacultyAssignHistory[$batchId]);
                 }
-                array_splice($prevfacultyAssignHistory[$prevFacultyArrayInfo[0]], $prevFacultyArrayInfo[1], 1);
                 
                 $prevfacultyAssignNew = json_encode($prevfacultyAssignHistory);
                 $sql = "UPDATE `users` SET `faculty`='$prevfacultyAssignNew' WHERE `uid`='$prevFacultyId' ";
