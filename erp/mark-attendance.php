@@ -97,26 +97,26 @@ if(is_null($data)) {
                         <!-- BODY CONTENT -->
 
                         <?php
-                        
                         if(!$dataNull) {
                             foreach ($data as $key => $value) {
                                 foreach ($value as $key_ => $value_) {
-                                    $sectionInfo = explode('-', $value_);
+                                    $sectionInfo = explode('-', $key_);
                                     $randId = uniqid();
                                     ?>
                                     
-                                    <div class="col-12 <?php echo $key.$value_; ?> ">
+                                    <div class="col-12 <?php echo $key.$key_; ?> ">
                                         <form class='form_<?php echo $randId; ?>' method="POST" action='../assets/backend/submitAttendance'>
                                             <input type="hidden" name="batchid" value="<?php echo $key; ?>">
-                                            <input type="hidden" name="sectionid" value="<?php echo $value_; ?>">
+                                            <input type="hidden" name="sectionid" value="<?php echo $key_; ?>">
+                                            <input type="hidden" name="subjectid" value="<?php echo $value_[0]; ?>">
                                             <input type="hidden" name="date" value="">
                                             <input type="hidden" name="absStuds" value="">
                                         </form>
                                         <div class="card card-collapsed">
                                             <div class="card-header">
-                                                <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>)</h3>
+                                                <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>) - <?php echo $value_[1]; ?> </h3>
                                                 <div class="card-options">
-                                                    <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $value_; ?>", "<?php echo $randId; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
+                                                    <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $key_; ?>", "<?php echo $randId; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
                                                 </div>
                                             </div>
                                             <div class="card-body">
@@ -153,7 +153,7 @@ if(is_null($data)) {
                                                         </div>
                                                     </div>
                                                     <div class="col-4">
-                                                        <button class="btn btn-primary submitAttendanceBtn <?php echo "btn_".$key."_".$value_; ?>" onclick='submitAttendance("<?php echo $randId; ?>");' disabled>Submit Attendance</button>
+                                                        <button class="btn btn-primary submitAttendanceBtn <?php echo "btn_".$key."_".$key_; ?>" onclick='submitAttendance("<?php echo $randId; ?>");' disabled>Submit Attendance</button>
                                                     </div>
                                                 <!-- </div> -->
                                             </div>
