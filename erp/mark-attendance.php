@@ -406,6 +406,35 @@ if(is_null($data)) {
             });
         }
 
+        <?php
+    
+    if(isset($_SESSION['succ']))
+    {
+        if($_SESSION['succ']!="1")  {
+
+            ?>
+            <script>swal({
+             title: "Oops!",
+             text: "An error occured. Please contact admin!",
+             type: "warning",
+             showCancelButton: true,
+             confirmButtonText: 'Exit'
+         });</script>
+            <?php
+
+        }
+        else {
+            ?>
+            <script>
+                swal('Hooray!', 'Attendance Successfully registered!', 'success');
+            </script>
+            <?php
+        }
+        unset($_SESSION['succ']);
+    }
+
+    ?>
+
     </script>
 
 
