@@ -406,6 +406,8 @@ if(is_null($data)) {
             });
         }
 
+        
+            </script>
         <?php
     
     if(isset($_SESSION['succ']))
@@ -434,8 +436,6 @@ if(is_null($data)) {
     }
 
     ?>
-
-    </script>
 
 
 </body>
