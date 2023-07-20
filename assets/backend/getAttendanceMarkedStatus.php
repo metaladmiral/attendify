@@ -16,7 +16,7 @@ try {
     $sql = $conn->mconnect()->prepare("SELECT date FROM $tableName WHERE `date`<='$nowDate' AND `sectionId`='$sectionId' AND `subjectId`='$subjectId' ORDER BY `date` DESC LIMIT 2 ");
     $sql->execute();
 
-    $data = $conn->fetchAll(PDO::FETCH_COLUMN);
+    $data = $sql->fetchAll(PDO::FETCH_COLUMN);
     
     $key = array_search($nowDate, $data);
     if($key) {
@@ -26,7 +26,9 @@ try {
         $dateDetails[date('Y-m-d', $nowDate)] = "0";
     }
     
-    $dateDetails[date('Y-m-d', $data[1])] = "1";
+    if(count($data)>1) {
+        $dateDetails[date('Y-m-d', $data[1])] = "1";
+    }
     
 }
 catch(PDOException $e) {
