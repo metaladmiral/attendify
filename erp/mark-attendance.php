@@ -110,7 +110,7 @@ if(is_null($data)) {
                                             <input type="hidden" name="sectionid" value="<?php echo $key_; ?>">
                                             <input type="hidden" name="subjectid" value="<?php echo $value_[0]; ?>">
                                             <input type="hidden" name="date" value="">
-                                            <input type="hidden" name="absStuds" value="">
+                                            <input type="hidden" name="absentStudents" value="">
                                         </form>
                                         <div class="card card-collapsed">
                                             <div class="card-header">
@@ -183,16 +183,16 @@ if(is_null($data)) {
         function submitAttendance(randId) {
             // let classInfo = $(e)[0].classList[3];
             let checkBoxes= $("."+randId);
-            let absStuds = [];
+            let absentStudents = [];
             for(let k in checkBoxes) {
                 if(!checkBoxes[k].checked) {
-                    absStuds.push(checkBoxes[k].value);
+                    absentStudents.push(checkBoxes[k].value);
                 }
                 if(k==(checkBoxes.length-1)) {
                     break;
                 }
             }
-            $(".form_"+randId+" input[name='absStuds']")[0].value = btoa(JSON.stringify(absStuds));
+            $(".form_"+randId+" input[name='absentStudents']")[0].value = btoa(JSON.stringify(absentStudents));
             $(".form_"+randId+" input[name='date']")[0].value = $(".attDate"+randId)[0].getAttribute('date-value');
             $(".form_"+randId)[0].submit();
         }
