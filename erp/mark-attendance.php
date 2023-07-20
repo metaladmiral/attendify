@@ -116,7 +116,7 @@ if(is_null($data)) {
                                             <div class="card-header">
                                                 <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>) - <?php echo $value_[1]; ?> </h3>
                                                 <div class="card-options">
-                                                    <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $key_; ?>", "<?php echo $randId; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
+                                                    <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $key_; ?>", "<?php echo $randId; ?>", "<?php echo $value_[0]; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
                                                 </div>
                                             </div>
                                             <div class="card-body">
@@ -202,7 +202,7 @@ if(is_null($data)) {
         var dateRanges = [];
 
         let studentDetailsOffset = 0;
-        function getStudentDetails(e, batchid, sectionid, randid) {
+        function getStudentDetails(e, batchid, sectionid, randid, subjectid) {
             if($(e).attr('data-loadedRecords')=="0") {
                 $(e).attr('data-loadedRecords', "1");
                 // $(".student-records")[0].style.display = "block";
@@ -229,6 +229,7 @@ if(is_null($data)) {
                     console.error('Error:', error);
                 });
 
+                fd.set("subjectid", subjectid);
                 fetch('../assets/backend/getAttendanceMarkedStatus', {
                     method: 'POST',
                     body: fd
@@ -245,7 +246,6 @@ if(is_null($data)) {
                 .catch(function (error) {
                     console.error('Error:', error);
                 });
-              
 
             }
         }
