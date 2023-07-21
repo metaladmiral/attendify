@@ -98,7 +98,6 @@ if(is_null($data) || count($data)==0) {
                         <!-- BODY CONTENT -->
 
                         <?php
-                            echo "0";
                         if(!$dataNull) {
                             foreach ($data as $key => $value) {
                                 foreach ($value as $key_ => $value_) {
