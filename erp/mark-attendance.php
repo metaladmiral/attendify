@@ -7,7 +7,8 @@ $sql = $conn->mconnect()->prepare("SELECT faculty FROM `users` WHERE `uid`='".$_
 $sql->execute();
 
 $data = $sql->fetch(PDO::FETCH_COLUMN);
-if(is_null($data)) {
+$data = json_decode($data, true);
+if(is_null($data) || count($data)==0) {
     $dataNull = true;
 }else {
     $dataNull = false;
@@ -97,6 +98,7 @@ if(is_null($data)) {
                         <!-- BODY CONTENT -->
 
                         <?php
+                            echo "0";
                         if(!$dataNull) {
                             foreach ($data as $key => $value) {
                                 foreach ($value as $key_ => $value_) {
@@ -386,7 +388,9 @@ if(is_null($data)) {
                 $("."+batchid+sectionid+" #attDate")[0].setAttribute('date-value', picker.startDate.format('YYYY-MM-DD'));
                 
                 $("."+batchid+sectionid+" .submitAttendanceBtn").removeAttr('disabled');
-                if(dateRanges[picker.startDate.format('YYYY-MM-DD')]) {
+                console.log(dateRanges);
+                console.log(picker.startDate.format('YYYY-MM-DD'));
+                if(dateRanges.includes(picker.startDate.format('YYYY-MM-DD'))) {
                     $("."+batchid+sectionid+" .attStatusText").addClass('text-success');
                     $("."+batchid+sectionid+" .attStatusText")[0].innerHTML = "Already Submitted!";
                 }
