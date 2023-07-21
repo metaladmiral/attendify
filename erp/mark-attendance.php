@@ -12,7 +12,6 @@ if(is_null($data) || count($data)==0) {
     $dataNull = true;
 }else {
     $dataNull = false;
-    $data = json_decode($data, true);
     $allBatchesAssigned = array();
     foreach ($data as $key => $value) {
         array_push($allBatchesAssigned, $key);
