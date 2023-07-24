@@ -120,16 +120,10 @@ if(is_null($data) || count($data)==0) {
                                                 </div>
                                             </div>
                                             <div class="card-body">
-                                                <div class="row">
+                                                <div class="row" style='display: none;'>
                                                     <div class="col-3"><label for="">Select Date: </label></div>
                                                     <div class="col-9">
                                                         <input id='attDate' style='display:none;' class='form-control attDate<?php echo $randId; ?>'>
-                                                    </div>
-                                                </div>
-                                                <br>
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <span>Attendance Status: </span> <span class="attStatusText font-weight-bold" style='font-weight: bold;'>Select Date to Get Status and Submit Attendance</span>
                                                     </div>
                                                 </div>
                                                 <br>
@@ -140,10 +134,9 @@ if(is_null($data) || count($data)==0) {
                                                             <div class="table-responsive">
                                                                 <table class="table table-bordered text-nowrap border-bottom key-buttons" id="file-datatable">
                                                                     <thead>
-                                                                        <tr>
+                                                                        <tr id='dates-table-row'>
                                                                             <th>ID</th>
                                                                             <th>Name</th>
-                                                                            <th>Present Today</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class='student-table-body'>
@@ -151,9 +144,6 @@ if(is_null($data) || count($data)==0) {
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <button class="btn btn-primary submitAttendanceBtn <?php echo "btn_".$key."_".$key_; ?>" onclick='submitAttendance("<?php echo $randId; ?>");' disabled>Submit Attendance</button>
                                                     </div>
                                                 <!-- </div> -->
                                             </div>
@@ -179,24 +169,7 @@ if(is_null($data) || count($data)==0) {
         </div>
      <!-- FOOTER -->
     <?php include 'footer.php' ?>
-    <script>
-        function submitAttendance(randId) {
-            // let classInfo = $(e)[0].classList[3];
-            let checkBoxes= $("."+randId);
-            let absentStudents = [];
-            for(let k in checkBoxes) {
-                if(!checkBoxes[k].checked) {
-                    absentStudents.push(checkBoxes[k].value);
-                }
-                if(k==(checkBoxes.length-1)) {
-                    break;
-                }
-            }
-            $(".form_"+randId+" input[name='absentStudents']")[0].value = btoa(JSON.stringify(absentStudents));
-            $(".form_"+randId+" input[name='date']")[0].value = $(".attDate"+randId)[0].getAttribute('date-value');
-            $(".form_"+randId)[0].submit();
-        }
-    </script>
+    
     <script>
 
         var dateRanges = [];
@@ -211,26 +184,9 @@ if(is_null($data) || count($data)==0) {
                 fd.set("offset", studentDetailsOffset);
                 fd.set("batchid", batchid);
                 fd.set("sectionid", sectionid);
-
-                fetch('../assets/backend/getStudentRecords', {
-                    method: 'POST',
-                    body: fd
-                })
-                .then(function (response) {
-                    if (response.ok) {
-                        return response.text(); 
-                    }
-                    throw new Error('Network response was not OK');
-                })
-                .then(function (data) {
-                    processStudentDetails(batchid, sectionid, data, randid);
-                })
-                .catch(function (error) {
-                    console.error('Error:', error);
-                });
-
                 fd.set("subjectid", subjectid);
-                fetch('../assets/backend/getAttendanceMarkedStatus', {
+
+                fetch('../assets/backend/getAttendanceDetails', {
                     method: 'POST',
                     body: fd
                 })
@@ -241,66 +197,25 @@ if(is_null($data) || count($data)==0) {
                     throw new Error('Network response was not OK');
                 })
                 .then(function (data) {
-                    initDates(data);
+                    showStudentDetails(batchid, sectionid, data, randid);
                 })
                 .catch(function (error) {
                     console.error('Error:', error);
                 });
 
+
             }
         }
 
-        function processStudentDetails(batchid, sectionid, data, randid) {
-            data = JSON.parse(data);
-            for(const key in data) {
-                data[key].marks = JSON.parse(data[key].marks);
-                
-                let avgMarks = 0;
-                let finalMarks = 0;
-
-                if(data[key].marks.phase1.mst==null) {
-                    data[key].marks.phase1.mst = 0;
-                } 
-                if(data[key].marks.phase1.assign==null) {
-                    data[key].marks.phase1.assign = 0;
-                } 
-
-                if(data[key].marks.phase2.mst==null) {
-                    data[key].marks.phase2.mst = 0;
-                } 
-                if(data[key].marks.phase2.assign==null) {
-                    data[key].marks.phase2.assign = 0;
-                }        
-
-                avgMarks = (parseInt(data[key].marks.phase1.mst) + parseInt(data[key].marks.phase1.assign) + parseInt(data[key].marks.phase2.mst) + parseInt(data[key].marks.phase2.assign))/4;
-                data[key].marks['avgMarks'] = avgMarks;
-
-                if(data[key].totalattendance>75 && data[key].totalattendance<=80) {
-                    finalMarks += 5;
-                }
-
-                finalMarks += avgMarks;
-
-                data[key]['totalInternal'] = finalMarks;
-
-            }
-            showStudentDetails(batchid, sectionid, data, randid);
-        }
+        
         let datesWithSubmissionRecords;
         function initDates(data) {
             data=JSON.parse(data);
             datesWithSubmissionRecords = data;
-            // for(let key in data) {
-                
-            // }
             
-            // dateRanges['start'] = moment(Object.keys(data)[0]);
-            // dateRanges['end'] = moment(Object.keys(data)[1]);
-            // dateRanges['start'] = Object.keys(data)[0];
-            // dateRanges['end'] = Object.keys(data)[1];
             dateRanges.push(Object.keys(data)[0]);
             dateRanges.push(Object.keys(data)[1]);
-            // console.log(dateRanges);ss
+            
         }
 
     </script>
@@ -365,11 +280,6 @@ if(is_null($data) || count($data)==0) {
 
     <script>
        function isInvalidDate(date, log) {
-            if(!dateRanges[1]) {
-                if(date.format('YYYY-MM-DD')==dateRanges[0]) {
-                    return false;
-                }
-            }
             if(date.format('YYYY-MM-DD')<=dateRanges[0] && date.format('YYYY-MM-DD')>=dateRanges[1]) {
                 return false;
             }
@@ -378,15 +288,44 @@ if(is_null($data) || count($data)==0) {
         function showStudentDetails(batchid, sectionid, data, randid) {
             $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = "";
             let html = "";
-            for(const key in data) {
+            data = JSON.parse(data);
+
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
+                "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+            ];
+
+            for(const key in data["dates"]) {
+                let date = new Date(key * 1000);
+                let textDate = date.getDate()+" "+monthNames[date.getMonth()]+", "+date.getFullYear();
+                html += `<th>${textDate}</th>`;
+            }
+            $("."+batchid+sectionid+" #dates-table-row")[0].innerHTML += html;
+
+            html = "";
+
+            for(const key in data["students"]) {
+                let studid = data["students"][key].studid;
                 html += `<tr>
                 <td>${parseInt(key)+1}</td>
-                <td>${data[key].name}</td>
-                <td><input type='checkbox' class='${randid}' value='${data[key].studid}' checked></td>
-                </tr>`;
+                <td>${data["students"][key].name}</td>
+                `;
+                for(const dateDetails in data["dates"]) {
+                    // let unixDate = new Date(dateDeta * 1000);
+                    let studentData = JSON.parse(data["dates"][dateDetails]);
+                    
+
+                    if(!studentData.includes(studid)) {
+                        html += `<td class='text-success'>P</td>`;
+                    }
+                    else {
+                        html += `<td class='text-danger'>A</td>`;
+                    }
+                }
+
+                html += "</tr>";
             }
             $("."+batchid+sectionid+" .loader")[0].style.display = "none";
-            $("."+batchid+sectionid+" #attDate")[0].style.display = "block";
+            // $("."+batchid+sectionid+" #attDate")[0].style.display = "block";
             $("."+batchid+sectionid+" #attDate").daterangepicker({
                 singleDatePicker: true,
                 autoUpdateInput: true,

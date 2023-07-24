@@ -19,15 +19,17 @@ try {
     $data = $sql->fetchAll(PDO::FETCH_COLUMN);
     
     $key = array_search($nowDate, $data);
-    if($key) {
-        $dateDetails[date('Y-m-d', $data[$key])] = "1";
+    if(gettype($key)=='integer') {
+        $dateDetails[date('Y-m-d', $data[$key])] = 1;
+        if(count($data)>1) {
+            $dateDetails[date('Y-m-d', $data[1])] = 1;
+        }
     }
     else {
-        $dateDetails[date('Y-m-d', $nowDate)] = "0";
-    }
-    
-    if(count($data)>1) {
-        $dateDetails[date('Y-m-d', $data[1])] = "1";
+        $dateDetails[date('Y-m-d', $nowDate)] = 0;
+        if(count($data)>0) {
+            $dateDetails[date('Y-m-d', $data[0])] = 1;
+        }   
     }
     
 }
