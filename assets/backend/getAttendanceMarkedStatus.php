@@ -13,7 +13,7 @@ $nowDate = strtotime("today");
 $dateDetails = array();
 
 try {
-    $sql = $conn->mconnect()->prepare("SELECT date FROM $tableName WHERE `date`<='$nowDate' AND `sectionId`='$sectionId' AND `subjectId`='$subjectId' ORDER BY `date` DESC LIMIT 2 ");
+    $sql = $conn->mconnect()->prepare("SELECT  date FROM $tableName WHERE `date`<='$nowDate' AND `sectionId`='$sectionId' AND `subjectId`='$subjectId' ORDER BY `date` DESC LIMIT 2 ");
     $sql->execute();
 
     $data = $sql->fetchAll(PDO::FETCH_COLUMN);
@@ -32,9 +32,21 @@ try {
         }   
     }
     
+    $sql = $conn->mconnect()->prepare("SELECT absentStudents, date FROM $tableName WHERE `date`<='$nowDate' AND `sectionId`='$sectionId' AND `subjectId`='$subjectId' ORDER BY `date` DESC LIMIT 2 ");
+    $sql->execute();
+    $data = $sql->fetchAll(PDO::FETCH_ASSOC);
+    $absentStudents = array();
+    foreach ($data as $key => $value) {
+        // $data[$key]["date"] = date("Y-m-d", $value["date"]);
+        $absentStudents[date("Y-m-d", $value["date"])] = $value["absentStudents"];
+    }
+
+
 }
 catch(PDOException $e) {
     $dateDetails[date('Y-m-d', $nowDate)] = "0";
+    $absentStudents = null;
 }
 
-echo json_encode($dateDetails);
+echo json_encode(array("dateDetails"=>$dateDetails, "absentStudentsDetails"=>$absentStudents));
+// echo json_encode($dateDetails);

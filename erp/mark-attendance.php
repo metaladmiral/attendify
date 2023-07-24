@@ -211,6 +211,25 @@ if(is_null($data) || count($data)==0) {
                 fd.set("offset", studentDetailsOffset);
                 fd.set("batchid", batchid);
                 fd.set("sectionid", sectionid);
+                
+                fd.set("subjectid", subjectid);
+                fetch('../assets/backend/getAttendanceMarkedStatus', {
+                    method: 'POST',
+                    body: fd
+                })
+                .then(function (response) {
+                    if (response.ok) {
+                        return response.text(); 
+                    }
+                    throw new Error('Network response was not OK');
+                })
+                .then(function (data) {
+                    initDates(data);
+                    setAbsentees(data);
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                });
 
                 fetch('../assets/backend/getStudentRecords', {
                     method: 'POST',
@@ -229,23 +248,7 @@ if(is_null($data) || count($data)==0) {
                     console.error('Error:', error);
                 });
 
-                fd.set("subjectid", subjectid);
-                fetch('../assets/backend/getAttendanceMarkedStatus', {
-                    method: 'POST',
-                    body: fd
-                })
-                .then(function (response) {
-                    if (response.ok) {
-                        return response.text(); 
-                    }
-                    throw new Error('Network response was not OK');
-                })
-                .then(function (data) {
-                    initDates(data);
-                })
-                .catch(function (error) {
-                    console.error('Error:', error);
-                });
+
 
             }
         }
@@ -288,7 +291,7 @@ if(is_null($data) || count($data)==0) {
         }
         let datesWithSubmissionRecords;
         function initDates(data) {
-            data=JSON.parse(data);
+            data=JSON.parse(data)["dateDetails"];
             datesWithSubmissionRecords = data;
             // for(let key in data) {
                 
@@ -301,6 +304,11 @@ if(is_null($data) || count($data)==0) {
             dateRanges.push(Object.keys(data)[0]);
             dateRanges.push(Object.keys(data)[1]);
             // console.log(dateRanges);ss
+        }
+        let absentees;
+        function setAbsentees(data) {
+            data = JSON.parse(data)["absentStudentsDetails"];
+            absentees = data;
         }
 
     </script>
@@ -375,16 +383,42 @@ if(is_null($data) || count($data)==0) {
             }
             return true;
         }
+        function setHtml(htmlData, date, randid) {
+            let dateKey = absentees[date];
+            console.log(dateKey);
+            let html = "";
+            if(dateKey) {
+                let absStudsUid = JSON.parse(dateKey);
+                for(const key in htmlData) {
+                    if(absStudsUid.includes(htmlData[key].studid)) {
+                        html += `<tr>
+                        <td>${parseInt(key)+1}</td>
+                        <td>${htmlData[key].name}</td>
+                        <td><input type='checkbox' class='${randid}' value='${htmlData[key].studid}'></td>
+                        </tr>`;
+                    }
+                    else {
+                        html += `<tr>
+                        <td>${parseInt(key)+1}</td>
+                        <td>${htmlData[key].name}</td>
+                        <td><input type='checkbox' class='${randid}' value='${htmlData[key].studid}' checked></td>
+                        </tr>`;
+                    }
+                }
+            }else {
+                for(const key in htmlData) {
+                    html += `<tr>
+                        <td>${parseInt(key)+1}</td>
+                        <td>${htmlData[key].name}</td>
+                        <td><input type='checkbox' class='${randid}' value='${htmlData[key].studid}' checked></td>
+                        </tr>`;
+                }
+            }
+            return html;
+        }   
         function showStudentDetails(batchid, sectionid, data, randid) {
             $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = "";
-            let html = "";
-            for(const key in data) {
-                html += `<tr>
-                <td>${parseInt(key)+1}</td>
-                <td>${data[key].name}</td>
-                <td><input type='checkbox' class='${randid}' value='${data[key].studid}' checked></td>
-                </tr>`;
-            }
+            
             $("."+batchid+sectionid+" .loader")[0].style.display = "none";
             $("."+batchid+sectionid+" #attDate")[0].style.display = "block";
             $("."+batchid+sectionid+" #attDate").daterangepicker({
@@ -398,8 +432,10 @@ if(is_null($data) || count($data)==0) {
             });
 
             $("."+batchid+sectionid+" #attDate").on('apply.daterangepicker', function(ev, picker) {
-
                 $("."+batchid+sectionid+" #attDate")[0].setAttribute('date-value', picker.startDate.format('YYYY-MM-DD'));
+
+                let html = setHtml(data, picker.startDate.format('YYYY-MM-DD'), randid);
+                $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = html;
                 
                 $("."+batchid+sectionid+" .submitAttendanceBtn").removeAttr('disabled');
                 // console.log(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]);
@@ -417,7 +453,6 @@ if(is_null($data) || count($data)==0) {
                 }
 		    });
             
-            $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = html;
             let table = new DataTable("."+batchid+sectionid+" #file-datatable", {
                 dom: 'Bfrtip',
                 buttons: [
