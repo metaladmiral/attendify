@@ -216,6 +216,7 @@ $dataBatch= $query->fetchAll(PDO::FETCH_ASSOC);
         document.querySelector('#studForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const file = document.querySelector('.excelData').files[0];
+            if(file) {
             const batch = document.querySelector('#batch').value;
             $(".body1")[0].style.display = "none";
             $(".body2")[0].style.display = "block";
@@ -226,7 +227,6 @@ $dataBatch= $query->fetchAll(PDO::FETCH_ASSOC);
                 $(".prg")[0].setAttribute('style', 'width: '+currWidth.toString()+"%");
                 $(".prg")[0].innerHTML = currWidth.toString()+" %";
             }, 1500);
-            if(file) {
 
                 let tmpXLName = "";
 
