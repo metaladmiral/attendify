@@ -48,8 +48,8 @@ $conn = new Db;
                             <h1 class="page-title">Bulk Upload</h1>
                             <div>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                                    <li class="breadcrumb-item"><a href="#">Bulk</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Users</li>
                                 </ol>
                             </div>
                         </div>
@@ -194,7 +194,6 @@ $conn = new Db;
         document.querySelector('#studForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const file = document.querySelector('.excelData').files[0];
-            const batch = document.querySelector('#batch').value;
             $(".body1")[0].style.display = "none";
             $(".body2")[0].style.display = "block";
             
@@ -216,10 +215,10 @@ $conn = new Db;
                 }
                 let fd = new FormData();
                 fd.set('file', document.querySelector('.excelData').files[0]);
-                xml.open("POST", "../assets/backend/add-studs-bulk.php", false);
+                xml.open("POST", "../assets/backend/add-users-bulk.php", false);
                 xml.send(fd);
 
-                const worker = new Worker("uploadBulkStudWorker.js?v=0.1");
+                const worker = new Worker("uploadBulkUsersWorker.js?v=0.1");
                 worker.onmessage = (ef) => {
                     clearInterval(progressInterval);
                     $(".prg")[0].setAttribute('style', 'width: 100%');
@@ -231,7 +230,7 @@ $conn = new Db;
                     }
                 }
 
-                let data = {xlname: tmpXLName ,batchid:batch };
+                let data = {xlname: tmpXLName  };
                 worker.postMessage(JSON.stringify(data));
 
             }
