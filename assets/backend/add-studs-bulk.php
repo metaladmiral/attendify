@@ -39,7 +39,7 @@ else {
            }
             $batchid = $value[0];
             $section = explode('-', $value[1]);
-            $sectionid = ord($section[0])."-".$section[1];
+            $sectionid = (ord($section[0])-64)."-".$section[1];
 
             $name = $value[2]." ".$value[3];
             $sem = $value[4];
