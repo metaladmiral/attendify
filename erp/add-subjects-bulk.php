@@ -1,14 +1,4 @@
-<?php 
-session_start();
-require_once 'conn.php';
-$conn = new Db;
 
-$sql = "SELECT * FROM `batches` ORDER BY `id` DESC";
-$query = $conn->mconnect()->prepare($sql);
-$query->execute();
-$dataBatch= $query->fetchAll(PDO::FETCH_ASSOC);
-
-?>
 <!doctype html>
 <html lang="en" dir="ltr">
 <head>
