@@ -62,7 +62,7 @@ $conn = new Db;
                                     <div class="card-header">
                                         <h3 class="card-title">Upload Users in Bulk</h3>
                                         <div class="card-options">
-                                            <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                            <a href="./xlformats/users-bulk-format.xlsx" id='downloadFormat' class='btn btn-primary' download>Download</a>
                                         </div>
                                     </div>
                                     <form action="../assets/backend/add-users-bulk.php" method="POST" id="studForm" enctype="multipart/form-data">
