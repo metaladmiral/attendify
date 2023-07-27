@@ -1,4 +1,9 @@
+<?php 
+session_start();
+require_once 'conn.php';
+$conn = new Db;
 
+?>
 <!doctype html>
 <html lang="en" dir="ltr">
 <head>
