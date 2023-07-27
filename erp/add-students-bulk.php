@@ -68,7 +68,7 @@ $dataBatch= $query->fetchAll(PDO::FETCH_ASSOC);
                                     <div class="card-header">
                                         <h3 class="card-title">Upload Students in Bulk</h3>
                                         <div class="card-options">
-                                            <a href="./xlformats/students-bulk-format.xlsx" id='downloadFormat' class='btn btn-primary' download>Download</a>
+                                            <a href="./xlformats/student-bulk-format.xlsx" id='downloadFormat' class='btn btn-primary' download>Download</a>
                                         </div>
                                     </div>
                                     <form action="../assets/backend/add-studs-bulk.php" method="POST" id="studForm" enctype="multipart/form-data">
