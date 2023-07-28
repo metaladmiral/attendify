@@ -293,17 +293,9 @@ if(is_null($data) || count($data)==0) {
         function initDates(data) {
             data=JSON.parse(data)["dateDetails"];
             datesWithSubmissionRecords = data;
-            // for(let key in data) {
-                
-            // }
-            
-            // dateRanges['start'] = moment(Object.keys(data)[0]);
-            // dateRanges['end'] = moment(Object.keys(data)[1]);
-            // dateRanges['start'] = Object.keys(data)[0];
-            // dateRanges['end'] = Object.keys(data)[1];
             dateRanges.push(Object.keys(data)[0]);
             dateRanges.push(Object.keys(data)[1]);
-            // console.log(dateRanges);ss
+            
         }
         let absentees;
         function setAbsentees(data) {
@@ -384,8 +376,13 @@ if(is_null($data) || count($data)==0) {
             return true;
         }
         function setHtml(htmlData, date, randid) {
-            let dateKey = absentees[date];
-            console.log(dateKey);
+            let dateKey;
+            try {
+                dateKey = absentees[date];
+            }
+            catch(err) {
+                dateKey = null;
+            }
             let html = "";
             if(dateKey) {
                 let absStudsUid = JSON.parse(dateKey);
@@ -439,7 +436,7 @@ if(is_null($data) || count($data)==0) {
                 
                 $("."+batchid+sectionid+" .submitAttendanceBtn").removeAttr('disabled');
                 // console.log(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]);
-                if(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]) {
+                if(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]=="1") {
                     
                     $("."+batchid+sectionid+" .attStatusText").addClass('text-success');
                     $("."+batchid+sectionid+" .attStatusText").removeClass('text-danger');
