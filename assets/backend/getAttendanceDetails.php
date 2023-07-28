@@ -9,7 +9,7 @@ $offset = $_POST['offset'];
 $batchid = $_POST['batchid'];
 $sectionid = $_POST['sectionid'];
 
-$sql = $conn->mconnect()->prepare("SELECT studid, name FROM `students` WHERE `batchid`='".$batchid."' AND `sectionid`='$sectionid'  ");
+$sql = $conn->mconnect()->prepare("SELECT studid, uniroll, classroll, name FROM `students` WHERE `batchid`='".$batchid."' AND `sectionid`='$sectionid'  ");
 
 $sql->execute();
 $studentDetails = $sql->fetchAll(PDO::FETCH_ASSOC);
