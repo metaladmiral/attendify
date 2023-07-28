@@ -101,22 +101,23 @@ if(is_null($data) || count($data)==0) {
                             foreach ($data as $key => $value) {
                                 foreach ($value as $key_ => $value_) {
                                     $sectionInfo = explode('-', $key_);
+                                    foreach($value_ as $key__ => $subjectDetails) {
                                     $randId = uniqid();
                                     ?>
                                     
-                                    <div class="col-12 <?php echo $key.$key_; ?> ">
+                                    <div class="col-12 <?php echo $randId; ?>">
                                         <form class='form_<?php echo $randId; ?>' method="POST" action='../assets/backend/submitAttendance'>
                                             <input type="hidden" name="batchid" value="<?php echo $key; ?>">
                                             <input type="hidden" name="sectionid" value="<?php echo $key_; ?>">
-                                            <input type="hidden" name="subjectid" value="<?php echo $value_[0]; ?>">
+                                            <input type="hidden" name="subjectid" value="<?php echo $subjectDetails[0]; ?>">
                                             <input type="hidden" name="date" value="">
                                             <input type="hidden" name="absentStudents" value="">
                                         </form>
                                         <div class="card card-collapsed">
                                             <div class="card-header">
-                                                <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>) - <?php echo $value_[1]; ?> </h3>
+                                                <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>) - <?php echo $subjectDetails[1]; ?> </h3>
                                                 <div class="card-options">
-                                                    <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $key_; ?>", "<?php echo $randId; ?>", "<?php echo $value_[0]; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
+                                                    <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $key_; ?>", "<?php echo $randId; ?>", "<?php echo $subjectDetails[0]; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
                                                 </div>
                                             </div>
                                             <div class="card-body">
@@ -138,10 +139,11 @@ if(is_null($data) || count($data)==0) {
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons" id="file-datatable">
+                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id="file-datatable">
                                                                     <thead>
                                                                         <tr>
                                                                             <th>ID</th>
+                                                                            <th>Roll No.</th>
                                                                             <th>Name</th>
                                                                             <th>Present Today</th>
                                                                         </tr>
@@ -153,13 +155,14 @@ if(is_null($data) || count($data)==0) {
                                                         </div>
                                                     </div>
                                                     <div class="col-4">
-                                                        <button class="btn btn-primary submitAttendanceBtn <?php echo "btn_".$key."_".$key_; ?>" onclick='submitAttendance("<?php echo $randId; ?>");' disabled>Submit Attendance</button>
+                                                        <button class="btn btn-primary submitAttendanceBtn <?php echo "btn_".$randId; ?>" onclick='submitAttendance("<?php echo $randId; ?>");' disabled>Submit Attendance</button>
                                                     </div>
                                                 <!-- </div> -->
                                             </div>
                                         </div>
                                     </div>
                                     <?php
+                                    }
                                 }
                             }
                         }
@@ -182,7 +185,7 @@ if(is_null($data) || count($data)==0) {
     <script>
         function submitAttendance(randId) {
             // let classInfo = $(e)[0].classList[3];
-            let checkBoxes= $("."+randId);
+            let checkBoxes= $(".cb_"+randId);
             let absentStudents = [];
             for(let k in checkBoxes) {
                 if(!checkBoxes[k].checked) {
@@ -387,38 +390,44 @@ if(is_null($data) || count($data)==0) {
             if(dateKey) {
                 let absStudsUid = JSON.parse(dateKey);
                 for(const key in htmlData) {
+                    let rollno = (htmlData[key].uniroll) ? htmlData[key].uniroll : htmlData[key].classroll;
                     if(absStudsUid.includes(htmlData[key].studid)) {
                         html += `<tr>
                         <td>${parseInt(key)+1}</td>
+                        <td>${rollno}</td>
                         <td>${htmlData[key].name}</td>
-                        <td><input type='checkbox' class='${randid}' value='${htmlData[key].studid}'></td>
+                        <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}'></td>
                         </tr>`;
                     }
                     else {
                         html += `<tr>
                         <td>${parseInt(key)+1}</td>
+                        <td>${rollno}</td>
                         <td>${htmlData[key].name}</td>
-                        <td><input type='checkbox' class='${randid}' value='${htmlData[key].studid}' checked></td>
+                        <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}' checked></td>
                         </tr>`;
                     }
                 }
             }else {
+                
                 for(const key in htmlData) {
+                    let rollno = (htmlData[key].classroll) ? htmlData[key].classroll : htmlData[key].uniroll;
                     html += `<tr>
                         <td>${parseInt(key)+1}</td>
+                        <td>${rollno}</td>
                         <td>${htmlData[key].name}</td>
-                        <td><input type='checkbox' class='${randid}' value='${htmlData[key].studid}' checked></td>
+                        <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}' checked></td>
                         </tr>`;
                 }
             }
             return html;
         }   
         function showStudentDetails(batchid, sectionid, data, randid) {
-            $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = "";
+            $("."+randid+" .student-table-body")[0].innerHTML = "";
             
-            $("."+batchid+sectionid+" .loader")[0].style.display = "none";
-            $("."+batchid+sectionid+" #attDate")[0].style.display = "block";
-            $("."+batchid+sectionid+" #attDate").daterangepicker({
+            $("."+randid+" .loader")[0].style.display = "none";
+            $(".attDate"+randid)[0].style.display = "block";
+            $(".attDate"+randid).daterangepicker({
                 singleDatePicker: true,
                 autoUpdateInput: true,
 	            autoApply: true,
@@ -428,29 +437,29 @@ if(is_null($data) || count($data)==0) {
                 isInvalidDate: isInvalidDate
             });
 
-            $("."+batchid+sectionid+" #attDate").on('apply.daterangepicker', function(ev, picker) {
-                $("."+batchid+sectionid+" #attDate")[0].setAttribute('date-value', picker.startDate.format('YYYY-MM-DD'));
+            $(".attDate"+randid).on('apply.daterangepicker', function(ev, picker) {
+                $(".attDate"+randid)[0].setAttribute('date-value', picker.startDate.format('YYYY-MM-DD'));
 
                 let html = setHtml(data, picker.startDate.format('YYYY-MM-DD'), randid);
-                $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = html;
+                $("."+randid+" .student-table-body")[0].innerHTML = html;
                 
-                $("."+batchid+sectionid+" .submitAttendanceBtn").removeAttr('disabled');
+                $("."+randid+" .submitAttendanceBtn").removeAttr('disabled');
                 // console.log(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]);
                 if(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]=="1") {
                     
-                    $("."+batchid+sectionid+" .attStatusText").addClass('text-success');
-                    $("."+batchid+sectionid+" .attStatusText").removeClass('text-danger');
-                    $("."+batchid+sectionid+" .attStatusText")[0].innerHTML = "Already Submitted!";
+                    $("."+randid+" .attStatusText").addClass('text-success');
+                    $("."+randid+" .attStatusText").removeClass('text-danger');
+                    $("."+randid+" .attStatusText")[0].innerHTML = "Already Submitted!";
                 }
                 else {
-                    $("."+batchid+sectionid+" .attStatusText").removeClass('text-success');
-                    $("."+batchid+sectionid+" .attStatusText").addClass('text-danger');
-                    $("."+batchid+sectionid+" .attStatusText")[0].innerHTML = "Not Submitted Yet!";
+                    $("."+randid+" .attStatusText").removeClass('text-success');
+                    $("."+randid+" .attStatusText").addClass('text-danger');
+                    $("."+randid+" .attStatusText")[0].innerHTML = "Not Submitted Yet!";
 
                 }
 		    });
             
-            let table = new DataTable("."+batchid+sectionid+" #file-datatable", {
+            let table = new DataTable("."+randid+" .file-datatable", {
                 dom: 'Bfrtip',
                 buttons: [
                     'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'

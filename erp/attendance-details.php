@@ -85,11 +85,11 @@ if(is_null($data) || count($data)==0) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Mark Attendance</h1>
+                            <h1 class="page-title">Attendance Details</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Mark Attendance</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Attendance Details</li>
                                 </ol>
                             </div>
                         </div>
@@ -101,29 +101,30 @@ if(is_null($data) || count($data)==0) {
                             foreach ($data as $key => $value) {
                                 foreach ($value as $key_ => $value_) {
                                     $sectionInfo = explode('-', $key_);
+                                    foreach($value_ as $key__ => $subjectDetails) {
                                     $randId = uniqid();
                                     ?>
                                     
-                                    <div class="col-12 <?php echo $key.$key_; ?> ">
+                                    <div class="col-12 <?php echo $randId; ?>">
                                         <form class='form_<?php echo $randId; ?>' method="POST" action='../assets/backend/submitAttendance'>
                                             <input type="hidden" name="batchid" value="<?php echo $key; ?>">
                                             <input type="hidden" name="sectionid" value="<?php echo $key_; ?>">
-                                            <input type="hidden" name="subjectid" value="<?php echo $value_[0]; ?>">
+                                            <input type="hidden" name="subjectid" value="<?php echo $subjectDetails[0]; ?>">
                                             <input type="hidden" name="date" value="">
                                             <input type="hidden" name="absentStudents" value="">
                                         </form>
                                         <div class="card card-collapsed">
                                             <div class="card-header">
-                                                <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>) - <?php echo $value_[1]; ?> </h3>
+                                                <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>) - <?php echo $subjectDetails[1]; ?> </h3>
                                                 <div class="card-options">
-                                                    <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $key_; ?>", "<?php echo $randId; ?>", "<?php echo $value_[0]; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
+                                                    <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $key_; ?>", "<?php echo $randId; ?>", "<?php echo $subjectDetails[0]; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
                                                 </div>
                                             </div>
                                             <div class="card-body">
                                                 <div class="row" style='display: none;'>
                                                     <div class="col-3"><label for="">Select Date: </label></div>
                                                     <div class="col-9">
-                                                        <input id='attDate' style='display:none;' class='form-control attDate<?php echo $randId; ?>'>
+                                                        <input id='attDate' style='display:none;' class='form-control attDate<?php echo $randId; ?> attDate'>
                                                     </div>
                                                 </div>
                                                 <br>
@@ -132,10 +133,11 @@ if(is_null($data) || count($data)==0) {
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons" id="file-datatable">
+                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id="file-datatable">
                                                                     <thead>
-                                                                        <tr id='dates-table-row'>
+                                                                        <tr class='dates-table-row'>
                                                                             <th>ID</th>
+                                                                            <th>Roll No.</th>
                                                                             <th>Name</th>
                                                                         </tr>
                                                                     </thead>
@@ -150,6 +152,7 @@ if(is_null($data) || count($data)==0) {
                                         </div>
                                     </div>
                                     <?php
+                                }
                                 }
                             }
                         }
@@ -286,7 +289,7 @@ if(is_null($data) || count($data)==0) {
             return true;
         }
         function showStudentDetails(batchid, sectionid, data, randid) {
-            $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = "";
+            $("."+randid+" .student-table-body")[0].innerHTML = "";
             let html = "";
             data = JSON.parse(data);
 
@@ -299,14 +302,15 @@ if(is_null($data) || count($data)==0) {
                 let textDate = date.getDate()+" "+monthNames[date.getMonth()]+", "+date.getFullYear();
                 html += `<th>${textDate}</th>`;
             }
-            $("."+batchid+sectionid+" #dates-table-row")[0].innerHTML += html;
+            $("."+randid+" .dates-table-row")[0].innerHTML += html;
 
             html = "";
-
             for(const key in data["students"]) {
                 let studid = data["students"][key].studid;
+                let rollno = (data["students"][key].uniroll) ? data["students"][key].uniroll : data["students"][key].classroll;
                 html += `<tr>
                 <td>${parseInt(key)+1}</td>
+                <td>${rollno}</td>
                 <td>${data["students"][key].name}</td>
                 `;
                 for(const dateDetails in data["dates"]) {
@@ -324,9 +328,9 @@ if(is_null($data) || count($data)==0) {
 
                 html += "</tr>";
             }
-            $("."+batchid+sectionid+" .loader")[0].style.display = "none";
-            // $("."+batchid+sectionid+" #attDate")[0].style.display = "block";
-            $("."+batchid+sectionid+" #attDate").daterangepicker({
+            $("."+randid+" .loader")[0].style.display = "none";
+            // $("."+randid+" #attDate")[0].style.display = "block";
+            $("."+randid+" .attDate").daterangepicker({
                 singleDatePicker: true,
                 autoUpdateInput: true,
 	            autoApply: true,
@@ -336,28 +340,28 @@ if(is_null($data) || count($data)==0) {
                 isInvalidDate: isInvalidDate
             });
 
-            $("."+batchid+sectionid+" #attDate").on('apply.daterangepicker', function(ev, picker) {
+            $("."+randid+" .attDate").on('apply.daterangepicker', function(ev, picker) {
 
-                $("."+batchid+sectionid+" #attDate")[0].setAttribute('date-value', picker.startDate.format('YYYY-MM-DD'));
+                $("."+randid+" .attDate")[0].setAttribute('date-value', picker.startDate.format('YYYY-MM-DD'));
                 
-                $("."+batchid+sectionid+" .submitAttendanceBtn").removeAttr('disabled');
+                $("."+randid+" .submitAttendanceBtn").removeAttr('disabled');
                 // console.log(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]);
                 if(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]) {
                     
-                    $("."+batchid+sectionid+" .attStatusText").addClass('text-success');
-                    $("."+batchid+sectionid+" .attStatusText").removeClass('text-danger');
-                    $("."+batchid+sectionid+" .attStatusText")[0].innerHTML = "Already Submitted!";
+                    $("."+randid+" .attStatusText").addClass('text-success');
+                    $("."+randid+" .attStatusText").removeClass('text-danger');
+                    $("."+randid+" .attStatusText")[0].innerHTML = "Already Submitted!";
                 }
                 else {
-                    $("."+batchid+sectionid+" .attStatusText").removeClass('text-success');
-                    $("."+batchid+sectionid+" .attStatusText").addClass('text-danger');
-                    $("."+batchid+sectionid+" .attStatusText")[0].innerHTML = "Not Submitted Yet!";
+                    $("."+randid+" .attStatusText").removeClass('text-success');
+                    $("."+randid+" .attStatusText").addClass('text-danger');
+                    $("."+randid+" .attStatusText")[0].innerHTML = "Not Submitted Yet!";
 
                 }
 		    });
             
-            $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = html;
-            let table = new DataTable("."+batchid+sectionid+" #file-datatable", {
+            $("."+randid+" .student-table-body")[0].innerHTML = html;
+            let table = new DataTable("."+randid+" .file-datatable", {
                 dom: 'Bfrtip',
                 buttons: [
                     'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
