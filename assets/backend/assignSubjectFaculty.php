@@ -8,9 +8,18 @@ $conn = new Db;
 if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
 
     if(isset($_POST['updatesubjectfaculty']) || isset($_POST['assignsubjectfaculty'])) {
-        
+
+        $facultyId = $_POST['facultyId'];
+        if(isset($_POST['updatesubjectfaculty'])) {
+            $prevFacultyId = $_POST['prevfaculty'];
+            if($prevFacultyId==$facultyId) {
+                $_SESSION['sufaculty'] = 1;
+                header('Location: ../../erp/assign-subject-faculty');
+                die();
+            }
+        }
+
         try {    
-            $facultyId = $_POST['facultyId'];
             $batchId = $_POST['batchid'];
             $sectionId = $_POST['sectionid'];
             $subjectId = $_POST['subjectid'];
@@ -72,7 +81,7 @@ if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
 
             if(isset($_POST['updatesubjectfaculty'])) {
                 $prevFacultyId = $_POST['prevfaculty'];
-                if($prevFacultyId!=$facultyId)  {
+                
                     $sql = "SELECT faculty from `users` WHERE `uid`='$prevFacultyId' ";
                     $query = $conn->mconnect()->prepare($sql);
                     $query->execute();
@@ -103,7 +112,7 @@ if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
                     $sql = "UPDATE `users` SET `faculty`='$prevfacultyAssignNew' WHERE `uid`='$prevFacultyId' ";
                     $query = $conn->mconnect()->prepare($sql);
                     $query->execute();
-                }
+                
             }
             $_SESSION['sufaculty'] = 1;
             header('Location: ../../erp/assign-subject-faculty');
