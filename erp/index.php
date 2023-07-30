@@ -6,9 +6,17 @@ require_once 'conn.php';
 
 $conn = new Db;
 $uid = $_SESSION['uid'];
-if($_SESSION['usertype']=="2") {
-    header('Location: dashboard');
+// if($_SESSION['usertype']=="2") {
+//     header('Location: dashboard');
+// }
+
+if($_SESSION['usertype']=='1') {
+    header('Location: ./dashboard-superadmin');
 }
+else if($_SESSION['usertype']=='2') {
+    header('Location: ./class-counselor-dashboard');
+}
+
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
