@@ -3,7 +3,76 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
+$uid = $_SESSION['uid'];
+$sql = $conn->mconnect()->prepare("SELECT faculty, CC FROM `users` WHERE `uid`='$uid' ");
+$sql->execute();
+$userDetails = $sql->fetch(PDO::FETCH_ASSOC);
 
+$totalClasssesAssigned = count(json_decode($userDetails["CC"], true));
+$totalSubjectsAssigned = 0;
+$subjectsAssigned = json_decode($userDetails["faculty"], true);
+foreach ($subjectsAssigned as $key => $sectionId) {
+    foreach ($sectionId as $key => $subjectDetails) {
+        foreach ($subjectDetails as $key => $value) {
+            $totalSubjectsAssigned++;
+        }
+    }
+}
+
+$sql = $conn->mconnect()->prepare("SELECT batchLabel, sectionCC FROM `batches` ");
+$sql->execute();
+$ccData = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = $conn->mconnect()->prepare("SELECT batchLabel, batchid FROM `batches` ");
+$sql->execute();
+$batchData = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` ");
+$sql->execute();
+$facultyAssignData = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$sections = array();
+$subjects = array();
+$faculties = array();
+foreach ($facultyAssignData as $key => $value) {
+    
+    $facultyAssignData_ = json_decode($value["faculty"], true);
+            
+    foreach ($facultyAssignData_ as $sectionId => $subjectData) {
+        array_push($sections, $sectionId);
+        foreach ($subjectData as $subjectId => $facultyId) {
+            if(gettype(array_search($subjectId, $subjects))!='integer') {
+                array_push($subjects, $subjectId);
+            }
+            array_push($faculties, $facultyId);
+        }
+    }
+    
+}
+$subjects = "'".implode("', '", $subjects)."'";
+$faculties = "'".implode("', '", $faculties)."'";
+$sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
+$sql->execute();
+$subjectInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = $conn->mconnect()->prepare("SELECT uid,email FROM `users` WHERE `uid` IN ($faculties) ");
+$sql->execute();
+$facultyInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$subjectsInfoData = array();
+foreach ($subjectInfo as $key => $value) {
+    $subjectsInfoData[$value["subjectid"]] = $value["subjectname"];
+}
+
+$facultyInfoData = array();
+foreach ($facultyInfo as $key => $value) {
+    $facultyInfoData[$value["uid"]] = $value["email"];
+}
+
+$batches = array();
+foreach ($batchData as $key => $value) {
+    $batches[$value["batchid"]] = $value["batchLabel"];
+}
 
 ?>
 <!doctype html>
@@ -49,17 +118,90 @@ $conn = new Db;
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">CC Dashboard</h1>
+                            <h1 class="page-title">User Dashboard</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">CC Dashboard</li>
+                                    <li class="breadcrumb-item active" aria-current="page">User Dashboard</li>
                                 </ol>
                             </div>
                         </div>
                         
                         <!-- BODY CONTENT -->
-                        
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="card overflow-hidden">
+                                    <div class="card-body">
+                                        <div class="d-flex">
+                                            <div class="mt-2">
+                                                <h6 class=""> Total Classes Assigned as CC</h6>
+                                                <h2 class="mb-0 number-font"><?php echo $totalClasssesAssigned; ?></h2>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="card overflow-hidden">
+                                    <div class="card-body">
+                                        <div class="d-flex">
+                                            <div class="mt-2">
+                                                <h6 class="">Total Subject Assigned</h6>
+                                                <h2 class="mb-0 number-font"><?php echo $totalSubjectsAssigned; ?></h2>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Classes Assigned: </h3>
+                                        <div class="card-options">
+                                            <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                    <div class="table-responsive">
+                                            <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="border-bottom-0">S. No</th>
+                                                        <th class="border-bottom-0">Batch Name</th>
+                                                        <th class="border-bottom-0">Section ID</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                <?php
+                                                $ccData = json_decode($userDetails["CC"], true);
+                                                    foreach ($ccData as $batchid => $sectionid) {
+                                                        $section = explode('-', $sectionId);
+                                                        echo "<tr>";
+                                                        echo "<td>".($key+1)."</td>";
+                                                        echo "<td>";
+                                                        echo $batches[$batchid];
+                                                        echo "</td>";
+                                                        echo "<td>".chr($section[0]+64).$section[1]."</td>";
+                                                        echo "</td>";
+                                                    }
+                                               
+
+                                                ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- BODY CONTENT END -->
                         
                     </div>
@@ -142,14 +284,6 @@ $conn = new Db;
     <script src="../assets/js/sweet-alert.js"></script>
     <script src="../assets/plugins/multipleselect/multiple-select.js"></script>
     <script src="../assets/plugins/multipleselect/multi-select.js"></script>
-    <script>
-        $(document).ready(function() {
-            var table = $('#resTable').DataTable( {
-                responsive: false
-            } );
-            // table.buttons().container()
-            //     .appendTo( '#example_wrapper .col-md-6:eq(0)' );
-            } );
-    </script>
+   
 </body>
 </html>
