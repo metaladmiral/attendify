@@ -14,7 +14,7 @@ if($_SESSION['usertype']=='1') {
     header('Location: ./dashboard-superadmin');
 }
 else if($_SESSION['usertype']=='2') {
-    header('Location: ./class-counselor-dashboard');
+    header('Location: ./user-dashboard');
 }
 
 ?>
