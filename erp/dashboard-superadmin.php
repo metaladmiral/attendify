@@ -86,6 +86,7 @@ foreach ($facultyInfo as $key => $value) {
     <!-- INTERNAL Switcher css -->
     <link href="../assets/switcher/css/switcher.css" rel="stylesheet">
     <link href="../assets/switcher/demo.css" rel="stylesheet">
+    
 </head>
 <body class="app sidebar-mini ltr light-mode">
     <!-- GLOBAL-LOADER -->
@@ -106,17 +107,16 @@ foreach ($facultyInfo as $key => $value) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Dashboard</h1>
+                            <h1 class="page-title">User Dashboard</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                                    <li class="breadcrumb-item active" aria-current="page">User Dashboard</li>
                                 </ol>
                             </div>
                         </div>
                         
                         <!-- BODY CONTENT -->
-                        
                         <div class="row">
                             <div class="col-4">
                                 <div class="card overflow-hidden">
@@ -229,7 +229,7 @@ foreach ($facultyInfo as $key => $value) {
                                     </div>
                                     <div class="card-body">
                                     <div class="table-responsive">
-                                            <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                            <table id="file-datatable1" class="table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
                                                         <th class="border-bottom-0">S. No</th>
@@ -280,7 +280,7 @@ foreach ($facultyInfo as $key => $value) {
                                     </div>
                                     <div class="card-body">
                                     <div class="table-responsive">
-                                            <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                            <table id="file-datatable2" class="table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
                                                         <th class="border-bottom-0">S. No</th>
@@ -311,7 +311,7 @@ foreach ($facultyInfo as $key => $value) {
                                 </div>
                             </div>
                         </div>
-            
+
                         <!-- BODY CONTENT END -->
                         
                     </div>
@@ -322,77 +322,6 @@ foreach ($facultyInfo as $key => $value) {
         </div>
      <!-- FOOTER -->
     <?php include 'footer.php' ?>
-
-    <script>
-
-        let studentDetailsOffset = 0;
-        function getStudentDetails(e, batchid, sectionid) {
-            if($(e).attr('data-loadedRecords')=="0") {
-                $(e).attr('data-loadedRecords', "1");
-                // $(".student-records")[0].style.display = "block";
-
-                let fd = new FormData();
-                fd.set("offset", studentDetailsOffset);
-                fd.set("batchid", batchid);
-                fd.set("sectionid", sectionid);
-
-                fetch('../assets/backend/getStudentRecords', {
-                    method: 'POST',
-                    body: fd
-                })
-                .then(function (response) {
-                    if (response.ok) {
-                        return response.text(); 
-                    }
-                    throw new Error('Network response was not OK');
-                })
-                .then(function (data) {
-                    processStudentDetails(batchid, sectionid, data);
-                })
-                .catch(function (error) {
-                    console.error('Error:', error);
-                });
-            }
-        }
-
-        function processStudentDetails(batchid, sectionid, data) {
-            data = JSON.parse(data);
-            for(const key in data) {
-                data[key].marks = JSON.parse(data[key].marks);
-                
-                let avgMarks = 0;
-                let finalMarks = 0;
-
-                if(data[key].marks.phase1.mst==null) {
-                    data[key].marks.phase1.mst = 0;
-                } 
-                if(data[key].marks.phase1.assign==null) {
-                    data[key].marks.phase1.assign = 0;
-                } 
-
-                if(data[key].marks.phase2.mst==null) {
-                    data[key].marks.phase2.mst = 0;
-                } 
-                if(data[key].marks.phase2.assign==null) {
-                    data[key].marks.phase2.assign = 0;
-                }        
-
-                avgMarks = (parseInt(data[key].marks.phase1.mst) + parseInt(data[key].marks.phase1.assign) + parseInt(data[key].marks.phase2.mst) + parseInt(data[key].marks.phase2.assign))/4;
-                data[key].marks['avgMarks'] = avgMarks;
-
-                if(data[key].totalattendance>75 && data[key].totalattendance<=80) {
-                    finalMarks += 5;
-                }
-
-                finalMarks += avgMarks;
-
-                data[key]['totalInternal'] = finalMarks;
-
-            }
-            showStudentDetails(batchid, sectionid, data);
-        }
-
-    </script>
     <!-- FOOTER END -->
     <!-- BACK-TO-TOP -->
     <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
@@ -424,7 +353,17 @@ foreach ($facultyInfo as $key => $value) {
     <!-- INTERNAL Data tables js-->
     <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
     <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.bootstrap5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/pdfmake.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/vfs_fonts.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.colVis.min.js"></script>
     <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
+    <script src="../assets/plugins/datatable/responsive.bootstrap5.min.js"></script>
+    <script src="../assets/js/table-data.js"></script>
     <!-- INTERNAL APEXCHART JS -->
     <script src="../assets/js/apexcharts.js"></script>
     <script src="../assets/plugins/apexchart/irregular-data-series.js"></script>
@@ -451,39 +390,19 @@ foreach ($facultyInfo as $key => $value) {
     <script src="../assets/js/custom-swicher.js"></script>
     <!-- Switcher js -->
     <script src="../assets/switcher/js/switcher.js"></script>
-
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>
-
+    <script src="../assets/plugins/multipleselect/multiple-select.js"></script>
+    <script src="../assets/plugins/multipleselect/multi-select.js"></script>
     <script>
-        
-        function showStudentDetails(batchid, sectionid, data) {
-            $("."+batchid+sectionid+" .student-table-body")[0].innerHTML = "";
-            let html = "";
-            for(const key in data) {
-                html += `<tr>
-                <td>${parseInt(key)+1}</td>
-                <td><i onclick="window.location = 'edit-student.php?sid=${data[key].studid} ' " class="fa fa-edit" data-bs-toggle="tooltip" title="fa fa-edit" style='font-size: 16px;cursor:pointer;'></i></td>
-                <td>${data[key].name}</td>
-                <td>${data[key].marks.phase1.mst}</td>
-                <td>${data[key].marks.phase1.assign}</td>
-                <td>${data[key].marks.phase2.mst}</td>
-                <td>${data[key].marks.phase2.assign}</td>
-                <td>${data[key].marks.avgMarks}</td>
-                <td>${data[key].totalattendance}</td>
-                <td>${data[key].totalInternal}</td>
-                </tr>`;
-            }
-            $("."+batchid+sectionid+" .loader")[0].style.display = "none";
-            $("."+batchid+sectionid+" .student-table-body")[0].innerHTML += html;
-            $("."+batchid+sectionid+" #file-datatable").DataTable( {
-                dom: 'Bfrtip',
-                buttons: [
-                    'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
-                ]
+        $(document).ready(function() {
+            var table = $('#resTable').DataTable( {
+                responsive: false
             } );
-        }
-
+            // table.buttons().container()
+            //     .appendTo( '#example_wrapper .col-md-6:eq(0)' );
+            } );
     </script>
+
 </body>
 </html>
