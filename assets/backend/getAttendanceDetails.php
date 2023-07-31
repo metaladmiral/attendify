@@ -24,11 +24,18 @@ $attendanceData = $sql->fetchAll(PDO::FETCH_ASSOC);
 
 $dates = array();
 foreach ($attendanceData as $key => $value) {   
-    $dates[$value["date"]] = $value['absentStudents'];
+    if(isset($dates[$value["date"]])) {
+        $dates[$value["date"]][count($dates[$value["date"]])] = json_decode($value['absentStudents'], true);
+        // array_push($dates[$value["date"]], $value['absentStudents']);
+        continue;
+    }
+    $dates[$value["date"]] = array();
+    $dates[$value["date"]][0] = json_decode($value['absentStudents'], true);
+    // array_push($dates[$value["date"]], $value['absentStudents']);
 }
 
 $stickedData = array("students"=>$studentDetails, "dates"=>$dates);
-
+// var_dump($stickedData);
 echo json_encode($stickedData);
 
 }

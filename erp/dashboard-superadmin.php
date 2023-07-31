@@ -3,24 +3,64 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
-$sql = $conn->mconnect()->prepare("SELECT CC FROM `users` WHERE `uid`='".$_SESSION['uid']."' ");
+$sql = $conn->mconnect()->prepare("SELECT id FROM `users`");
 $sql->execute();
+$totalUsers = $sql->rowCount();
 
-$data = json_decode($sql->fetch(PDO::FETCH_COLUMN), true);
-$allBatchesAssigned = array();
-foreach ($data as $key => $value) {
-    array_push($allBatchesAssigned, $key);
+$sql = $conn->mconnect()->prepare("SELECT id FROM `students`");
+$sql->execute();
+$totalStudents = $sql->rowCount();
+
+
+$sql = $conn->mconnect()->prepare("SELECT id FROM `batches` ");
+$sql->execute();
+$totalBatches = $sql->rowCount();
+
+$sql = $conn->mconnect()->prepare("SELECT batchLabel, sectionCC FROM `batches` ");
+$sql->execute();
+$ccData = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` ");
+$sql->execute();
+$facultyAssignData = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$sections = array();
+$subjects = array();
+$faculties = array();
+foreach ($facultyAssignData as $key => $value) {
+    
+    $facultyAssignData_ = json_decode($value["faculty"], true);
+            
+    foreach ($facultyAssignData_ as $sectionId => $subjectData) {
+        array_push($sections, $sectionId);
+        foreach ($subjectData as $subjectId => $facultyId) {
+            if(gettype(array_search($subjectId, $subjects))!='integer') {
+                array_push($subjects, $subjectId);
+            }
+            array_push($faculties, $facultyId);
+        }
+    }
+
+    
+}
+$subjects = "'".implode("', '", $subjects)."'";
+$faculties = "'".implode("', '", $faculties)."'";
+$sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
+$sql->execute();
+$subjectInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$sql = $conn->mconnect()->prepare("SELECT uid,email FROM `users` WHERE `uid` IN ($faculties) ");
+$sql->execute();
+$facultyInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+$subjectsInfoData = array();
+foreach ($subjectInfo as $key => $value) {
+    $subjectsInfoData[$value["subjectid"]] = $value["subjectname"];
 }
 
-$processedBatchsAssigned = "'".implode("', '", $allBatchesAssigned)."'";
-
-$sql = $conn->mconnect()->prepare("SELECT batchLabel, batchid FROM `batches` WHERE `batchid` IN (".$processedBatchsAssigned.") ");
-$sql->execute();
-$batchLabelData = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-$batchData = array();
-foreach ($batchLabelData as $key => $value) {
-    $batchData[$value["batchid"]] = $value["batchLabel"];
+$facultyInfoData = array();
+foreach ($facultyInfo as $key => $value) {
+    $facultyInfoData[$value["uid"]] = $value["email"];
 }
 
 ?>
@@ -84,14 +124,9 @@ foreach ($batchLabelData as $key => $value) {
                                         <div class="d-flex">
                                             <div class="mt-2">
                                                 <h6 class="">Total Users</h6>
-                                                <h2 class="mb-0 number-font">5245</h2>
+                                                <h2 class="mb-0 number-font"><?php echo $totalUsers; ?></h2>
                                             </div>
-                                            <div class="ms-auto">
-                                                <div class="chart-wrapper mt-1">
-                                                    <canvas id="saleschart"
-                                                        class="h-8 w-9 chart-dropshadow"></canvas>
-                                                </div>
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -102,15 +137,10 @@ foreach ($batchLabelData as $key => $value) {
                                     <div class="card-body">
                                         <div class="d-flex">
                                             <div class="mt-2">
-                                                <h6 class="">Total CCs</h6>
-                                                <h2 class="mb-0 number-font">44,278</h2>
+                                                <h6 class="">Total Students</h6>
+                                                <h2 class="mb-0 number-font"><?php echo $totalStudents; ?></h2>
                                             </div>
-                                            <div class="ms-auto">
-                                                <div class="chart-wrapper mt-1">
-                                                    <canvas id="saleschart"
-                                                        class="h-8 w-9 chart-dropshadow"></canvas>
-                                                </div>
-                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -122,18 +152,164 @@ foreach ($batchLabelData as $key => $value) {
                                         <div class="d-flex">
                                             <div class="mt-2">
                                                 <h6 class="">Total Batches</h6>
-                                                <h2 class="mb-0 number-font">44,278</h2>
-                                            </div>
-                                            <div class="ms-auto">
-                                                <div class="chart-wrapper mt-1">
-                                                    <canvas id="saleschart"
-                                                        class="h-8 w-9 chart-dropshadow"></canvas>
-                                                </div>
+                                                <h2 class="mb-0 number-font"><?php echo $totalBatches; ?></h2>
                                             </div>
                                     </div>
                                 </div>
                             </div>
 
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Batches & Sections with No CC Assigned: </h3>
+                                        <div class="card-options">
+                                            <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                    <div class="table-responsive">
+                                            <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="border-bottom-0">S. No</th>
+                                                        <th class="border-bottom-0">Batch Name</th>
+                                                        <th class="border-bottom-0">CC Not Assigned</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+
+                                                        foreach ($ccData as $key => $value) {
+                                                            ?>
+                                                            <tr>
+                                                                <td><?php echo $key+1; ?></td>
+                                                                <td><?php echo $value["batchLabel"]; ?></td>
+                                                                <?php
+                                                            $allSectionswithNoCC = array();
+                                                            $sectionCC = json_decode($value["sectionCC"], true);
+                                                            echo "<td>";
+                                                            for($i=1;$i<=8;$i++) {
+                                                                for ($p=1; $p < 3; $p++) { 
+                                                                    $sectionTag = $i."-".$p;
+                                                                    if(!isset($sectionCC[$sectionTag])) {
+                                                                        $sectionTag = chr($i+64).$p;
+                                                                        array_push($allSectionswithNoCC, $sectionTag);
+                                                                    }
+
+                                                                }
+                                                            }
+                                                            echo $allSectionsStr = implode(', ', $allSectionswithNoCC);
+                                                            echo "</td>";
+                                                            ?>
+
+                                                            </tr>
+                                                            <?php
+                                                        }
+                                                        
+                                                    ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Batches & Subjects Details: </h3>
+                                        <div class="card-options">
+                                            <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                    <div class="table-responsive">
+                                            <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="border-bottom-0">S. No</th>
+                                                        <th class="border-bottom-0">Batch Name</th>
+                                                        <th class="border-bottom-0">Faculties Assigned</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                        $counter = 0;
+                                                        foreach ($facultyAssignData as $key => $value) {
+                                                            $counter++;
+                                                            echo "<tr>";
+                                                            echo "<td>$counter</td>";
+                                                            echo "<td>".$value['batchLabel']."</td>";
+                                                            $data =json_decode($value["faculty"], true);
+                                                            echo "<td>";
+                                                            foreach ($data as $sectionId => $subjectDetails) {
+                                                                $sectionId = explode('-', $sectionId);
+                                                                $section = chr($sectionId[0]+64).$sectionId[1];
+                                                                echo "<span class='text-success font-weight-bold'>$section :</span><br>";
+                                                                // echo "<span>".$subjectInfo[$subjectDetails[0]]."</span>";
+                                                                // echo "<span>".$facultyInfo[$subjectDetails[1]]."</span>";
+                                                                foreach ($subjectDetails as $key => $value) {
+                                                                    echo "<b>".$subjectsInfoData[$key]."</b>".": ".$facultyInfoData[$value]."<br>";
+                                                                }
+                                                            }
+                                                            echo "</td>";
+                                                            echo "</tr>";
+                                                        }
+                                                    ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">All Subjects Created </h3>
+                                        <div class="card-options">
+                                            <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                    <div class="table-responsive">
+                                            <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="border-bottom-0">S. No</th>
+                                                        <th class="border-bottom-0">Subject Code</th>
+                                                        <th class="border-bottom-0">Subject Name</th>
+                                                        <th class="border-bottom-0">Subject Semester</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+
+                                                    $sql = $conn->mconnect()->prepare("SELECT subjectcode, subjectname, subjectsem FROM `subjects` ");
+                                                    $sql->execute();
+                                                    foreach ($sql->fetchAll(PDO::FETCH_ASSOC) as $key => $value) {
+                                                        echo "<tr>";
+                                                        echo "<td>".($key+1)."</td>";
+                                                        echo "<td>".$value['subjectcode']."</td>";
+                                                        echo "<td>".$value['subjectname']."</td>";
+                                                        echo "<td>".$value['subjectsem']."</td>";
+                                                        echo "</tr>";
+                                                    }
+                                                        
+                                                    ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
             
                         <!-- BODY CONTENT END -->
