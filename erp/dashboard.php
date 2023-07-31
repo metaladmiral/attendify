@@ -2,27 +2,12 @@
 session_start();
 require_once 'conn.php';
 $conn = new Db;
-
-$sql = $conn->mconnect()->prepare("SELECT CC FROM `users` WHERE `uid`='".$_SESSION['uid']."' ");
-$sql->execute();
-
-$data = json_decode($sql->fetch(PDO::FETCH_COLUMN), true);
-$allBatchesAssigned = array();
-foreach ($data as $key => $value) {
-    array_push($allBatchesAssigned, $key);
+if($_SESSION['usertype']=='1') {
+    header('Location: ./dashboard-superadmin');
 }
-
-$processedBatchsAssigned = "'".implode("', '", $allBatchesAssigned)."'";
-
-$sql = $conn->mconnect()->prepare("SELECT batchLabel, batchid FROM `batches` WHERE `batchid` IN (".$processedBatchsAssigned.") ");
-$sql->execute();
-$batchLabelData = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-$batchData = array();
-foreach ($batchLabelData as $key => $value) {
-    $batchData[$value["batchid"]] = $value["batchLabel"];
+else if($_SESSION['usertype']=='2') {
+    header('Location: ./user-dashboard');
 }
-
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
@@ -66,7 +51,7 @@ foreach ($batchLabelData as $key => $value) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">CC Dashboard</h1>
+                            <h1 class="page-title">Dashboard</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
