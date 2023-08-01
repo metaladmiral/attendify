@@ -46,36 +46,22 @@ $ut = $_SESSION['usertype'];
                 </li>
 
                 <?php } ?>
-
                 <?php if($ut=="2") { ?>
-                <li class="slide">
-                   <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1" || $ut=="2") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?> ><i class="side-menu__icon fe fe-users"></i>
-                        <span class="side-menu__label">Attendance</span><i class="angle fe fe-chevron-right"></i>
+                    <li class="slide">
+                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="attendance-details"><i class="side-menu__icon lnr lnr-pie-chart"></i>
+                        <span class="side-menu__label">Attendance Details</span>
                     </a>
-                   <?php if($ut=="2") { ?>
-                   <ul class="slide-menu">
-                       <li class="panel sidetab-menu">
-                           <div class="panel-body tabs-menu-body p-0 border-0">
-                               <div class="tab-content">
-                                   <div class="tab-pane active" id="side1">
-                                       <ul class="sidemenu-list">
-                                           <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
-                                           
-                                           <li><a href="mark-attendance" class="slide-item"> Mark Attendance</a></li>
-                                           <li><a href="attendance-details" class="slide-item"> Attendance Details</a></li>
-                                           
-                                            <!-- <l><a href="#" class="slide-item"> Faculty Dashboard</a></l i> -->
-                                            <!-- <li><a href="<?php echo $superadminURLS[2]; ?>" class="slide-item"> Add Counseller</a></li> -->
-                                           <!-- <li><a href="#" class="slide-item"> Email Setting</a></li> -->
-                                       </ul>
-                                   </div>
-                               </div>
-                           </div>
-                       </li>
-                   </ul>
-                   <?php } ?>
                 </li>
-                <?php } ?> 
+
+                <?php } ?>
+                <?php if($ut=="2") { ?>
+                    <li class="slide">
+                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="mark-attendance"><i class="side-menu__icon lnr lnr-pie-chart"></i>
+                        <span class="side-menu__label">Mark Attendance</span>
+                    </a>
+                </li>
+
+                <?php } ?>
 
                 <?php if($ut=="1") { ?>
                 <li class="slide">
