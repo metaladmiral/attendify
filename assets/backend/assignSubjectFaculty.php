@@ -115,12 +115,12 @@ if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
                 
             }
             $_SESSION['sufaculty'] = 1;
-            header('Location: ../../erp/assign-subject-faculty');
+            header('Location: '.$_SERVER['HTTP_REFERER']);
             
         }catch(PDOException $e) {
             
             $_SESSION['sufaculty'] = 0;
-            header('Location: ../../erp/assign-subject-faculty');
+            header('Location: '.$_SERVER['HTTP_REFERER']);
         }
 
     }else {
