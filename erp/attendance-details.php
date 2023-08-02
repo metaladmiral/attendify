@@ -131,6 +131,10 @@ if(is_null($data) || count($data)==0) {
                                                                         <tr class='dates-table-row'>
                                                                             <th>Roll No.</th>
                                                                             <th>Name</th>
+                                                                            <th>Total Classes</th>
+                                                                            <th>Total Present</th>
+                                                                            <th>Total Absent</th>
+                                                                            <th>Attendace Percentage</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class='student-table-body'>
@@ -330,6 +334,10 @@ if(is_null($data) || count($data)==0) {
                 html += `<tr>
                 <td>${rollno}</td>
                 <td>${data["students"][key].name}</td>
+                <td>${(Math.floor(Math.random() * 10))+30}</td>
+                <td>33</td>
+                <td>33</td>
+                <td>80%</td>
                 `;
                 for(const dateDetails in data["dates"]) {
                     // let unixDate = new Date(dateDeta * 1000);
