@@ -115,7 +115,10 @@ if(is_null($data) || count($data)==0) {
                                             </div>
                                             <div class="card-body">
                                                 <div class="row" style='display: none;'>
-                                                    <b>Total Lectures: <span class='text-success tl'></span></b>
+                                                    <div class="col-3"><label for="">Select Date: </label></div>
+                                                    <div class="col-9">
+                                                        <input id='attDate' style='display:none;' class='form-control attDate<?php echo $randId; ?> attDate'>
+                                                    </div>
                                                 </div>
                                                 <br>
                                                 <div class="spinner-grow text-primary me-2 loader" style="width: 3rem; height: 3rem;" role="status"></div>
@@ -312,15 +315,15 @@ if(is_null($data) || count($data)==0) {
                 let textDate = date.getDate()+" "+monthNames[date.getMonth()]+", "+date.getFullYear();
                 html += `<th>${textDate}</th>`;
             }
-            html += "<th>Lectures Absent</th>";
+            // html += "<th>Lectures Absent</th>";
             
             $("."+randid+" .dates-table-row")[0].innerHTML += html;
 
             html = "";
             for(const key in data["students"]) {
 
-                let lp = 0;
-                let lAb = 0;
+                // let lp = 0;
+                // let lAb = 0;
 
                 let studid = data["students"][key].studid;
                 let rollno = (data["students"][key].uniroll) ? data["students"][key].uniroll : data["students"][key].classroll;
@@ -330,24 +333,15 @@ if(is_null($data) || count($data)==0) {
                 `;
                 for(const dateDetails in data["dates"]) {
                     // let unixDate = new Date(dateDeta * 1000);
-                    let studentData = data["dates"][dateDetails];
-                    let dayHTML = "";
+                    let studentData = JSON.parse(data["dates"][dateDetails]);
 
-                    for (let i=0; i<studentData.length; i++) {
-                        let absStudIds = studentData[i];
-                        if(!absStudIds.includes(studid)) {
-                            dayHTML += "<span class='text-success'>P</span>";
-                            continue;
-                        }
-                        lAb++;
-                        dayHTML += "<span class='text-danger'>A</span>";
+                    if(!studentData.includes(studid)) {
+                        html += `<td class='text-success'>P</td>`;
                     }
-
-                    // lp = tl - lAb;
-                    // html += `<td>${lp}</td>`;
-                    html += `<td>${dayHTML}</td>`;
+                    else {
+                        html += `<td class='text-danger'>A</td>`;
+                    }
                 }
-                html += `<td>${lAb}</td>`;
 
                 html += "</tr>";
             }
