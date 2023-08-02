@@ -53,6 +53,14 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     <!-- INTERNAL Switcher css -->
     <link href="../assets/switcher/css/switcher.css" rel="stylesheet">
     <link href="../assets/switcher/demo.css" rel="stylesheet">
+    <style>
+        .amsify-selection-label {
+            height: 40px;
+            display:flex;
+            align-items:center;
+            justify-content:right;
+        }
+    </style>
 </head>
 <body class="app sidebar-mini ltr light-mode">
     <!-- GLOBAL-LOADER -->
@@ -187,7 +195,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                             <label for="">Select Faculty (Faculty): </label>
                                             <br>
 
-                                            <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                            <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required searchable>
                                                 <option value="" disabled selected>Select Faculty</option>
                                                 <?php 
                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' ";
@@ -358,6 +366,16 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     }
 
     ?>
-
+<link rel="stylesheet" href="../assets/amsify/css/amsify.select.css" />
+<script src="../assets/amsify/js/jquery.amsifyselect.js"></script>
+<script>
+    $(document).ready(function() {
+        $("select[name='facultyId']").amsifySelect({
+            searchable: true,
+            type:'bootstrap'
+        });
+        // $("select[name='facultyId']")[0].style.display = "none";
+    });
+</script>
 </body>
 </html>
