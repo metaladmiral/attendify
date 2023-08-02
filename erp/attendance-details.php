@@ -390,7 +390,8 @@ if(is_null($data) || count($data)==0) {
                     'pdf', 'excel'
                 ],
                 "bInfo": false,
-                "pageLength": 40
+                "pageLength": 40,
+                "bPaginate": false
             });
         }
 
