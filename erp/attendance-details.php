@@ -46,14 +46,7 @@ if(is_null($data) || count($data)==0) {
     <script src="../assets/js/jquery.min.js"></script>
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.css" />
-    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
-
-    <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
-    <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
-    <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
     
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- BOOTSTRAP CSS -->
     <!-- STYLE CSS -->
@@ -130,10 +123,9 @@ if(is_null($data) || count($data)==0) {
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id="file-datatable">
+                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable">
                                                                     <thead>
                                                                         <tr class='dates-table-row'>
-                                                                            <th>ID</th>
                                                                             <th>Roll No.</th>
                                                                             <th>Name</th>
                                                                         </tr>
@@ -277,6 +269,26 @@ if(is_null($data) || count($data)==0) {
 
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
+
+    <script src="../assets/plugins/select2/select2.full.min.js"></script>
+    <!-- INTERNAL Data tables js-->
+    <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.bootstrap5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/pdfmake.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/vfs_fonts.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.colVis.min.js"></script>
+    <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
+    <script src="../assets/plugins/datatable/responsive.bootstrap5.min.js"></script>
+    <script src="../assets/js/table-data.js"></script>
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
        function isInvalidDate(date, log) {
@@ -313,7 +325,6 @@ if(is_null($data) || count($data)==0) {
                 let studid = data["students"][key].studid;
                 let rollno = (data["students"][key].uniroll) ? data["students"][key].uniroll : data["students"][key].classroll;
                 html += `<tr>
-                <td>${parseInt(key)+1}</td>
                 <td>${rollno}</td>
                 <td>${data["students"][key].name}</td>
                 `;
@@ -373,11 +384,19 @@ if(is_null($data) || count($data)==0) {
 		    });
             
             $("."+randid+" .student-table-body")[0].innerHTML = html;
-            let table = new DataTable("."+randid+" .file-datatable", {
+            // let table = new DataTable("."+randid+" .file-datatable", {
+            //     dom: 'Bfrtip',
+            //     buttons: [
+            //         'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
+            //     ]
+            // });
+            $("."+randid+" .file-datatable").DataTable({
                 dom: 'Bfrtip',
                 buttons: [
-                    'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
-                ]
+                    'pdf', 'excel'
+                ],
+                "bInfo": false,
+                "pageLength": 40
             });
         }
 
