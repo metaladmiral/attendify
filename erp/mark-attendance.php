@@ -95,7 +95,17 @@ if(is_null($data) || count($data)==0) {
                         </div>
                         
                         <!-- BODY CONTENT -->
+                        <script>
+                            function addAttendanceCheckbox(randid) {
+                                // let table = $("."+randid+" .file-datatable");
+                                let table = $("#file-datatable").DataTable();
+                                let totalLec = $(".totalLec_"+randid)[0].getAttribute('value');
 
+                                table.row(':eq(0)').edit({
+                                    title: 'Edit First row'
+                                });
+                            }
+                        </script>
                         <?php
                         if(!$dataNull) {
                             foreach ($data as $key => $value) {
@@ -112,6 +122,7 @@ if(is_null($data) || count($data)==0) {
                                             <input type="hidden" name="subjectid" value="<?php echo $subjectDetails[0]; ?>">
                                             <input type="hidden" name="date" value="">
                                             <input type="hidden" name="absentStudents" value="">
+                                            <input type="hidden" name="totalLectures" value="">
                                         </form>
                                         <div class="card card-collapsed">
                                             <div class="card-header">
@@ -130,7 +141,14 @@ if(is_null($data) || count($data)==0) {
                                                 <br>
                                                 <div class="row">
                                                     <div class="col-12">
-                                                        <span>Attendance Status: </span> <span class="attStatusText font-weight-bold" style='font-weight: bold;'>Select Date to Get Status and Submit Attendance</span>
+                                                        <span><b>Attendance Status:</b> </span> <span class="attStatusText font-weight-bold" style='font-weight: bold;'>Select Date to Get Status and Submit Attendance</span>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row">
+                                                    <div class="col-2"><b>Total No. of Lectures: </b></div>
+                                                    <div class="col-2">
+                                                        <input type="number" min="1" max="3" onchange="addAttendanceCheckbox('<?php echo $randId; ?>');" value="1" class="form-control totalLec_<?php echo $randId; ?>">
                                                     </div>
                                                 </div>
                                                 <br>
@@ -196,6 +214,7 @@ if(is_null($data) || count($data)==0) {
                 }
             }
             $(".form_"+randId+" input[name='absentStudents']")[0].value = btoa(JSON.stringify(absentStudents));
+            $(".form_"+randId+" input[name='totalLectures']")[0].value = $(".totalLec_"+randId)[0].getAttribute('value');
             $(".form_"+randId+" input[name='date']")[0].value = $(".attDate"+randId)[0].getAttribute('date-value');
             $(".form_"+randId)[0].submit();
         }
