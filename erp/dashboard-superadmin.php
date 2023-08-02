@@ -171,7 +171,7 @@ foreach ($facultyInfo as $key => $value) {
                                     </div>
                                     <div class="card-body">
                                     <div class="table-responsive">
-                                            <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                            <table id="datatable" class="datatable table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
                                                         <th class="border-bottom-0">S. No</th>
@@ -229,7 +229,7 @@ foreach ($facultyInfo as $key => $value) {
                                     </div>
                                     <div class="card-body">
                                     <div class="table-responsive">
-                                            <table id="file-datatable1" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                            <table id="file-datatable1" class="datatable table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
                                                         <th class="border-bottom-0">S. No</th>
@@ -280,7 +280,7 @@ foreach ($facultyInfo as $key => $value) {
                                     </div>
                                     <div class="card-body">
                                     <div class="table-responsive">
-                                            <table id="file-datatable2" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                            <table id="file-datatable2" class="datatable table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
                                                         <th class="border-bottom-0">S. No</th>
@@ -311,6 +311,17 @@ foreach ($facultyInfo as $key => $value) {
                                 </div>
                             </div>
                         </div>
+
+                        <style>
+                            @media screen and (min-width:1364px) {
+                                
+                                .buttons-html5 {
+                                    position: relative;
+                                    top: 22px;
+                                    left: -100px;
+                                }
+                            }
+                        </style>
 
                         <!-- BODY CONTENT END -->
                         
@@ -394,15 +405,19 @@ foreach ($facultyInfo as $key => $value) {
     <script src="../assets/js/sweet-alert.js"></script>
     <script src="../assets/plugins/multipleselect/multiple-select.js"></script>
     <script src="../assets/plugins/multipleselect/multi-select.js"></script>
+    
     <script>
-        $(document).ready(function() {
-            var table = $('#resTable').DataTable( {
-                responsive: false
-            } );
-            // table.buttons().container()
-            //     .appendTo( '#example_wrapper .col-md-6:eq(0)' );
-            } );
+        // $("#datatable").DataTable({
+        //     dom: 'Bfrtip',
+        //     buttons: ['excel', 'pdf']
+        // });
+        $(".datatable").each(function() {
+            $(this).DataTable({
+                dom: 'Bfrtip',
+                buttons: ['excel', 'pdf'],
+                "bInfo": false
+            });
+        });
     </script>
-
 </body>
 </html>
