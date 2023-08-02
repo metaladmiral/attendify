@@ -174,7 +174,7 @@ foreach ($facultyInfo as $key => $value) {
                                             <table id="datatable" class="datatable table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
-                                                        <th class="border-bottom-0">S. No</th>
+                                                        <!-- <th class="border-bottom-0">S. No</th> -->
                                                         <th class="border-bottom-0">Batch Name</th>
                                                         <th class="border-bottom-0">CC Not Assigned</th>
                                                     </tr>
@@ -185,7 +185,7 @@ foreach ($facultyInfo as $key => $value) {
                                                         foreach ($ccData as $key => $value) {
                                                             ?>
                                                             <tr>
-                                                                <td><?php echo $key+1; ?></td>
+                                                                <!-- <td><?php echo $key+1; ?></td> -->
                                                                 <td><?php echo $value["batchLabel"]; ?></td>
                                                                 <?php
                                                             $allSectionswithNoCC = array();
@@ -232,7 +232,7 @@ foreach ($facultyInfo as $key => $value) {
                                             <table id="file-datatable1" class="datatable table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
-                                                        <th class="border-bottom-0">S. No</th>
+                                                        <!-- <th class="border-bottom-0">S. No</th> -->
                                                         <th class="border-bottom-0">Batch Name</th>
                                                         <th class="border-bottom-0">Faculties Assigned</th>
                                                     </tr>
@@ -243,7 +243,7 @@ foreach ($facultyInfo as $key => $value) {
                                                         foreach ($facultyAssignData as $key => $value) {
                                                             $counter++;
                                                             echo "<tr>";
-                                                            echo "<td>$counter</td>";
+                                                            // echo "<td>$counter</td>";
                                                             echo "<td>".$value['batchLabel']."</td>";
                                                             $data =json_decode($value["faculty"], true);
                                                             echo "<td>";
@@ -283,7 +283,7 @@ foreach ($facultyInfo as $key => $value) {
                                             <table id="file-datatable2" class="datatable table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
-                                                        <th class="border-bottom-0">S. No</th>
+                                                        <!-- <th class="border-bottom-0">S. No</th> -->
                                                         <th class="border-bottom-0">Subject Code</th>
                                                         <th class="border-bottom-0">Subject Name</th>
                                                         <th class="border-bottom-0">Subject Semester</th>
@@ -296,7 +296,7 @@ foreach ($facultyInfo as $key => $value) {
                                                     $sql->execute();
                                                     foreach ($sql->fetchAll(PDO::FETCH_ASSOC) as $key => $value) {
                                                         echo "<tr>";
-                                                        echo "<td>".($key+1)."</td>";
+                                                        // echo "<td>".($key+1)."</td>";
                                                         echo "<td>".$value['subjectcode']."</td>";
                                                         echo "<td>".$value['subjectname']."</td>";
                                                         echo "<td>".$value['subjectsem']."</td>";
