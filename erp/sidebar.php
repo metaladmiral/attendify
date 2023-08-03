@@ -71,6 +71,14 @@ $ut = $_SESSION['usertype'];
                 </li>
                 <?php } ?>
 
+                <?php if($ut=="1") { ?>
+                <li class="slide">
+                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="attendance-reports"><i class="side-menu__icon lnr lnr-pie-chart"></i>
+                        <span class="side-menu__label">Attendance Reports</span>
+                    </a>
+                </li>
+                <?php } ?>
+
                 <!-- <li class="sub-category"><h3>UI Kit</h3></li> -->
                 <li class="slide">
                     <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1" || $ut=="2") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?> ><i class="side-menu__icon fe fe-users"></i>
