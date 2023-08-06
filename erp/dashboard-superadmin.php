@@ -229,7 +229,7 @@ foreach ($facultyInfo as $key => $value) {
                                     </div>
                                     <div class="card-body">
                                     <div class="table-responsive">
-                                            <table id="file-datatable1" class="datatable table table-bordered text-nowrap key-buttons border-bottom">
+                                            <table id="file-datatable1" class="table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
                                                         <!-- <th class="border-bottom-0">S. No</th> -->
@@ -280,7 +280,7 @@ foreach ($facultyInfo as $key => $value) {
                                     </div>
                                     <div class="card-body">
                                     <div class="table-responsive">
-                                            <table id="file-datatable2" class="datatable table table-bordered text-nowrap key-buttons border-bottom">
+                                            <table id="file-datatable2" class="table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
                                                         <!-- <th class="border-bottom-0">S. No</th> -->
@@ -418,6 +418,13 @@ foreach ($facultyInfo as $key => $value) {
                 "bInfo": false
             });
         });
+
+            $("#file-datatable1").DataTable({
+                dom: 'Bfrtip',
+                buttons: [],
+                "bInfo": false
+            });
+        // });
     </script>
 </body>
 </html>
