@@ -170,10 +170,9 @@ foreach ($batchData as $key => $value) {
                                     </div>
                                     <div class="card-body">
                                     <div class="table-responsive">
-                                            <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                            <table id="dtable" class="table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
-                                                        <th class="border-bottom-0">S. No</th>
                                                         <th class="border-bottom-0">Batch Name</th>
                                                         <th class="border-bottom-0">Section ID</th>
                                                     </tr>
@@ -184,7 +183,6 @@ foreach ($batchData as $key => $value) {
                                                     foreach ($ccData as $batchid => $sectionid) {
                                                         $section = explode('-', $sectionId);
                                                         echo "<tr>";
-                                                        echo "<td>".($key+1)."</td>";
                                                         echo "<td>";
                                                         echo $batches[$batchid];
                                                         echo "</td>";
@@ -285,5 +283,13 @@ foreach ($batchData as $key => $value) {
     <script src="../assets/plugins/multipleselect/multiple-select.js"></script>
     <script src="../assets/plugins/multipleselect/multi-select.js"></script>
    
+    <script>
+        $("#dtable").DataTable( {
+            dom: 'Bfrtip',
+            buttons: [],
+            "bInfo": false
+        } );
+    </script>
+
 </body>
 </html>
