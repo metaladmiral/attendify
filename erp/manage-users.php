@@ -104,7 +104,7 @@ $conn = new Db;
                                     </div>
                                     <div class="card-body">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered border text-nowrap mb-0" id="responsive-datatable">
+                                            <table class="table table-bordered border text-nowrap mb-0" id="dtable">
                                                 <thead>
                                                         <th>S. No.</th>
                                                         <th>Fullname</th>
@@ -355,5 +355,13 @@ $conn = new Db;
         unset($_SESSION['message']);
     } ?>
     
+    <script>
+        $("#dtable").DataTable( {
+            dom: 'Bfrtip',
+            buttons: [],
+            "bInfo": false
+        } );
+    </script>
+
 </body>
 </html>

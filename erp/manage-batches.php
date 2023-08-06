@@ -83,11 +83,12 @@ $conn = new Db;
                                     </div>
                                     <div class="card-body">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered text-nowrap border-bottom" id="responsive-datatable">
+                                            <table class="table table-bordered text-nowrap border-bottom" id='dtable'>
                                                 <thead>
                                                     <tr>
                                                         <th>Batch Name</th>
-                                                    <th name="bstable-actions">Actions</th></tr>
+                                                        <th name="bstable-actions">Actions</th>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
                                                     
@@ -249,6 +250,14 @@ $conn = new Db;
         }
         unset($_SESSION['message']);
     } ?>
+
+    <script>
+        $("#dtable").DataTable({
+            dom: 'Bfrtip',
+            buttons: [],
+            "bInfo": false
+        });
+    </script>
     
 </body>
 </html>
