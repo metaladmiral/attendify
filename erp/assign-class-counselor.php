@@ -49,9 +49,21 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
     <link href="../assets/css/plugins.css" rel="stylesheet">
     <!--- FONT-ICONS CSS -->
     <link href="../assets/css/icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/amsify/css/amsify.select.css" />
     <!-- INTERNAL Switcher css -->
     <link href="../assets/switcher/css/switcher.css" rel="stylesheet">
     <link href="../assets/switcher/demo.css" rel="stylesheet">
+    <style>
+        .amsify-selection-list {
+            position: relative !important;
+        }
+        .amsify-selection-label {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: right;
+        }
+    </style>
 </head>
 <body class="app sidebar-mini ltr light-mode">
     <!-- GLOBAL-LOADER -->
@@ -311,6 +323,9 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>
 
+    
+    <script src="../assets/amsify/js/jquery.amsifyselect.js"></script>
+    
     <?php
     
     if(isset($_SESSION['succ']))
@@ -339,6 +354,16 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
     }
 
     ?>
+
+<script>
+    $(document).ready(function() {
+        $("select[name='cc']").amsifySelect({
+            searchable: true,
+            type:'bootstrap'
+        });
+        // $("select[name='facultyId']")[0].style.display = "none";
+    });
+</script>
 
 </body>
 </html>

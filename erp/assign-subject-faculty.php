@@ -52,13 +52,17 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     <link href="../assets/css/icons.css" rel="stylesheet">
     <!-- INTERNAL Switcher css -->
     <link href="../assets/switcher/css/switcher.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/amsify/css/amsify.select.css" />
     <link href="../assets/switcher/demo.css" rel="stylesheet">
     <style>
+        .amsify-selection-list {
+            position: relative !important;
+        }
         .amsify-selection-label {
             height: 40px;
-            display:flex;
-            align-items:center;
-            justify-content:right;
+            display: flex;
+            align-items: center;
+            justify-content: right;
         }
     </style>
 </head>
@@ -366,7 +370,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     }
 
     ?>
-<link rel="stylesheet" href="../assets/amsify/css/amsify.select.css" />
+
 <script src="../assets/amsify/js/jquery.amsifyselect.js"></script>
 <script>
     $(document).ready(function() {
