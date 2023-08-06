@@ -293,6 +293,7 @@ if(is_null($data) || count($data)==0) {
         }
         let datesWithSubmissionRecords;
         function initDates(data) {
+            dateRanges = [];
             data=JSON.parse(data)["dateDetails"];
             datesWithSubmissionRecords = data;
             dateRanges.push(Object.keys(data)[0]);
@@ -377,6 +378,7 @@ if(is_null($data) || count($data)==0) {
             }
             return true;
         }
+
         function setHtml(htmlData, date, randid) {
             let dateKey;
             try {
