@@ -123,12 +123,13 @@ $conn = new Db;
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
 
                                                         foreach ($row as $key => $value) {
+                                                            $ll = $value["lastlogin"];
                                                             ?>
 
                                                                 <tr style='position:relative;'>
                                                                 <td><?php echo ($key+1); ?></td>
                                                                 <td><?php echo $value["username"]; ?></td>
-                                                                <td><?php if($value["lastlogin"]!="0") { echo Date("d M,y h:i A", $value["lastlogin"]); }else {echo "Never";} ?></td>
+                                                                <td><?php if($ll!="0"  && $ll!="" ) { echo Date("d M,y h:i A", $value["lastlogin"]); }else {echo "Never";} ?></td>
                                                                 <td><?php echo $value["email"]; ?></td>
                                                                 <?php 
                                                                 $utype="";
