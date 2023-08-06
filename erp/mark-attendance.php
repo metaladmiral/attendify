@@ -142,7 +142,6 @@ if(is_null($data) || count($data)==0) {
                                                                 <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id="file-datatable">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th>ID</th>
                                                                             <th>Roll No.</th>
                                                                             <th>Name</th>
                                                                             <th>Present Today</th>
@@ -393,7 +392,6 @@ if(is_null($data) || count($data)==0) {
                     let rollno = (htmlData[key].uniroll) ? htmlData[key].uniroll : htmlData[key].classroll;
                     if(absStudsUid.includes(htmlData[key].studid)) {
                         html += `<tr>
-                        <td>${parseInt(key)+1}</td>
                         <td>${rollno}</td>
                         <td>${htmlData[key].name}</td>
                         <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}'></td>
@@ -401,7 +399,6 @@ if(is_null($data) || count($data)==0) {
                     }
                     else {
                         html += `<tr>
-                        <td>${parseInt(key)+1}</td>
                         <td>${rollno}</td>
                         <td>${htmlData[key].name}</td>
                         <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}' checked></td>
@@ -413,7 +410,6 @@ if(is_null($data) || count($data)==0) {
                 for(const key in htmlData) {
                     let rollno = (htmlData[key].classroll) ? htmlData[key].classroll : htmlData[key].uniroll;
                     html += `<tr>
-                        <td>${parseInt(key)+1}</td>
                         <td>${rollno}</td>
                         <td>${htmlData[key].name}</td>
                         <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}' checked></td>
@@ -462,7 +458,6 @@ if(is_null($data) || count($data)==0) {
             let table = new DataTable("."+randid+" .file-datatable", {
                 dom: 'Bfrtip',
                 buttons: [
-                    'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
                 ]
             });
         }
