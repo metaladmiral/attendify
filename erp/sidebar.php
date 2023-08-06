@@ -71,47 +71,39 @@ $ut = $_SESSION['usertype'];
                 </li>
                 <?php } ?>
 
-                <?php if($ut=="1") { ?>
-                <li class="slide">
-                    <a class="side-menu__item has-link" data-bs-toggle="slide" href="attendance-reports"><i class="side-menu__icon lnr lnr-pie-chart"></i>
-                        <span class="side-menu__label">Attendance Reports</span>
-                    </a>
-                </li>
-                <?php } ?>
-
-                <!-- <li class="sub-category"><h3>UI Kit</h3></li> -->
                 <li class="slide">
                     <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1" || $ut=="2") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?> ><i class="side-menu__icon fe fe-users"></i>
                         <span onclick='window.location = "<?php echo $operationsURLS[1]; ?>" ' class="side-menu__label">Add Student</span></i>
                     </a>
                 </li>
 
+
+                <?php if($ut=="1") { ?>
+                <li class="slide">
+                   <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-database"></i>
+                       <span class="side-menu__label">Reports</span><i class="angle fe fe-chevron-right"></i>
+                   </a>
+                   <?php if($ut=="1") { ?>
+                   <ul class="slide-menu">
+                       <li class="panel sidetab-menu">
+                           <div class="panel-body tabs-menu-body p-0 border-0">
+                               <div class="tab-content">
+                                   <div class="tab-pane active" id="side1">
+                                       <ul class="sidemenu-list">
+                                           <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
+                                           
+                                           <li><a href="student-record" class="slide-item"> Student Record</a></li>
+                                           <li><a href="attendance-reports" class="slide-item"> Attendance Reports</a></li>
+                                       </ul>
+                                   </div>
+                               </div>
+                           </div>
+                       </li>
+                   </ul>
+                   <?php } ?>
+                </li>
+                <?php } ?> 
                 <!-- Operations END -->
-                
-                <?php if($ut=="1") { ?>
-                <li style="cursor: pointer;" class="slide">
-                    <a class="side-menu__item" data-bs-toggle="slide"><i class="side-menu__icon fe fe-layers"></i>
-                        <span class="side-menu__label" onclick="window.location='student-record'">Student Record</span></i>
-                    </a>
-                </li>
-                <?php } ?> 
-
-                <?php if($ut=="1") { ?>
-                <li style="cursor: pointer;" class="slide">
-                    <a class="side-menu__item" data-bs-toggle="slide"><i class="side-menu__icon fe fe-layers"></i>
-                        <span class="side-menu__label" onclick="window.location='<?php echo $superadminURLS[3]; ?>'">Assign CC</span></i>
-                    </a>
-                </li>
-                
-                <?php } ?> 
-
-                <?php if($ut=="1") { ?>
-                <li style="cursor: pointer;" class="slide">
-                    <a class="side-menu__item" href="assign-subject-faculty" data-bs-toggle="slide"><i class="side-menu__icon fe fe-layers"></i>
-                        <span class="side-menu__label">Assign Subject Faculty</span></i>
-                    </a>
-                </li>
-                <?php } ?> 
                 
                 <?php if($ut=="1") { ?>
                 <li class="slide">
@@ -127,6 +119,8 @@ $ut = $_SESSION['usertype'];
                                        <ul class="sidemenu-list">
                                            <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
                                            
+                                           <li><a href="assign-class-counselor" class="slide-item"> Assign CC</a></li>
+                                           <li><a href="assign-subject-faculty" class="slide-item"> Assign Subject Faculty</a></li>
                                            <li><a href="<?php echo $superadminURLS[0]; ?>" class="slide-item"> Manage Batches</a></li>
                                            <li><a href="<?php echo $superadminURLS[1]; ?>" class="slide-item"> Manage Users</a></li>
                                            <li><a href="manage-subjects" class="slide-item"> Manage Subjects</a></li>
