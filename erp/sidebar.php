@@ -49,7 +49,7 @@ $ut = $_SESSION['usertype'];
                 <?php if($ut=="2") { ?>
                     <li class="slide">
                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="attendance-details"><i class="side-menu__icon lnr lnr-pie-chart"></i>
-                        <span class="side-menu__label">Attendance Details</span>
+                        <span class="side-menu__label">Attendance Records</span>
                     </a>
                 </li>
 
