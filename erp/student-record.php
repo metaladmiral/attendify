@@ -135,7 +135,7 @@ $conn = new Db;
                                             <div class=card>
                                                 <div class=card-body>
                                                     <div class=table-responsive>
-                                                    <table id='file-datatable' class="table border text-nowrap text-md-nowrap  table table-bordered text-nowrap key-buttons border-bottom">
+                                                    <table id='file-datatable' data-init="0" class="table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
                                                         <th>ID</th>
@@ -323,12 +323,14 @@ $conn = new Db;
             $(".loader")[0].style.display = "none";
             $(".data-records")[0].style.display = "block";
             $(".student-table-body")[0].innerHTML += html;
-            $("#file-datatable").DataTable( {
-                dom: 'Bfrtip',
-                buttons: [
-                    'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
-                ]
-            } );
+            if($("#file-datatable").attr('data-init')=="0") {
+                $("#file-datatable").DataTable( {
+                    dom: 'Bfrtip',
+                    buttons: ['excel', 'pdf'],
+                    "bInfo": false
+                } );
+                $("#file-datatable").attr('data-init', '1');
+            }
         }
 
     </script>
