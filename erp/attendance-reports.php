@@ -31,7 +31,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
             }
         
         $stickedData = array("students"=>$studentDetails, "dates"=>$dates);
-            var_dump($stickedData);
+            // var_dump($stickedData);
     }
     catch(PDOException $e) {
         $stickedData = array("dates"=>array(), "students"=>array());
