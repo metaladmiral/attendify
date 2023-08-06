@@ -11,34 +11,27 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
     $batch = $_GET['batch'];
     $subjectID = $_GET['subject'];
 
-    if(isset($_GET['section']) && !empty($_GET['section'])) {
         $section = $_GET['section'];
         $sql = $conn->mconnect()->prepare("SELECT studid, uniroll, classroll, name FROM `students` WHERE `batchid`='".$batch."' AND `sectionid`='$section'  ");
-    }
-    else {
-        $sql = $conn->mconnect()->prepare("SELECT studid, uniroll, classroll, name FROM `students` WHERE `batchid`='".$batch."' ");
-    }
+    
     $sql->execute();
     $studentDetails = $sql->fetchAll(PDO::FETCH_ASSOC);
 
 
     
     try {
-        if(isset($_GET['section']) && !empty($_GET['section'])) {
-            $sql = $conn->mconnect()->prepare("SELECT * FROM `att_$batch` WHERE `sectionid`='$section' AND `subjectid`='$subjectID' ");
-        }
-        else {
-            $sql = $conn->mconnect()->prepare("SELECT * FROM `att_$batch` WHERE `subjectid`='$subjectID' ");
-        }
+            $sql = $conn->mconnect()->prepare("SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' ");
         $sql->execute();
         $attendanceData = $sql->fetchAll(PDO::FETCH_ASSOC);
         
         $dates = array();
-        foreach ($attendanceData as $key => $value) {   
-            $dates[$value["date"]] = $value['absentStudents'];
-        }
+        
+            foreach ($attendanceData as $key => $value) {   
+                $dates[$value["date"]] = $value['absentStudents'];
+            }
         
         $stickedData = array("students"=>$studentDetails, "dates"=>$dates);
+            var_dump($stickedData);
     }
     catch(PDOException $e) {
         $stickedData = array("dates"=>array(), "students"=>array());
@@ -140,8 +133,8 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <select name="section" class='form-control' id="">
-                                                        <option value="" selected>Select Section</option>
+                                                    <select name="section" class='form-control' id="" required>
+                                                        <option value="" disabled selected>Select Section</option>
                                                         <?php
                                                             for($i=65;$i<=73;$i++) {
                                                                 $p = 1;
