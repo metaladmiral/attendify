@@ -327,7 +327,8 @@ $conn = new Db;
                 $("#file-datatable").DataTable( {
                     dom: 'Bfrtip',
                     buttons: ['excel', 'pdf'],
-                    "bInfo": false
+                    "bInfo": false,
+                    "pageLength": 50
                 } );
                 $("#file-datatable").attr('data-init', '1');
             }
