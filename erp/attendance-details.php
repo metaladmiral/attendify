@@ -131,7 +131,6 @@ if(is_null($data) || count($data)==0) {
                                                                         <tr class='dates-table-row'>
                                                                             <th>Roll No.</th>
                                                                             <th>Name</th>
-                                                                            <th>Total Classes</th>
                                                                             <th>Total Present</th>
                                                                             <th>Total Absent</th>
                                                                             <th>Attendace Percentage</th>
@@ -334,22 +333,39 @@ if(is_null($data) || count($data)==0) {
                 html += `<tr>
                 <td>${rollno}</td>
                 <td>${data["students"][key].name}</td>
-                <td>${(Math.floor(Math.random() * 10))+30}</td>
-                <td>33</td>
-                <td>33</td>
-                <td>80%</td>
                 `;
+
+                let tempHtml = "";
+                let totalClasses = 0;
+                let totalPresent = 0;
                 for(const dateDetails in data["dates"]) {
                     // let unixDate = new Date(dateDeta * 1000);
                     let studentData = JSON.parse(data["dates"][dateDetails]);
-
+                    
+                    totalClasses++;
                     if(!studentData.includes(studid)) {
-                        html += `<td class='text-success'>P</td>`;
+                        totalPresent++;
+                        tempHtml += `<td class='text-success'>P</td>`;
                     }
                     else {
-                        html += `<td class='text-danger'>A</td>`;
+                        tempHtml += `<td class='text-danger'>A</td>`;
                     }
                 }
+
+                let attPercentage;
+                if(totalClasses) {
+                    attPercentage = ((totalPresent/totalClasses)*100)+"%";
+                }else {
+                    attPercentage = "NA";
+                }
+
+                html += `
+                <td>${totalPresent}</td>
+                <td>${totalClasses-totalPresent}</td>
+                <td>${attPercentage}</td>
+                `;
+
+                html += tempHtml;
 
                 html += "</tr>";
             }

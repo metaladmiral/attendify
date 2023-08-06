@@ -219,23 +219,41 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                 <?php
                                                 
                                                 foreach ($stickedData["students"] as $key => $value) {
+                                                    $rand = uniqid();
                                                     ?>
                                                         <tr>
                                                             <td><?php echo ($value["uniroll"]) ? $value["uniroll"] : $value["classroll"]; ?></td>
                                                             <td><?php echo $value["name"]; ?></td>
-                                                            <td><?php echo rand(30, 39); ?></td>
-                                                            <td><?php echo rand(0, 9); ?></td>
-                                                            <td><?php echo rand(60, 90)."%"; ?></td>
-
+                                                            
                                                             <?php
+                                                                $totalClasses = 0;
+                                                                $totalPresent = 0;
+                                                                $html = "";
                                                                 foreach ($stickedData["dates"] as $key_ => $value_) {
                                                                     $absStuds = json_decode($value_, true);
                                                                     $key = array_search($value["studid"], $absStuds);
-                                                                    ?>
-                                                                        <td><?php echo (gettype($key)=='integer') ? "<span class='text-danger'>A</span>" : "<span class='text-success'>P</span>" ; ?></td>
-                                                                    <?php
+                                                                    $totalClasses++;
+                                                                    $html .= "<td>";
+                                                                    if(gettype($key)=='integer'){
+                                                                        $html .= "<span class='text-danger'>A</span>";
+                                                                    }else {
+                                                                        $totalPresent++;
+                                                                        $html .= "<span class='text-success'>P</span>";
+                                                                    }
+                                                                    $html .= "</td>";
                                                                 }
-                                                            ?>
+                                                                $totalAbsent = $totalClasses - $totalPresent;
+                                                                if($totalClasses!=0) {
+                                                                    $totalAttPercent = (($totalPresent/$totalClasses)*100)."%";
+                                                                }
+                                                                else {
+                                                                    $totalAttPercent = "NA";
+                                                                }
+                                                                ?>
+                                                                <td><?php echo $totalPresent ?></td>
+                                                                <td><?php echo $totalAbsent; ?></td>
+                                                                <td><?php echo $totalAttPercent; ?></td>
+                                                                <?php echo $html; ?>
 
                                                         </tr>
                                                     <?php
