@@ -352,6 +352,21 @@ if(is_null($data) || count($data)==0) {
 
                     updateStudentMarks(studid, mst1, assgn1, mst2, assgn2, subjectid);
 
+                },
+
+                advanced: { // Do not override advanced unless you know what youre doing
+                    columnLabel: 'Actions',
+                    buttonHTML: `<div class="btn-list">
+                    <button id="bEdit" type="button" class="btn btn-sm btn-primary">
+                        <span class="fe fe-edit" > </span>
+                    </button>
+                    <button id="bAcep" type="button" class="btn  btn-sm btn-primary" style="display:none;">
+                        <span class="fe fe-check-circle" > </span>
+                    </button>
+                    <button id="bCanc" type="button" class="btn  btn-sm btn-danger" style="display:none;">
+                        <span class="fe fe-x-circle" > </span>
+                    </button>
+                </div>`
                 }
                 
             });

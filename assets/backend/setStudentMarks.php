@@ -17,10 +17,10 @@ try{
     $marksOld = json_decode($marksOld, true);
 
     $marksOld[$subjectid] = [
-        'mst1' => isset($_POST['mst1']) ? $_POST['mst1'] : "NA",
-        'assgn1' => isset($_POST['assgn1']) ? $_POST['assgn1'] : "NA",
-        'mst2' => isset($_POST['mst2']) ? $_POST['mst2'] : "NA",
-        'assgn2' => isset($_POST['assgn2']) ? $_POST['assgn2'] : "NA",
+        'mst1' => (isset($_POST['mst1']) && !empty($_POST['mst1'])) ? $_POST['mst1'] : "NA",
+        'assgn1' => (isset($_POST['assgn1']) && !empty($_POST['assgn1'])) ? $_POST['assgn1'] : "NA",
+        'mst2' => (isset($_POST['mst2']) && !empty($_POST['mst2'])) ? $_POST['mst2'] : "NA",
+        'assgn2' => (isset($_POST['assgn2']) && !empty($_POST['assgn2'])) ? $_POST['assgn2'] : "NA",
     ];
     
     $marksNew = json_encode($marksOld);
