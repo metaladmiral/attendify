@@ -257,38 +257,7 @@ if(is_null($data) || count($data)==0) {
 
         function processStudentDetails(batchid, sectionid, data, randid) {
             data = JSON.parse(data);
-            for(const key in data) {
-                data[key].marks = JSON.parse(data[key].marks);
-                
-                let avgMarks = 0;
-                let finalMarks = 0;
-
-                if(data[key].marks.phase1.mst==null) {
-                    data[key].marks.phase1.mst = 0;
-                } 
-                if(data[key].marks.phase1.assign==null) {
-                    data[key].marks.phase1.assign = 0;
-                } 
-
-                if(data[key].marks.phase2.mst==null) {
-                    data[key].marks.phase2.mst = 0;
-                } 
-                if(data[key].marks.phase2.assign==null) {
-                    data[key].marks.phase2.assign = 0;
-                }        
-
-                avgMarks = (parseInt(data[key].marks.phase1.mst) + parseInt(data[key].marks.phase1.assign) + parseInt(data[key].marks.phase2.mst) + parseInt(data[key].marks.phase2.assign))/4;
-                data[key].marks['avgMarks'] = avgMarks;
-
-                if(data[key].totalattendance>75 && data[key].totalattendance<=80) {
-                    finalMarks += 5;
-                }
-
-                finalMarks += avgMarks;
-
-                data[key]['totalInternal'] = finalMarks;
-
-            }
+           
             showStudentDetails(batchid, sectionid, data, randid);
         }
         let datesWithSubmissionRecords;
