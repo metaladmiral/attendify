@@ -24,12 +24,15 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
         if(isset($_GET['daterange']) && !empty($_GET['daterange'])) {
             $dateRange = explode(' - ', $_GET['daterange']);
             $startDate = strtotime($dateRange[0]);
+            
             $endDate = strtotime($dateRange[1]);
-            $sql = "SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' AND `date` BETWEEN $startDate AND $endDate ";
         }
         else {
-            $sql = "SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' ";
+            $startDate = strtotime("today -1 month");
+            
+            $endDate = strtotime("today");
         }
+        $sql = "SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' AND `date` BETWEEN $startDate AND $endDate ";
 
         $sql = $conn->mconnect()->prepare($sql);
         $sql->execute();
