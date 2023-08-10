@@ -129,11 +129,11 @@ if(is_null($data) || count($data)==0) {
                                                                 <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable">
                                                                     <thead>
                                                                         <tr class='dates-table-row'>
-                                                                            <th>Roll No.</th>
-                                                                            <th>Name</th>
-                                                                            <th>Total Present</th>
-                                                                            <th>Total Absent</th>
-                                                                            <th>Attendace Percentage</th>
+                                                                            <th width="1">Roll No.</th>
+                                                                            <th width="1">Name</th>
+                                                                            <abbr title="Total Present"><th width="1" class="border-bottom-0">TP</th></abbr>
+                                                                            <abbr title="Lectures Delivered"><th width="1" class="border-bottom-0">LD</th></abbr>
+                                                                            <abbr title="Attendance Percentage"><th width="1" class="border-bottom-0">AP</th></abbr>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class='student-table-body'>
@@ -315,8 +315,10 @@ if(is_null($data) || count($data)==0) {
             // html += "<th>Lectures Present</th>";
             for(const key in data["dates"]) {
                 let date = new Date(key * 1000);
-                let textDate = date.getDate()+" "+monthNames[date.getMonth()]+", "+date.getFullYear();
-                html += `<th>${textDate}</th>`;
+                let year = parseInt(date.getFullYear());
+                year  = year%2000;
+                let textDate = date.getDate()+" "+monthNames[date.getMonth()]+", "+year;
+                html += `<th width="1">${textDate}</th>`;
             }
             // html += "<th>Lectures Absent</th>";
             
@@ -361,7 +363,7 @@ if(is_null($data) || count($data)==0) {
 
                 html += `
                 <td>${totalPresent}</td>
-                <td>${totalClasses-totalPresent}</td>
+                <td>${totalClasses}</td>
                 <td>${attPercentage}</td>
                 `;
 

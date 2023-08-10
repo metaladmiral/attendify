@@ -190,19 +190,22 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                     </div>
                                 </div>
                                 <div class="card-body">
+
+                                    
+
                                     <div class="table-responsive">
                                         <table id="file-datatable1" class="table table-bordered text-nowrap key-buttons border-bottom">
                                             <thead>
                                                 <tr>
-                                                    <th class="border-bottom-0">Roll No.</th>
-                                                    <th class="border-bottom-0">Name</th>
-                                                    <th class="border-bottom-0">Total Present</th>
-                                                    <th class="border-bottom-0">Total Absent</th>
-                                                    <th class="border-bottom-0">Attendance</th>
+                                                    <th class="border-bottom-0" width="1">Roll No.</th>
+                                                    <th class="border-bottom-0" width="1">Name</th>
+                                                    <abbr title="Total Present"><th width="1" class="border-bottom-0">TP</th></abbr>
+                                                    <abbr title="Lectures Delivered"><th width="1" class="border-bottom-0">LD</th></abbr>
+                                                    <abbr title="Attendance Percentage"><th width="1" class="border-bottom-0">AP</th></abbr>
                                                     <?php
                                                         foreach ($stickedData["dates"] as $key => $value) {
                                                             ?>
-                                                                <td><?php echo date("d M, Y", $key); ?></td>
+                                                                <th width="1"><?php echo date("d M", $key); ?></th>
                                                             <?php
                                                         }
                                                     ?>
@@ -235,16 +238,15 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                                     }
                                                                     $html .= "</td>";
                                                                 }
-                                                                $totalAbsent = $totalClasses - $totalPresent;
                                                                 if($totalClasses!=0) {
-                                                                    $totalAttPercent = (($totalPresent/$totalClasses)*100)."%";
+                                                                    $totalAttPercent = floor( (($totalPresent/$totalClasses)*100))."%";
                                                                 }
                                                                 else {
                                                                     $totalAttPercent = "NA";
                                                                 }
                                                                 ?>
                                                                 <td><?php echo $totalPresent ?></td>
-                                                                <td><?php echo $totalAbsent; ?></td>
+                                                                <td><?php echo $totalClasses; ?></td>
                                                                 <td><?php echo $totalAttPercent; ?></td>
                                                                 <?php echo $html; ?>
 
