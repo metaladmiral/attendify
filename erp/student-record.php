@@ -2,11 +2,9 @@
 session_start();
 require_once 'conn.php';
 $conn = new Db;
-
 $sql = $conn->mconnect()->prepare(" SELECT subjectcode, subjectname FROM `subjects` WHERE `subjectsem`='5' ");
 $sql->execute();
 $subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
@@ -153,27 +151,17 @@ $subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);
                                                 <div class=card-body>
                                                     <div class=table-responsive>
                                                     <table id='file-datatable' data-init="0" class="table table-bordered text-nowrap key-buttons border-bottom">
-                                                <thead>
-                                                    <tr>
-                                                        <th rowspan="2">Actions</th>
-                                                        <th rowspan="2">Name</th>
-                                                        <?php foreach($subjectData as $key=>$value) { ?>
-                                                            <th colspan="5"><?php echo $value["subjectname"]; ?></span>
-                                                        <?php } ?>
-                                                    </tr>
-                                                    <tr>
-                                                        <?php foreach($subjectData as $value) { ?>
-                                                            <th>MST 1</th>
-                                                            <th>ASSGN 1</th>
-                                                            <th>MST 2</th>
-                                                            <th>ASSGN 2</th>
-                                                            <th>AVG</th>
-                                                        <?php } ?>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class='student-table-body'>
-                                                </tbody>
-                                            </table>
+                                                        <thead>
+                                                            <tr class='subjectsColumns'>
+                                                                
+                                                            </tr>
+                                                            <tr class='subjectsSubColumns'>
+                                                                
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class='student-table-body'>
+                                                        </tbody>
+                                                    </table>
                                                     </div>
                                                 </div>
                                             </div>
@@ -264,6 +252,27 @@ $subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);
             let batchid = $("#batchid").val();
             let sectionid = $("#sectionid").val();
             
+            let subjectDetails;
+
+            let fd2 = new FormData();
+            fd2.set('sem', $("select[name='sem']")[0].value);
+            fetch('../assets/backend/getSubjectBySem', {
+                method: 'POST',
+                body: fd2
+            })
+            .then(function (response) {
+                if (response.ok) {
+                    return response.text(); 
+                }
+                throw new Error('Network response was not OK');
+            })
+            .then(function (data) {
+                subjectDetails = data;
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+            
             let fd = new FormData();
             fd.set("offset", studentDetailsOffset);
             fd.set("batchid", batchid);
@@ -279,91 +288,122 @@ $subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);
                 }
                 throw new Error('Network response was not OK');
             })
-            .then(function (data) {
-                processStudentDetails(data);
+            .then(function (data_) {
+                processStudentDetails(data_, subjectDetails);
             })
             .catch(function (error) {
                 console.error('Error:', error);
             });
+
         }
         
-        function processStudentDetails(data) {
+        function processStudentDetails(data, subjectDetails) {
             data = JSON.parse(data);
-            showStudentDetails(data);
+            if(subjectDetails!==0 && subjectDetails!==undefined) {
+                subjectDetails = JSON.parse(subjectDetails);
+            }
+            else {
+                subjectDetails = [];   
+            }
+            showStudentDetails(data, subjectDetails);
         }
 
-        function showStudentDetails(data) {
-            $(".student-table-body")[0].innerHTML = "";
+        function showStudentDetails(data, subjectDetails) {
+            
+            $("#file-datatable").remove();
+            $(".table-responsive")[0].innerHTML = `<table id='file-datatable' data-init="0" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                                        <thead>
+                                                            <tr class='subjectsColumns'>
+                                                                
+                                                            </tr>
+                                                            <tr class='subjectsSubColumns'>
+                                                                
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class='student-table-body'>
+                                                        </tbody>
+                                                    </table>`;
+
+
+            let subjectHTML = `<th width="1">Actions</th><th width="1">Name</th>`;
+            let subjectSubHTML = "<th></th><th></th>";
+
+            for(const key in subjectDetails) {
+                let subject = subjectDetails[key];
+                subjectHTML += `
+                                                        
+                <th colspan="5">
+                    ${subject.subjectname}
+                </th>
+                `;
+                subjectSubHTML += `
+                    <th>MST 1</th>
+                    <th>ASSGN 1</th>
+                    <th>MST 2</th>
+                    <th>ASSGN 2</th>
+                    <th>AVG</th>
+                `;
+            }
+            $(".subjectsColumns")[0].innerHTML = subjectHTML;
+            if(subjectSubHTML) {
+                $(".subjectsSubColumns")[0].innerHTML = subjectSubHTML;
+            }
+            else {
+                $(".subjectsSubColumns")[0].remove();
+            }
+            // consol.elog(subjectHTML);
+
             let html = "";
             for(const key in data) {
                 let studDetails = data[key];
+                let marks;
+                if(studDetails.marks!==undefined) {
+                    marks = JSON.parse(studDetails.marks);
+                }
+                else {
+                    marks = [];
+                }
                 html += `<tr>
                 <td><i onclick="window.location = 'edit-student.php?sid=${data[key].studid} ' " class="fa fa-edit" data-bs-toggle="tooltip" title="fa fa-edit" style='font-size: 16px;cursor:pointer;'></i></td>
                 <td>${data[key].name}</td>
-                
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-                <td>15</td>
-                <td>10</td>
-                <td>15</td>
-                <td>10</td>
-                <td>12.5</td>
-
-                </tr>`;
+                `;
+                for(const skey in subjectDetails) {
+                    let subjectid = subjectDetails[skey].subjectid;
+                    if(marks[subjectid]==undefined) {
+                        html += `
+                        <td>NA</td>
+                        <td>NA</td>
+                        <td>NA</td>
+                        <td>NA</td>
+                        <td>NA</td>
+                        `;
+                    }
+                    else {
+                        let allMarks = marks[subjectid];
+                        let avgMarks;
+                        if(allMarks.mst1!='NA' && allMarks.mst1!='NA' && allMarks.mst2!='NA' && allMarks.assgn2!='NA'){
+                            avgMarks = (((allMarks.mst1) + (allMarks.assgn1) +(allMarks.mst2) +(allMarks.assgn2)) / 4 )
+                        }
+                        else {
+                            avgMarks = 'NA';
+                        }
+                        html += `
+                        <td>${allMarks.mst1}</td>
+                        <td>${allMarks.assgn1}</td>
+                        <td>${allMarks.mst2}</td>
+                        <td>${allMarks.assgn2}</td>
+                        <td>${ avgMarks }</td>
+                        `;
+                    }
+                }
+                html += `</tr>`;
                 
             }
             $(".loader")[0].style.display = "none";
             $(".data-records")[0].style.display = "block";
             $(".student-table-body")[0].innerHTML += html;
             if($("#file-datatable").attr('data-init')=="0") {
+                console.log($("#file-datatable").html());
                 $("#file-datatable").DataTable( {
                     dom: 'Bfrtip',
                     buttons: ['excel', 'pdf'],
