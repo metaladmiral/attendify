@@ -202,7 +202,25 @@ $ut = $_SESSION['usertype'];
                                        <ul class="sidemenu-list">
                                            <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
                                            
-                                           <li><a href="./tt/cec-it-tt.pdf" class="slide-item" download> CEC - IT</a></li>
+                                           <?php if($ut=="1") { ?>
+                                                <li><a href="add-time-table" class="slide-item"> Add Time Table</a></li>
+                                            <?php } ?>
+
+                                            <?php
+                                           
+                                           $fileNames = scandir("./tt/");
+                                           if($fileNames) {
+                                                foreach ($fileNames as $key => $value) {
+                                                    if($value=='.' || $value=='..') {
+                                                        continue;
+                                                    }
+                                                    $fileLabel = explode('.', $value)[0];
+                                                    ?>
+                                                        <li><a href="./tt/<?php echo $value; ?>" class="slide-item" download> <?php echo $fileLabel; ?></a></li>
+                                                    <?php
+                                                }
+                                            }
+                                           ?>
                                            
                                        </ul>
                                    </div>
