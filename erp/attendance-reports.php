@@ -20,7 +20,18 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
 
     
     try {
-            $sql = $conn->mconnect()->prepare("SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' ");
+
+        if(isset($_GET['daterange']) && !empty($_GET['daterange'])) {
+            $dateRange = explode(' - ', $_GET['daterange']);
+            $startDate = strtotime($dateRange[0]);
+            $endDate = strtotime($dateRange[1]);
+            $sql = "SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' AND `date` BETWEEN $startDate AND $endDate ";
+        }
+        else {
+            $sql = "SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' ";
+        }
+
+        $sql = $conn->mconnect()->prepare($sql);
         $sql->execute();
         $attendanceData = $sql->fetchAll(PDO::FETCH_ASSOC);
         
@@ -62,6 +73,9 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
     <!-- INTERNAL Switcher css -->
     <link href="../assets/switcher/css/switcher.css" rel="stylesheet">
     <link href="../assets/switcher/demo.css" rel="stylesheet">
+
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <style>
         .amsify-selection-label {
             height: 40px;
@@ -191,8 +205,17 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                 </div>
                                 <div class="card-body">
 
-                                    
-
+                                    <div class="col-12">
+                                        <form action="" class='dateSelectForm'>
+                                            <input type="hidden" name="batch" value="<?php echo $_GET['batch']; ?>">
+                                            <input type="hidden" name="subject" value="<?php echo $_GET['subject']; ?>">
+                                            <input type="hidden" name="section" value="<?php echo $_GET['section']; ?>">
+                                            <b><label for="">Select Date Range:</label></b>
+                                            <input type="text" class='attDateRange form-control' name="daterange">
+                                        </form>
+                                    </div>
+                                    <br>
+                                    <div class="col-12">
                                     <div class="table-responsive">
                                         <table id="file-datatable1" class="table table-bordered text-nowrap key-buttons border-bottom">
                                             <thead>
@@ -258,6 +281,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                             </tbody>
                                         </table>
                                     </div>
+                                            </div>
 
                                 </div>
                             </div>
@@ -391,6 +415,9 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
     <script src="../assets/plugins/datatable/responsive.bootstrap5.min.js"></script>
     <script src="../assets/js/table-data.js"></script>
 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
     <script>
         $("#file-datatable1").DataTable({
             dom: "Bfrtip",
@@ -400,5 +427,43 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
             "bPaginate": false
         });
     </script>
+
+    <?php
+    if($showReports) {
+        ?>
+        <script>
+
+            <?php
+            if(!isset($_GET['daterange'])) {
+            ?>
+                let today = new Date();
+                let endDate = new Date();
+                today.setMonth(today.getMonth() - 1);
+            <?php } else { 
+                $daterange = explode(' - ', $_GET['daterange']);
+            ?>
+                let today = "<?php echo $daterange[0]; ?>";
+                let endDate = "<?php echo $daterange[1]; ?>";
+            <?php } ?>
+
+            $(".attDateRange").daterangepicker({
+                startDate: today,
+                endDate: endDate,
+                autoUpdateInput: true,
+                locale: {
+                    "format": "YYYY-MM-DD",
+                }
+            });
+
+            $(".attDateRange").on('apply.daterangepicker', function(ev, picker) {
+                $(".dateSelectForm").submit();
+            });
+
+
+        </script>
+        <?php
+    }
+    ?>
+
 </body>
 </html>
