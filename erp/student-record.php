@@ -155,7 +155,6 @@ $subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);
                                                     <table id='file-datatable' data-init="0" class="table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
-                                                        <th rowspan="2">ID</th>
                                                         <th rowspan="2">Actions</th>
                                                         <th rowspan="2">Name</th>
                                                         <?php foreach($subjectData as $key=>$value) { ?>
@@ -299,7 +298,6 @@ $subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);
             for(const key in data) {
                 let studDetails = data[key];
                 html += `<tr>
-                <td>${parseInt(key)+1}</td>
                 <td><i onclick="window.location = 'edit-student.php?sid=${data[key].studid} ' " class="fa fa-edit" data-bs-toggle="tooltip" title="fa fa-edit" style='font-size: 16px;cursor:pointer;'></i></td>
                 <td>${data[key].name}</td>
                 
