@@ -189,6 +189,28 @@ $ut = $_SESSION['usertype'];
                    <?php } ?>
                 </li>
                 <?php } ?> 
+
+                <li class="slide">
+                   <a class="side-menu__item" data-bs-toggle="slide"><i class="side-menu__icon fe fe-layers"></i>
+                       <span class="side-menu__label">Time Tables</span><i class="angle fe fe-chevron-right"></i>
+                   </a>
+                   <ul class="slide-menu">
+                       <li class="panel sidetab-menu">
+                           <div class="panel-body tabs-menu-body p-0 border-0">
+                               <div class="tab-content">
+                                   <div class="tab-pane active" id="side1">
+                                       <ul class="sidemenu-list">
+                                           <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
+                                           
+                                           <li><a href="./tt/cec-it-tt.pdf" class="slide-item" download> CEC - IT</a></li>
+                                           
+                                       </ul>
+                                   </div>
+                               </div>
+                           </div>
+                       </li>
+                   </ul>
+                </li>
                 <!--Super Admin ENDS
                 !-->
                 
