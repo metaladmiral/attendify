@@ -2,6 +2,11 @@
 session_start();
 require_once 'conn.php';
 $conn = new Db;
+
+$sql = $conn->mconnect()->prepare(" SELECT subjectcode, subjectname FROM `subjects` WHERE `subjectsem`='5' ");
+$sql->execute();
+$subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
@@ -69,7 +74,7 @@ $conn = new Db;
                                         
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-6">
+                                                <div class="col-4">
                                                     <select name="batch" id='batchid' class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Batch</option>
                                                             <?php 
@@ -87,7 +92,7 @@ $conn = new Db;
                                                             ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-6">
+                                                <div class="col-4">
                                                     <select name="section" id='sectionid' class='form-control' id="">
                                                         <option value="" selected disabled>Select Section</option>
                                                         <?php
@@ -101,6 +106,18 @@ $conn = new Db;
                                                                 <?php
                                                                     $p++;
                                                                 }
+                                                            }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <select name="sem" id='sem' class='form-control' id="">
+                                                        <option value="" selected disabled>Select Semester</option>
+                                                        <?php
+                                                            for($i=1;$i<=8;$i++) {
+                                                                ?>
+                                                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                                                <?php
                                                             }
                                                         ?>
                                                     </select>
@@ -138,16 +155,21 @@ $conn = new Db;
                                                     <table id='file-datatable' data-init="0" class="table table-bordered text-nowrap key-buttons border-bottom">
                                                 <thead>
                                                     <tr>
-                                                        <th>ID</th>
-                                                        <th>Actions</th>
-                                                        <th>Name</th>
-                                                        <th>Mst 1</th>
-                                                        <th>Assignment 1</th>
-                                                        <th>Mst 2</th>
-                                                        <th>Assignment 2</th>
-                                                        <th>Average Marks</th>
-                                                        <th>Total Attendance</th>
-                                                        <th>Total Internal</th>
+                                                        <th rowspan="2">ID</th>
+                                                        <th rowspan="2">Actions</th>
+                                                        <th rowspan="2">Name</th>
+                                                        <?php foreach($subjectData as $key=>$value) { ?>
+                                                            <th colspan="5"><?php echo $value["subjectname"]; ?></span>
+                                                        <?php } ?>
+                                                    </tr>
+                                                    <tr>
+                                                        <?php foreach($subjectData as $value) { ?>
+                                                            <th>MST 1</th>
+                                                            <th>ASSGN 1</th>
+                                                            <th>MST 2</th>
+                                                            <th>ASSGN 2</th>
+                                                            <th>AVG</th>
+                                                        <?php } ?>
                                                     </tr>
                                                 </thead>
                                                 <tbody class='student-table-body'>
@@ -248,7 +270,7 @@ $conn = new Db;
             fd.set("batchid", batchid);
             fd.set("sectionid", sectionid);
 
-            fetch('../assets/backend/getStudentRecords', {
+            fetch('../assets/backend/getStudentRecords?subjects=true', {
                 method: 'POST',
                 body: fd
             })
@@ -268,38 +290,6 @@ $conn = new Db;
         
         function processStudentDetails(data) {
             data = JSON.parse(data);
-            for(const key in data) {
-                data[key].marks = JSON.parse(data[key].marks);
-                
-                let avgMarks = 0;
-                let finalMarks = 0;
-
-                if(data[key].marks.phase1.mst==null) {
-                    data[key].marks.phase1.mst = 0;
-                } 
-                if(data[key].marks.phase1.assign==null) {
-                    data[key].marks.phase1.assign = 0;
-                } 
-
-                if(data[key].marks.phase2.mst==null) {
-                    data[key].marks.phase2.mst = 0;
-                } 
-                if(data[key].marks.phase2.assign==null) {
-                    data[key].marks.phase2.assign = 0;
-                }        
-
-                avgMarks = (parseInt(data[key].marks.phase1.mst) + parseInt(data[key].marks.phase1.assign) + parseInt(data[key].marks.phase2.mst) + parseInt(data[key].marks.phase2.assign))/4;
-                data[key].marks['avgMarks'] = avgMarks;
-
-                if(data[key].totalattendance>75 && data[key].totalattendance<=80) {
-                    finalMarks += 5;
-                }
-
-                finalMarks += avgMarks;
-
-                data[key]['totalInternal'] = finalMarks;
-
-            }
             showStudentDetails(data);
         }
 
@@ -307,18 +297,70 @@ $conn = new Db;
             $(".student-table-body")[0].innerHTML = "";
             let html = "";
             for(const key in data) {
+                let studDetails = data[key];
                 html += `<tr>
                 <td>${parseInt(key)+1}</td>
                 <td><i onclick="window.location = 'edit-student.php?sid=${data[key].studid} ' " class="fa fa-edit" data-bs-toggle="tooltip" title="fa fa-edit" style='font-size: 16px;cursor:pointer;'></i></td>
                 <td>${data[key].name}</td>
-                <td>${data[key].marks.phase1.mst}</td>
-                <td>${data[key].marks.phase1.assign}</td>
-                <td>${data[key].marks.phase2.mst}</td>
-                <td>${data[key].marks.phase2.assign}</td>
-                <td>${data[key].marks.avgMarks}</td>
-                <td>${data[key].totalattendance}</td>
-                <td>${data[key].totalInternal}</td>
+                
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+                <td>15</td>
+                <td>10</td>
+                <td>15</td>
+                <td>10</td>
+                <td>12.5</td>
+
                 </tr>`;
+                
             }
             $(".loader")[0].style.display = "none";
             $(".data-records")[0].style.display = "block";
