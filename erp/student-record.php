@@ -2,9 +2,6 @@
 session_start();
 require_once 'conn.php';
 $conn = new Db;
-$sql = $conn->mconnect()->prepare(" SELECT subjectcode, subjectname FROM `subjects` WHERE `subjectsem`='5' ");
-$sql->execute();
-$subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
