@@ -382,7 +382,7 @@ $subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);
                         let allMarks = marks[subjectid];
                         let avgMarks;
                         if(allMarks.mst1!='NA' && allMarks.mst1!='NA' && allMarks.mst2!='NA' && allMarks.assgn2!='NA'){
-                            avgMarks = (((allMarks.mst1) + (allMarks.assgn1) +(allMarks.mst2) +(allMarks.assgn2)) / 4 )
+                            avgMarks = ((parseInt((allMarks.mst1)) + parseInt((allMarks.assgn1)) +parseInt((allMarks.mst2)) +parseInt((allMarks.assgn2))) / 4 )
                         }
                         else {
                             avgMarks = 'NA';
