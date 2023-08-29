@@ -69,7 +69,7 @@ $conn = new Db;
                                     <input type="hidden" name="deps" value="">
                                     <div class="row">
                                         
-                                        <div class="form-group col-4">
+                                        <div class="form-group col-3">
                                             <label for="exampleInputEmail1" class="form-label">College</label>
                                             <select name="collegeid" id="collegeSelect" class="form-control" required>    
                                                 <option value="" selected disabled>Select College</option>
@@ -87,19 +87,53 @@ $conn = new Db;
                                             </select>
                                             <input type="hidden" name="colleges" value="<?php echo base64_encode(json_encode($row)); ?>">
                                         </div>
-                                        <div class="form-group col-4">
+                                        <div class="form-group col-3">
                                             <label for="exampleInputEmail1" class="form-label">Department <sup class="text-danger">(Select College First)</sup></label>
                                             <select name="depid" id="depSelect" class="form-control" onclick="" disabled="1" required>
                                                 <option value="" selected disabled>Select Department</option>
                                             </select>
                                         </div>
 
-                                        <div class="form-group col-4">
+                                        <div class="form-group col-3">
+                                            <label for="" class="form-label">Course</label>
+                                            <select name="course" id="" class="form-control" required>
+                                                <option value="" selected disabled>Select Course</option>
+                                                <option value="B.Tech">B.Tech</option>
+                                                <option value="M.Tech">M.Tech</option>
+                                                <option value="MCA">MCA</option>
+                                                <option value="MBA">MBA</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-3">
                                             <label for="exampleInputEmail1" class="form-label">Batch Session</label>
                                             <div class="row">
-                                                <div class="form-group col-6"><input type="number" class="form-control col-12" placeholder="Start" name="startDate" min="1995" max="2500" id="" required></div>
                                                 <div class="form-group col-6">
-                                                    <input type="number" class="form-control col-12" placeholder="End" name="endDate" min="1995" max="2500" id="" required></div>
+                                                    <!-- <input type="number" class="form-control col-12" placeholder="Start" name="startDate" min="1995" max="2500" id="" required> -->
+                                                    <select name="startDate" id="" class="form-control col-12" required>
+                                                            <option value="" disabled selected>Start</option>
+                                                        <?php
+                                                        for($i=1995;$i<=2500;$i++) {
+                                                            ?>
+                                                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                                            <?php
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-6">
+                                                    <!-- <input type="number" class="form-control col-12" placeholder="End" name="endDate" min="1995" max="2500" id="" required> -->
+                                                    <select name="endDate" id="" class="form-control col-12" required>
+                                                        <option value="" disabled selected>End</option>
+                                                           <?php
+                                                           for($i=1995;$i<=2500;$i++) {
+                                                            ?>
+                                                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                                            <?php
+                                                           }
+                                                           ?>         
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
 
