@@ -206,6 +206,7 @@ $conn = new Db;
                                             <table class="table table-bordered text-nowrap border-bottom" id='dtable'>
                                                 <thead>
                                                     <tr>
+                                                        <th>Batch ID</th>
                                                         <th>Batch Name</th>
                                                         <th name="bstable-actions">Actions</th>
                                                     </tr>
@@ -222,6 +223,7 @@ $conn = new Db;
                                                             ?>
 
                                                                 <tr style='position:relative;'>
+                                                                <td><?php echo $value["batchid"]; ?></td>
                                                                 <td><?php echo $value["batchLabel"]; ?></td>
                                                                 <td name="bstable-actions"><div class="btn-list">
                                                                 <button id="bEdit" type="button" class="btn btn-sm btn-primary" onclick="window.location = 'edit-batch.php?batchid=<?php echo $value['batchid']; ?>';">

@@ -10,7 +10,7 @@ if(isset($_POST['submit'])){
         $deps = json_decode( $_POST['deps'],true);
         $colleges = json_decode( base64_decode($_POST['colleges']),true);
 
-        $batchLabel = $colleges[$_POST['collegeid']]." - ".$_POST['course']." - ".$deps[$_POST['depid']]." ".$_POST['startDate']."-".$_POST['endDate'];
+        $batchLabel = $colleges[$_POST['collegeid']]." - ".$_POST['course']." - ".$deps[$_POST['depid']]." - ".$_POST['startDate']."-".$_POST['endDate'];
 
         $batchId = substr($batchLabel, 0, 4)."".uniqid();
         $batchId = preg_replace('/\s+/', '', $batchId);
