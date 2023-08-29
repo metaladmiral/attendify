@@ -7,14 +7,17 @@ if(isset($_POST['submit'])){
     if($_POST['code'] != "" && $_POST['name'] != "" && $_POST['sem']){
         $conn = new Db;
         try{
+            $collegeid = $_POST['collegeid'];
+            $depid = $_POST['depid'];
+
             $code = $_POST['code'];
             $name = $_POST['name'];
             $id = (String) uniqid();
             $sem = $_POST['sem'];
             
-            $sql = "INSERT INTO `subjects`(subjectcode, subjectname, subjectid, subjectsem) VALUES (?, ?, ?, ?)";
+            $sql = "INSERT INTO `subjects`(subjectcode, subjectname, subjectid, subjectsem, collegeid, depid) VALUES (?, ?, ?, ?, ? ,?)";
             $query = $conn->mconnect()->prepare($sql);
-            $query->execute(array($code, $name, $id, $sem));
+            $query->execute(array($code, $name, $id, $sem, $collegeid, $depid));
 
 
             $_SESSION['message']="1";
