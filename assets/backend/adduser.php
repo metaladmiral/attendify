@@ -8,8 +8,6 @@ if(isset($_POST['submit'])){
         $conn = new Db;
         try{
 
-            
-
             $collegeid = $_POST['collegeid'];
             $depid= $_POST['depid'];
             $empid = $_POST['empid'];
@@ -21,9 +19,18 @@ if(isset($_POST['submit'])){
             $password = md5($_POST['password']);
             $usertype = $_POST['usertype'];
             
-            $sql = "INSERT INTO `users`(uid, email, username, password, usertype, lastlogin, collegeid, depid, empid, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $query = $conn->mconnect()->prepare($sql);
-            $query->execute(array($uid, $email, $username,$password,$usertype, "0", $collegeid, $depid, $empid, $number));
+
+            if($usertype!="3") {
+                $sql = "INSERT INTO `users`(uid, email, username, password, usertype, lastlogin, collegeid, depid, empid, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $query = $conn->mconnect()->prepare($sql);
+                $query->execute(array($uid, $email, $username,$password,$usertype, "0", $collegeid, $depid, $empid, $number));
+            }
+            else {
+                $sql = "INSERT INTO `users`(uid, email, username, password, usertype, lastlogin, empid, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                $query = $conn->mconnect()->prepare($sql);
+                $query->execute(array($uid, $email, $username,$password,$usertype, "0", $empid, $number));
+            }
+
 
 
             $_SESSION['message']="1";
