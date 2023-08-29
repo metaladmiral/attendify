@@ -11,6 +11,9 @@ $sql = $conn->mconnect()->prepare("SELECT id FROM `students`");
 $sql->execute();
 $totalStudents = $sql->rowCount();
 
+$sql = $conn->mconnect()->prepare("SELECT id FROM `subjects` ");
+$sql->execute();
+$totalSubjects = $sql->rowCount();
 
 $sql = $conn->mconnect()->prepare("SELECT id FROM `batches` ");
 $sql->execute();
@@ -118,46 +121,71 @@ foreach ($facultyInfo as $key => $value) {
                         
                         <!-- BODY CONTENT -->
                         <div class="row">
-                            <div class="col-4">
-                                <div class="card overflow-hidden">
+                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3">
+                                <div class="card bg-primary img-card box-primary-shadow">
+                                    <a href="https://www.cgccms.in/attendify/erp/manage-users">
                                     <div class="card-body">
                                         <div class="d-flex">
-                                            <div class="mt-2">
-                                                <h6 class="">Total Users</h6>
+                                            <div class="text-white">
                                                 <h2 class="mb-0 number-font"><?php echo $totalUsers; ?></h2>
+                                                <p class="text-white mb-0">Teachers</p>
                                             </div>
-                                            
+                                            <div class="ms-auto"> <i class="fa fa-user-o text-white fs-30 me-2 mt-2"></i> </div>
                                         </div>
                                     </div>
+                                    </a>
                                 </div>
                             </div>
-
-                            <div class="col-4">
-                                <div class="card overflow-hidden">
+                            <!-- COL END -->
+                            
+                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3">
+                                <a href="https://www.cgccms.in/attendify/erp/add-student">
+                                <div class="card bg-secondary img-card box-secondary-shadow">
                                     <div class="card-body">
                                         <div class="d-flex">
-                                            <div class="mt-2">
-                                                <h6 class="">Total Students</h6>
+                                            <div class="text-white">
                                                 <h2 class="mb-0 number-font"><?php echo $totalStudents; ?></h2>
+                                                <p class="text-white mb-0">Students</p>
                                             </div>
-                                            
+                                            <div class="ms-auto"> <i class="fa fa-users text-white fs-30 me-2 mt-2"></i> </div>
                                         </div>
                                     </div>
                                 </div>
+                                </a>
                             </div>
-
-                            <div class="col-4">
-                                <div class="card overflow-hidden">
+                            <!-- COL END -->
+                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3">
+                                <div class="card  bg-success img-card box-success-shadow">
+                                    <a href="https://www.cgccms.in/attendify/erp/manage-batches">
                                     <div class="card-body">
                                         <div class="d-flex">
-                                            <div class="mt-2">
-                                                <h6 class="">Total Batches</h6>
+                                            <div class="text-white">
                                                 <h2 class="mb-0 number-font"><?php echo $totalBatches; ?></h2>
+                                                <p class="text-white mb-0">Batches</p>
                                             </div>
+                                            <div class="ms-auto"> <i class="fa fa-tasks text-white fs-30 me-2 mt-2"></i> </div>
+                                        </div>
                                     </div>
+                                    </a>
                                 </div>
                             </div>
-
+                            <!-- COL END -->
+                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3">
+                                <a href="https://www.cgccms.in/attendify/erp/manage-subjects">
+                                <div class="card bg-info img-card box-info-shadow">
+                                    <div class="card-body">
+                                        <div class="d-flex">
+                                            <div class="text-white">
+                                                <h2 class="mb-0 number-font"><?php echo $totalSubjects; ?></h2>
+                                                <p class="text-white mb-0">Subjects</p>
+                                            </div>
+                                            <div class="ms-auto"> <i class="fa fa-book text-white fs-30 me-2 mt-2"></i> </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                            <!-- COL END -->
                         </div>
 
                         <div class="row">
