@@ -19,18 +19,9 @@ if(isset($_POST['submit'])){
             $password = md5($_POST['password']);
             $usertype = $_POST['usertype'];
             
-
-            if($usertype!="3") {
-                $sql = "INSERT INTO `users`(uid, email, username, password, usertype, lastlogin, collegeid, depid, empid, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                $query = $conn->mconnect()->prepare($sql);
-                $query->execute(array($uid, $email, $username,$password,$usertype, "0", $collegeid, $depid, $empid, $number));
-            }
-            else {
-                $sql = "INSERT INTO `users`(uid, email, username, password, usertype, lastlogin, empid, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                $query = $conn->mconnect()->prepare($sql);
-                $query->execute(array($uid, $email, $username,$password,$usertype, "0", $empid, $number));
-            }
-
+            $sql = "INSERT INTO `users`(uid, email, username, password, usertype, lastlogin, collegeid, depid, empid, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $query = $conn->mconnect()->prepare($sql);
+            $query->execute(array($uid, $email, $username,$password,$usertype, "0", $collegeid, $depid, $empid, $number));
 
 
             $_SESSION['message']="1";
