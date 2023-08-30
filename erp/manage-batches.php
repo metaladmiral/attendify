@@ -3,7 +3,6 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
-
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
@@ -208,6 +207,8 @@ $conn = new Db;
                                                     <tr>
                                                         <th>Batch ID</th>
                                                         <th>Batch Name</th>
+                                                        <th>Current HOD</th>
+                                                        <th>Applied Science</th>
                                                         <th name="bstable-actions">Actions</th>
                                                     </tr>
                                                 </thead>
@@ -220,11 +221,25 @@ $conn = new Db;
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
 
                                                         foreach ($row as $key => $value) {
+                                                            
+                                                            $sql = "SELECT username FROM `users` WHERE `usertype`='3' AND `collegeid`='".$value['collegeid']."' AND `depid`='".$value['depid']."' ";
+                                                            $query = $conn->mconnect()->prepare($sql);
+                                                            $query->execute();
+                                                            $hod = $query->fetch(PDO::FETCH_COLUMN);
+                                                            if(!$hod)  {$hod="<span class='text-danger'>NA</span>";}
                                                             ?>
 
                                                                 <tr style='position:relative;'>
                                                                 <td><?php echo $value["batchid"]; ?></td>
                                                                 <td><?php echo $value["batchLabel"]; ?></td>
+                                                                <td><?php echo $hod; ?></td>
+                                                                <td>
+                                                                    <div class="material-switch">
+                                                                        <input id="someSwitchOptionPrimary" name="someSwitchOption001" type="checkbox">
+                                                                        <label for="someSwitchOptionPrimary" class="label-primary"></label>
+                                                                    </div>
+                                                                
+                                                                </td>
                                                                 <td name="bstable-actions"><div class="btn-list">
                                                                 <button id="bEdit" type="button" class="btn btn-sm btn-primary" onclick="window.location = 'edit-batch.php?batchid=<?php echo $value['batchid']; ?>';">
                                                                     <span class="fe fe-edit"> </span>
