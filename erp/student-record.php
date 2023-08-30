@@ -252,7 +252,7 @@ if($ut=="3") {
 
     <script>
         let studentDetailsOffset = 0;
-        function getStudentDetails(e) {
+        async function getStudentDetails(e) {
 
             $(".student-records")[0].style.display = "block";
             $(".loader")[0].style.display = "block";
