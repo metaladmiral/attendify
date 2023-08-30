@@ -3,6 +3,14 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
+
+$ut = $_SESSION['usertype'];
+if($ut=="3") {
+    $collegeid = $_SESSION['collegeid'];
+    $depid = $_SESSION['depid'];
+}
+
+
 $showCCStatus = 0;
 
 if(isset($_GET['batch']) && isset($_GET['section'])) {
@@ -112,7 +120,11 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                                                     <select name="batch" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Batch</option>
                                                             <?php 
-                                                            $sql = "SELECT * FROM `batches`";
+                                                            if($ut!="3") { 
+                                                                $sql = "SELECT * FROM `batches`";
+                                                            }else {
+                                                                $sql = "SELECT * FROM `batches` WHERE `collegeid`='$collegeid' AND `depid`='$depid' " ;
+                                                            }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
                                                             $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -183,7 +195,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                                             <select name="cc" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                 <option value="" disabled selected>Select CC</option>
                                                 <?php 
-                                                   $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' ";
+                                                   $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND `collegeid`='$collegeid' AND `depid`='$depid' ";
                                                    $query = $conn->mconnect()->prepare($sql);
                                                    $query->execute();
                                                    $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -211,7 +223,8 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                                                 <select name="cc" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                     <option value="" disabled selected>Select CC</option>
                                                     <?php 
-                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' ";
+                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND `collegeid`='$collegeid' AND `depid`='$depid' ";
+
                                                     $query = $conn->mconnect()->prepare($sql);
                                                     $query->execute();
                                                     $data= $query->fetchAll(PDO::FETCH_ASSOC);
