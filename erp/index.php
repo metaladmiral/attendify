@@ -16,6 +16,9 @@ if($_SESSION['usertype']=='1') {
 else if($_SESSION['usertype']=='2') {
     header('Location: ./user-dashboard');
 }
+else if($_SESSION['usertype']=='3') {
+    header('Location: ./dashboard-hod');
+}
 
 ?>
 <!doctype html>
