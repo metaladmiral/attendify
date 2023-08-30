@@ -15,6 +15,7 @@ $conn = new Db;
     <!-- FAVICON -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/brand/favicon.ico">
     <!-- TITLE -->
+    <script src="../assets/js/jquery.min.js"></script>
     <title>ERP</title>
     <!-- BOOTSTRAP CSS -->
     <link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -65,10 +66,75 @@ $conn = new Db;
                             </div>
                             <div class="card-body">
                                 <form method="POST" action="../assets/backend/addBatch.php">
-                                    <div class="">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1" class="form-label">Batch Name</label>
-                                            <input name="batchLabel" type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter Batch Name" autocomplete="off" required>
+                                    <input type="hidden" name="deps" value="">
+                                    <div class="row">
+                                        
+                                        <div class="form-group col-3">
+                                            <label for="exampleInputEmail1" class="form-label">College</label>
+                                            <select name="collegeid" id="collegeSelect" class="form-control" required>    
+                                                <option value="" selected disabled>Select College</option>
+                                                <?php
+                                                $sql = "SELECT collegeid, label FROM `colleges`";
+                                                $query = $conn->mconnect()->prepare($sql);
+                                                $query->execute();
+                                                $row = $query->fetchAll(PDO::FETCH_KEY_PAIR);
+                                                foreach ($row as $key => $value) {
+                                                    ?>
+                                                        <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                                                        <?php
+                                                }
+                                                ?>
+                                            </select>
+                                            <input type="hidden" name="colleges" value="<?php echo base64_encode(json_encode($row)); ?>">
+                                        </div>
+                                        <div class="form-group col-3">
+                                            <label for="exampleInputEmail1" class="form-label">Department <sup class="text-danger">(Select College First)</sup></label>
+                                            <select name="depid" id="depSelect" class="form-control" onclick="" disabled="1" required>
+                                                <option value="" selected disabled>Select Department</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-3">
+                                            <label for="" class="form-label">Course</label>
+                                            <select name="course" id="" class="form-control" required>
+                                                <option value="" selected disabled>Select Course</option>
+                                                <option value="B.Tech">B.Tech</option>
+                                                <option value="M.Tech">M.Tech</option>
+                                                <option value="MCA">MCA</option>
+                                                <option value="MBA">MBA</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-3">
+                                            <label for="exampleInputEmail1" class="form-label">Batch Session</label>
+                                            <div class="row">
+                                                <div class="form-group col-6">
+                                                    <!-- <input type="number" class="form-control col-12" placeholder="Start" name="startDate" min="1995" max="2500" id="" required> -->
+                                                    <select name="startDate" id="" class="form-control col-12" required>
+                                                            <option value="" disabled selected>Start</option>
+                                                        <?php
+                                                        for($i=1995;$i<=2500;$i++) {
+                                                            ?>
+                                                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                                            <?php
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-6">
+                                                    <!-- <input type="number" class="form-control col-12" placeholder="End" name="endDate" min="1995" max="2500" id="" required> -->
+                                                    <select name="endDate" id="" class="form-control col-12" required>
+                                                        <option value="" disabled selected>End</option>
+                                                           <?php
+                                                           for($i=1995;$i<=2500;$i++) {
+                                                            ?>
+                                                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                                            <?php
+                                                           }
+                                                           ?>         
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -76,6 +142,60 @@ $conn = new Db;
                                 </form>
                             </div>
                         </div>
+
+                        <script>
+                            
+                            $("#collegeSelect").change(function() {
+                                // alert('prakhar');
+                                let val = $(this).val();
+                                if(val) {
+                                    enableDep(val);
+                                }
+                            });
+                            async function enableDep(collegeid) {
+                                let resp = await fetch(`../assets/backend/getCollegeDepartments?collegeid=${collegeid}`);
+                                if(resp.ok) {
+                                    const data = await resp.text();
+                                    if(data=="0") {
+                                        swal({
+                                            title: "Alert",
+                                            text: "Maintainance Required! Contact Admin",
+                                            type: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Exit'
+                                        });
+                                        $("#depSelect").attr('disabled', '1');
+                                    }
+                                    else {
+                                        $("input[name='deps']")[0].value = data;
+                                        let depData = JSON.parse(data);
+                                        let html = "<option value='' selected disabled>Select Department</option>";
+                                        $("#depSelect").text('');
+
+                                        for(let key in depData) {
+                                            html += `
+                                                <option value="${key}">${depData[key]}</option>
+                                            `;
+                                        }
+                                        if(html) {
+                                            $("#depSelect").removeAttr('disabled');
+                                            $("#depSelect").html(html);
+                                        }
+                                        else {$("#depSelect").attr('disabled', '1');}
+                                    }
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    swal({
+                                        title: "Alert",
+                                        text: "Maintainance Required! Contact Admin",
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Exit'
+                                    });
+                                }
+                            }
+                        </script>
 
                         <div class="card">
                                     <div class="card-header">
@@ -86,6 +206,7 @@ $conn = new Db;
                                             <table class="table table-bordered text-nowrap border-bottom" id='dtable'>
                                                 <thead>
                                                     <tr>
+                                                        <th>Batch ID</th>
                                                         <th>Batch Name</th>
                                                         <th name="bstable-actions">Actions</th>
                                                     </tr>
@@ -102,6 +223,7 @@ $conn = new Db;
                                                             ?>
 
                                                                 <tr style='position:relative;'>
+                                                                <td><?php echo $value["batchid"]; ?></td>
                                                                 <td><?php echo $value["batchLabel"]; ?></td>
                                                                 <td name="bstable-actions"><div class="btn-list">
                                                                 <button id="bEdit" type="button" class="btn btn-sm btn-primary" onclick="window.location = 'edit-batch.php?batchid=<?php echo $value['batchid']; ?>';">
@@ -163,7 +285,7 @@ $conn = new Db;
     <!-- BACK-TO-TOP -->
     <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
     <!-- JQUERY JS -->
-    <script src="../assets/js/jquery.min.js"></script>
+    
     <!-- BOOTSTRAP JS -->
     <script src="../assets/plugins/bootstrap/js/popper.min.js"></script>
     <script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>

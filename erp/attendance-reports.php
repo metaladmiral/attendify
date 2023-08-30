@@ -5,6 +5,12 @@ $conn = new Db;
 
 $showReports = 0;
 
+$ut = $_SESSION['usertype'];
+if($ut=="3") {
+    $collegeid = $_SESSION['collegeid'];
+    $depid = $_SESSION['depid'];
+}
+
 if(isset($_GET['batch']) && isset($_GET['subject'])) {
     $showReports = 1;
 
@@ -135,7 +141,11 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     <select name="batch" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Batch</option>
                                                             <?php 
-                                                            $sql = "SELECT * FROM `batches`";
+                                                            if($ut!="3") { 
+                                                                $sql = "SELECT * FROM `batches`";
+                                                            }else {
+                                                                $sql = "SELECT * FROM `batches` WHERE `collegeid`='$collegeid' AND `depid`='$depid' " ;
+                                                            }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
                                                             $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -171,16 +181,23 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     <select name="subject" class='form-control' id="" required>
                                                         <option value="" selected disabled>Select Subject</option>
                                                         <?php 
-                                                        $sql = "SELECT * FROM `subjects`";
+                                                        $sql = "SELECT * FROM `subjects` WHERE `collegeid`='$collegeid' AND `depid`='$depid' GROUP BY `subjectsem`, `subjectname` ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                        $currOptGrp = 0;
                                                         foreach ($data as $key => $value) {
+                                                            if($value['subjectsem']!=$currOptGrp) {
+                                                                echo "</optgroup>";
+                                                                echo "<optgroup label='Sem: ".$value['subjectsem']." ' >";
+                                                                $currOptGrp = $value['subjectsem'];
+                                                            }
                                                             ?>
                                                             <option value="<?php echo $value['subjectid']; ?>" 
-                                                                <?php if(isset($_GET['subject'])) { if($_GET['subject']==$value["subjectid"]) {echo "selected";} } ?>><?php echo $value['subjectname']; ?></option>
+                                                                <?php if(isset($_GET['subject'])) { if($_GET['subject']==$value["subjectid"]) {echo "selected";} } ?>><?php echo $value['subjectname']; ?> - <?php echo $value['subjectcode']; ?></option>
                                                         <?php 
                                                         }
+                                                        echo "</optgroup>";
                                                         ?>
                                                     </select>
                                                 </div>

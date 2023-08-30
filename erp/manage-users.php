@@ -14,6 +14,7 @@ $conn = new Db;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- FAVICON -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/brand/favicon.ico">
+    <script src="../assets/js/jquery.min.js"></script>
     <!-- TITLE -->
     <title>ERP</title>
     <!-- BOOTSTRAP CSS -->
@@ -68,6 +69,43 @@ $conn = new Db;
                             <div class="card-body">
                                 <form method="POST" action="../assets/backend/adduser.php">
                                     <div class="">
+                                        <div class="row">
+                                            <div class="form-group col-6">
+                                                <label for="exampleInputEmail1" class="form-label">College</label>
+                                                <select name="collegeid" id="collegeSelect" class="form-control" required>    
+                                                    <option value="" selected disabled>Select College</option>
+                                                    <?php
+                                                    $sql = "SELECT collegeid, label FROM `colleges`";
+                                                    $query = $conn->mconnect()->prepare($sql);
+                                                    $query->execute();
+                                                    $row = $query->fetchAll(PDO::FETCH_KEY_PAIR);
+                                                    foreach ($row as $key => $value) {
+                                                        ?>
+                                                            <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                                                            <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="exampleInputEmail1" class="form-label">Department <sup class="text-danger">(Select College First)</sup></label>
+                                                <select name="depid" id="depSelect" class="form-control" onclick="" disabled="1" required>
+                                                    <option value="" selected disabled>Select Department</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-6">
+                                                <label for="" class="form-label">Employee ID</label>
+                                                <input type="number" class="form-control" name="empid" placeholder="Employee ID">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="" class="form-label">Phone Number</label>
+                                                <input type="text" class="form-control" name="phone" placeholder="Phone Number">
+                                            </div>
+                                        </div>
+
                                         <div class="form-group">
                                             <label for="exampleInputEmail1" class="form-label">Email address</label>
                                             <input name="email" type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email" autocomplete="username" required>
@@ -86,9 +124,12 @@ $conn = new Db;
                                                     <!-- <option label="Choose one">
                                                     </option> -->
                                                     <option value="1">Superadmin</option>
-                                                    <option value="2">Counselor</option>
+                                                    <option value="2">Faculty</option>
+                                                    <option value="3">HOD</option>
                                                 </select>
                                         </div>
+
+                                        
                                         
                                     </div>
                                     <button class="btn btn-primary mt-4 mb-0" type="submit" name="submit">Add</button>
@@ -97,6 +138,59 @@ $conn = new Db;
                                 
                             </div>
                         </div>
+
+                        <script>
+                            
+                            $("#collegeSelect").change(function() {
+                                // alert('prakhar');
+                                let val = $(this).val();
+                                if(val) {
+                                    enableDep(val);
+                                }
+                            });
+                            async function enableDep(collegeid) {
+                                let resp = await fetch(`../assets/backend/getCollegeDepartments?collegeid=${collegeid}`);
+                                if(resp.ok) {
+                                    const data = await resp.text();
+                                    if(data=="0") {
+                                        swal({
+                                            title: "Alert",
+                                            text: "Maintainance Required! Contact Admin",
+                                            type: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Exit'
+                                        });
+                                        $("#depSelect").attr('disabled', '1');
+                                    }
+                                    else {
+                                        let depData = JSON.parse(data);
+                                        let html = "<option value='' selected disabled>Select Department</option>";
+                                        $("#depSelect").text('');
+
+                                        for(let key in depData) {
+                                            html += `
+                                                <option value="${key}">${depData[key]}</option>
+                                            `;
+                                        }
+                                        if(html) {
+                                            $("#depSelect").removeAttr('disabled');
+                                            $("#depSelect").html(html);
+                                        }
+                                        else {$("#depSelect").attr('disabled', '1');}
+                                    }
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    swal({
+                                        title: "Alert",
+                                        text: "Maintainance Required! Contact Admin",
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Exit'
+                                    });
+                                }
+                            }
+                        </script>
 
                         <div class="card">
                                     <div class="card-header">
@@ -117,7 +211,7 @@ $conn = new Db;
                                                 <tbody>
                                                     
                                                         <?php 
-                                                        $sql = "SELECT * FROM `users` WHERE `usertype`!='0' ";
+                                                        $sql = "SELECT * FROM `users` WHERE `usertype`!='1' ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -139,7 +233,10 @@ $conn = new Db;
                                                                         break;
                                                                     
                                                                     case '2':
-                                                                        $utype = "Counselor";
+                                                                        $utype = "Faculty";
+                                                                        break;
+                                                                    case '3':
+                                                                        $utype = "HOD";
                                                                         break;
                                                                     default:
                                                                         break;
@@ -269,7 +366,7 @@ $conn = new Db;
     <!-- BACK-TO-TOP -->
     <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
     <!-- JQUERY JS -->
-    <script src="../assets/js/jquery.min.js"></script>
+    
     <!-- BOOTSTRAP JS -->
     <script src="../assets/plugins/bootstrap/js/popper.min.js"></script>
     <script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>

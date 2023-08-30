@@ -26,29 +26,40 @@ else {
         $spreadsheet = $reader->load($filename);
         $rows = $spreadsheet->getActiveSheet()->toArray();
         
-        $sql = "INSERT INTO `users`(uid, email, username, password, usertype, active) VALUES ";
-
+        
+        $sql = "INSERT INTO `users`(uid, email, username, password, usertype, active,collegeid, depid, number, dob, ptuid, pemail, joinedon, gender, empid) VALUES ";
         $queryData = array();
         foreach ($rows as $key => $value) {
            if($key=="0") {
             continue;
            }
-
-           $email = $value[0];
+           $empid = $value[0];
            $username = $value[1];
-           $usertype = "2";
+           $email = $value[2];
+           $password = $value[3];
+           $collegeid = $value[4];
+           $depid = $value[5];
+           $number = $value[6];
+           $dob = $value[7];
+           $dob = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($dob);
+           $ptuid = $value[8];
+           $emailpersonal = $value[9];
+           $joinedon = $value[10];
+           $gender = $value[11];
+           $usertype = $value[12];
+
            $active = "1";
-           if(empty($email) || empty($username)) {
+           if(empty($email) || empty($username) || empty($empid) || empty($password) || empty($collegeid) || empty($depid) || empty($number)  || empty($dob)  || empty($ptuid)  || empty($emailpersonal)  || empty($joinedon)  || empty($gender) || empty($usertype) ) {
             continue;
            }
 
            $validatedName = preg_replace('/\s+/', '', $username);
-           $password = md5("cgcfaculty@123");
            $uid = substr(strtolower($validatedName), 0, 3).uniqid();
             
-            array_push($queryData, array($uid, $email, $username, $password, $usertype, $active));
+            array_push($queryData, array($uid, $email, $username, $password, $usertype, $active, $collegeid, $depid, $number, $dob, $ptuid, $emailpersonal, $joinedon, $gender, $empid));
 
         }
+        
 
         $str = array();
         foreach($queryData as $key=>$value) {
@@ -66,9 +77,10 @@ else {
             $query = $db->mconnect()->prepare($sql);
             $query->execute();
             sleep(3);
+            // echo $sql;
             echo "1";
         }catch(PDOException $e) {
-            echo $e->getMessage();
+            // echo $e->getMessage();
         }
 
     }

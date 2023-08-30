@@ -2,6 +2,13 @@
 session_start();
 require_once 'conn.php';
 $conn = new Db;
+
+$ut = $_SESSION['usertype'];
+if($ut=="3") {
+    $collegeid = $_SESSION['collegeid'];
+    $depid = $_SESSION['depid'];
+}
+
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
@@ -73,7 +80,11 @@ $conn = new Db;
                                                     <select name="batch" id='batchid' class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Batch</option>
                                                             <?php 
-                                                            $sql = "SELECT * FROM `batches`";
+                                                            if($ut!="3") { 
+                                                                $sql = "SELECT * FROM `batches`";
+                                                            }else {
+                                                                $sql = "SELECT * FROM `batches` WHERE `collegeid`='$collegeid' AND `depid`='$depid' " ;
+                                                            }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
                                                             $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -241,7 +252,7 @@ $conn = new Db;
 
     <script>
         let studentDetailsOffset = 0;
-        function getStudentDetails(e) {
+        async function getStudentDetails(e) {
 
             $(".student-records")[0].style.display = "block";
             $(".loader")[0].style.display = "block";
@@ -253,22 +264,16 @@ $conn = new Db;
 
             let fd2 = new FormData();
             fd2.set('sem', $("select[name='sem']")[0].value);
-            fetch('../assets/backend/getSubjectBySem', {
+            fd2.set("batchid", batchid);
+            let resp = await fetch('../assets/backend/getSubjects', {
                 method: 'POST',
                 body: fd2
-            })
-            .then(function (response) {
-                if (response.ok) {
-                    return response.text(); 
-                }
-                throw new Error('Network response was not OK');
-            })
-            .then(function (data) {
-                subjectDetails = data;
-            })
-            .catch(function (error) {
-                console.error('Error:', error);
             });
+            
+            if(resp.ok) {
+                let data = await resp.text();
+                subjectDetails = data;
+            }
             
             let fd = new FormData();
             fd.set("offset", studentDetailsOffset);
@@ -295,6 +300,7 @@ $conn = new Db;
         }
         
         function processStudentDetails(data, subjectDetails) {
+            console.log(data);
             data = JSON.parse(data);
             if(subjectDetails!==0 && subjectDetails!==undefined) {
                 subjectDetails = JSON.parse(subjectDetails);
