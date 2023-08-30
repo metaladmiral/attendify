@@ -181,20 +181,23 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     <select name="subject" class='form-control' id="" required>
                                                         <option value="" selected disabled>Select Subject</option>
                                                         <?php 
-                                                        if($ut!="3") { 
-                                                            $sql = "SELECT * FROM `subjects`";
-                                                        }else {
-                                                            $sql = "SELECT * FROM `subjects` WHERE `collegeid`='$collegeid' AND `depid`='$depid' " ;
-                                                        }
+                                                        $sql = "SELECT * FROM `subjects` WHERE `collegeid`='$collegeid' AND `depid`='$depid' GROUP BY `subjectsem`, `subjectname` ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                        $currOptGrp = 0;
                                                         foreach ($data as $key => $value) {
+                                                            if($value['subjectsem']!=$currOptGrp) {
+                                                                echo "</optgroup>";
+                                                                echo "<optgroup label='Sem: ".$value['subjectsem']." ' >";
+                                                                $currOptGrp = $value['subjectsem'];
+                                                            }
                                                             ?>
                                                             <option value="<?php echo $value['subjectid']; ?>" 
-                                                                <?php if(isset($_GET['subject'])) { if($_GET['subject']==$value["subjectid"]) {echo "selected";} } ?>><?php echo $value['subjectname']; ?></option>
+                                                                <?php if(isset($_GET['subject'])) { if($_GET['subject']==$value["subjectid"]) {echo "selected";} } ?>><?php echo $value['subjectname']; ?> - <?php echo $value['subjectcode']; ?></option>
                                                         <?php 
                                                         }
+                                                        echo "</optgroup>";
                                                         ?>
                                                     </select>
                                                 </div>
