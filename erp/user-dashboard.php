@@ -181,7 +181,7 @@ foreach ($batchData as $key => $value) {
                                                 <?php
                                                 $ccData = json_decode($userDetails["CC"], true);
                                                     foreach ($ccData as $batchid => $sectionid) {
-                                                        $section = explode('-', $sectionId);
+                                                        $section = explode('-', $sectionid);
                                                         echo "<tr>";
                                                         echo "<td>";
                                                         echo $batches[$batchid];
