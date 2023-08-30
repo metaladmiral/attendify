@@ -5,10 +5,12 @@ $conn = new Db;
 
 
 $ut = $_SESSION['usertype'];
-if($ut=="3") {
-    $collegeid = $_SESSION['collegeid'];
-    $depid = $_SESSION['depid'];
+if($ut!="3") {
+    http_response_code(404);
+    die();
 }
+$collegeid = $_SESSION['collegeid'];
+$depid = $_SESSION['depid'];
 
 
 $showCCStatus = 0;
