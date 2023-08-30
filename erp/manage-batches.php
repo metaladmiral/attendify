@@ -203,7 +203,7 @@ $conn = new Db;
                                     </div>
                                     <div class="card-body">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered text-nowrap border-bottom" id='dtable'>
+                                            <table class="table table-bordered text-nowrap border-bottom" id='basic-datatable'>
                                                 <thead>
                                                     <tr>
                                                         <th>Batch ID</th>
