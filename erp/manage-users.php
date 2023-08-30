@@ -211,7 +211,7 @@ $conn = new Db;
                                                 <tbody>
                                                     
                                                         <?php 
-                                                        $sql = "SELECT * FROM `users` WHERE `usertype`!='0' ";
+                                                        $sql = "SELECT * FROM `users` WHERE `usertype`!='1' ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
