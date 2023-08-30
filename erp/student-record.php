@@ -265,22 +265,15 @@ if($ut=="3") {
             let fd2 = new FormData();
             fd2.set('sem', $("select[name='sem']")[0].value);
             fd2.set("batchid", batchid);
-            fetch('../assets/backend/getSubjects', {
+            let resp = await fetch('../assets/backend/getSubjects', {
                 method: 'POST',
                 body: fd2
-            })
-            .then(function (response) {
-                if (response.ok) {
-                    return response.text(); 
-                }
-                throw new Error('Network response was not OK');
-            })
-            .then(function (data) {
-                subjectDetails = data;
-            })
-            .catch(function (error) {
-                console.error('Error:', error);
             });
+            
+            if(resp.ok) {
+                let data = await resp.text();
+                subjectDetails = data;
+            }
             
             let fd = new FormData();
             fd.set("offset", studentDetailsOffset);
