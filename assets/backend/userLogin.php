@@ -21,6 +21,11 @@ class login extends db {
             $email = $arr[0]["email"];
             $fullname = $arr[0]["username"];
             $profilepic = $arr[0]["profilepic"];
+
+            if($ousertype=="3") {
+                $_SESSION['collegeid'] = $arr[0]["collegeid"];
+                $_SESSION['depid'] = $arr[0]["depid"];
+            }
             // setcookie('uid', $uid, time() + (86400 * 30), "/");
             $_SESSION['uid'] = $uid;
             $_SESSION['usertype'] = $ousertype;
