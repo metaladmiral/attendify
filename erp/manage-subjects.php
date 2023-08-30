@@ -3,6 +3,17 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
+$sql = "SELECT collegeid, label FROM `colleges` ";
+$query = $conn->mconnect()->prepare($sql);
+$query->execute();
+$clgDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
+
+$sql = "SELECT depid, label FROM `departments` ";
+$query = $conn->mconnect()->prepare($sql);
+$query->execute();
+$depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
+
+// var_dump($clgDetails);
 
 ?>
 <!doctype html>
@@ -193,12 +204,14 @@ $conn = new Db;
                                                         <th>Subject Code</th>
                                                         <th>Subject Name</th>
                                                         <th>Subject Sem</th>
+                                                        <th>College</th>
+                                                        <th>Department</th>
                                                         <th name="bstable-actions">Actions</th>
                                                 </thead>
                                                 <tbody>
                                                     
                                                         <?php 
-                                                        $sql = "SELECT subjectname as name, subjectid as id, subjectcode as code, subjectsem as sem FROM `subjects` ";
+                                                        $sql = "SELECT subjectname as name, subjectid as id, subjectcode as code, subjectsem as sem,collegeid,depid FROM `subjects` ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -211,14 +224,14 @@ $conn = new Db;
                                                                 <td><?php echo $value["code"]; ?></td>
                                                                 <td><?php echo $value["name"]; ?></td>
                                                                 <td><?php echo $value["sem"]; ?></td>
+                                                                <td><?php echo $clgDetails[$value["collegeid"]]; ?></td>
+                                                                <td><?php echo $depDetails[$value["depid"]]; ?></td>
                                                                 <td name="bstable-actions"><div class="btn-list">
                                                                 <button id="bEdit" type="button" class="btn btn-sm btn-primary" onclick="window.location = 'edit-subject?sid=<?php echo $value['id']; ?>';">
                                                                     <span class="fe fe-edit"> </span>
                                                                 </button>
                                                             </div></td>
                                                             
-
-                                                
                                                                 </tr>
 
                                                             <?php
