@@ -144,7 +144,7 @@ $depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
                             $("#collegeSelect").change(function() {
                                 // alert('prakhar');
                                 let val = $(this).val();
-                                if(val.length) {
+                                if(val) {
                                     let arr = [val];
                                     enableDep(JSON.stringify(arr));
                                 }

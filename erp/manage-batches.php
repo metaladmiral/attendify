@@ -147,7 +147,7 @@ $conn = new Db;
                             $("#collegeSelect").change(function() {
                                 // alert('prakhar');
                                 let val = $(this).val();
-                                if(val.length) {
+                                if(val) {
                                     let arr = [val];
                                     enableDep(JSON.stringify(arr));
                                 }

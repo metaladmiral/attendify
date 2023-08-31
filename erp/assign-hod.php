@@ -144,7 +144,7 @@ if(isset($_GET['collegeid']) && isset($_GET['depid'])) {
                             $("#collegeSelect").change(function() {
                                 // alert('prakhar');
                                 let val = $(this).val();
-                                if(val.length) {
+                                if(val) {
                                     let arr = [val];
                                     enableDep(JSON.stringify(arr));
                                 }
