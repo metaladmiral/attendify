@@ -9,7 +9,9 @@ if($ut!="3") {
     die();
 }
 $collegeid = $_SESSION['collegeid'];
-$depid = $_SESSION['depid'];
+$depid = json_decode($_SESSION['depid'], true);
+$depidFT = implode(" OR ", $depid);
+$depidin = "'".implode("', '", $depid)."'";
 
 
 $showFacultyStatus = 0;
@@ -108,13 +110,14 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-4">
+                                                    <label for="" class="form-label">Select Batch:</label>
                                                     <select name="batch" class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Batch</option>
                                                             <?php 
                                                             if($ut!="3") { 
                                                                 $sql = "SELECT * FROM `batches`";
                                                             }else {
-                                                                $sql = "SELECT * FROM `batches` WHERE `collegeid`='$collegeid' AND `depid`='$depid' " ;
+                                                                $sql = "SELECT * FROM `batches` WHERE `depid` IN ($depidin) " ;
                                                             }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
@@ -130,8 +133,8 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <select name="section[]" class='form-control form-select select2' id="" multiple>
-                                                        <option value="" selected disabled>Select Section</option>
+                                                    <label for="" class="form-label">Select Section:</label>
+                                                    <select name="section[]" class='form-control form-select select2' id="" required multiple>
                                                         <?php
                                                             for($i=65;$i<=73;$i++) {
                                                                 $p = 1;
@@ -148,10 +151,11 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <select name="subject" class='form-control form-select select2' id="">
+                                                    <label for="" class="form-label">Select Subject:</label>
+                                                    <select name="subject" class='form-control form-select select2' id="" required>
                                                         <option value="" selected disabled>Select Subject</option>
                                                         <?php 
-                                                        $sql = "SELECT * FROM `subjects` WHERE `collegeid`='$collegeid' AND `depid`='$depid' GROUP BY `subjectsem`, `subjectname` ";
+                                                        $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -237,7 +241,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                             <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required searchable>
                                                 <option value="" disabled selected>Select Faculty</option>
                                                 <?php 
-                                                   $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND `collegeid`='$collegeid' AND `depid`='$depid'  ";
+                                                   $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE) ";
                                                    $query = $conn->mconnect()->prepare($sql);
                                                    $query->execute();
                                                    $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -265,7 +269,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                     <option value="" disabled selected>Select Faculty</option>
                                                     <?php 
-                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND `collegeid`='$collegeid' AND `depid`='$depid' ";
+                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE) ";
                                                     $query = $conn->mconnect()->prepare($sql);
                                                     $query->execute();
                                                     $data= $query->fetchAll(PDO::FETCH_ASSOC);
