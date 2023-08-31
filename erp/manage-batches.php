@@ -147,12 +147,22 @@ $conn = new Db;
                             $("#collegeSelect").change(function() {
                                 // alert('prakhar');
                                 let val = $(this).val();
-                                if(val) {
-                                    enableDep(val);
+                                if(val.length) {
+                                    let arr = [val];
+                                    enableDep(JSON.stringify(arr));
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    // $("#depSelect").html("<option value='' selected disabled>Select Department</option>");
                                 }
                             });
                             async function enableDep(collegeid) {
-                                let resp = await fetch(`../assets/backend/getCollegeDepartments?collegeid=${collegeid}`);
+                                let fd = new FormData();
+                                fd.set('collegeids', collegeid);
+                                let resp = await fetch(`../assets/backend/getCollegeDepartments`, {
+                                    method: "POST",
+                                    body: fd
+                                });
                                 if(resp.ok) {
                                     const data = await resp.text();
                                     if(data=="0") {
@@ -173,7 +183,7 @@ $conn = new Db;
 
                                         for(let key in depData) {
                                             html += `
-                                                <option value="${key}">${depData[key]}</option>
+                                                <option value="${depData[key].depid}">${depData[key].depLabel} - ${depData[key].clgLabel}</option>
                                             `;
                                         }
                                         if(html) {
