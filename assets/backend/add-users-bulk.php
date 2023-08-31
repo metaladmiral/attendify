@@ -36,7 +36,7 @@ else {
            $empid = $value[0];
            $username = $value[1];
            $email = $value[2];
-           $password = $value[3];
+           $password = md5($value[3]);
            $collegeid = $value[4];
            $depid = $value[5];
            $number = $value[6];
