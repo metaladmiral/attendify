@@ -70,7 +70,7 @@ $conn = new Db;
                                         
                                         <div class="form-group col-3">
                                             <label for="exampleInputEmail1" class="form-label">College</label>
-                                            <select name="collegeid" id="collegeSelect" class="form-control" required>    
+                                            <select name="collegeid" id="collegeSelect" class="form-control form-select select2" required>    
                                                 <option value="" selected disabled>Select College</option>
                                                 <?php
                                                 $sql = "SELECT collegeid, label FROM `colleges`";
@@ -88,7 +88,7 @@ $conn = new Db;
                                         </div>
                                         <div class="form-group col-3">
                                             <label for="exampleInputEmail1" class="form-label">Department <sup class="text-danger">(Select College First)</sup></label>
-                                            <select name="depid" id="depSelect" class="form-control" onclick="" disabled="1" required>
+                                            <select name="depid" id="depSelect" class="form-control form-select select2" onclick="" disabled="1" required>
                                                 <option value="" selected disabled>Select Department</option>
                                             </select>
                                         </div>
