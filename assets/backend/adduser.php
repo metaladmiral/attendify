@@ -19,11 +19,10 @@ if(isset($_POST['submit'])){
             $password = md5($_POST['password']);
             $usertype = $_POST['usertype'];
 
-            // if($usertype=="3") {
-            //     $deps = array();
-            //     array_push($deps, $depid);
-            //     $depid = json_encode($deps);
-            // }
+            if($usertype=="3") {
+                $depid = "[]";
+                $collegeid = "[]";
+            }
             
             $sql = "INSERT INTO `users`(uid, email, username, password, usertype, lastlogin, collegeid, depid, empid, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $query = $conn->mconnect()->prepare($sql);
