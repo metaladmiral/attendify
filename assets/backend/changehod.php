@@ -15,16 +15,41 @@ if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
             $depid = $_POST['depid'];
 
 
-            $sql = "UPDATE `users` SET `collegeid`='$collegeid', `depid`='$depid' WHERE `uid`='$hodId' ";
+            $sql = " SELECT depid FROM `users` WHERE `uid`='$hodId' ";
+            $query = $conn->mconnect()->prepare($sql);
+            $query->execute();
+            $depIdsPrev = $query->fetch(PDO::FETCH_COLUMN);
+            
+            $depIdsNew = json_decode($depIdsPrev, true);
+            array_push($depIdsNew, $depid);
+
+            $depIdsNew = json_encode($depIdsNew);
+            
+            $sql = "UPDATE `users` SET `collegeid`='$collegeid', `depid`='$depIdsNew' WHERE `uid`='$hodId' ";
             $query = $conn->mconnect()->prepare($sql);
             $query->execute();
             
             if(isset($_POST['updatehod'])) {
                 $prevHodId = $_POST['prevhod'];
-                
-                $sql = "UPDATE `users` SET `collegeid`='-', `depid`='-' WHERE `uid`='$prevHodId' ";
+
+                $sql = " SELECT depid FROM `users` WHERE `uid`='$prevHodId' ";
                 $query = $conn->mconnect()->prepare($sql);
                 $query->execute();
+                $depIdsPrev = $query->fetch(PDO::FETCH_COLUMN)["depid"];
+
+                $depsIdsNew = $depIdsPrev;
+                $key = array_search($depid, $depIdsPrev);
+                if($key) {
+
+                    unset($depsIdsNew[$key]);
+                    $depsIdsNew = array_values($depsIdsNew);
+                    $depsIdsNew = json_encode($depsIdsNew);
+
+                    $sql = "UPDATE `users` SET `collegeid`='-', `depid`='$depsIdsNew' WHERE `uid`='$prevHodId' ";
+                    $query = $conn->mconnect()->prepare($sql);
+                    $query->execute();
+                }
+                
 
             }
             $_SESSION['succ'] = 1;

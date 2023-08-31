@@ -85,7 +85,7 @@ $depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
                                         <div class="row">
                                             <div class="form-group col-6">
                                                 <label for="exampleInputEmail1" class="form-label">College</label>
-                                                <select name="collegeid" id="collegeSelect" class="form-control" required>    
+                                                <select name="collegeid" id="collegeSelect" class="form-control form-select select2" required>    
                                                     <option value="" selected disabled>Select College</option>
                                                     <?php
                                                     $sql = "SELECT collegeid, label FROM `colleges`";
@@ -102,7 +102,7 @@ $depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
                                             </div>
                                             <div class="form-group col-6">
                                             <label for="exampleInputEmail1" class="form-label">Department <sup class="text-danger">(Select College First)</sup></label>
-                                            <select name="depid" id="depSelect" class="form-control" onclick="" disabled="1" required>
+                                            <select name="depid" id="depSelect" class="form-control form-select select2" onclick="" disabled="1" required>
                                                 <option value="" selected disabled>Select Department</option>
                                             </select>
                                         </div>
@@ -145,11 +145,21 @@ $depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
                                 // alert('prakhar');
                                 let val = $(this).val();
                                 if(val) {
-                                    enableDep(val);
+                                    let arr = [val];
+                                    enableDep(JSON.stringify(arr));
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    // $("#depSelect").html("<option value='' selected disabled>Select Department</option>");
                                 }
                             });
                             async function enableDep(collegeid) {
-                                let resp = await fetch(`../assets/backend/getCollegeDepartments?collegeid=${collegeid}`);
+                                let fd = new FormData();
+                                fd.set('collegeids', collegeid);
+                                let resp = await fetch(`../assets/backend/getCollegeDepartments`, {
+                                    method: "POST",
+                                    body: fd
+                                });
                                 if(resp.ok) {
                                     const data = await resp.text();
                                     if(data=="0") {
@@ -169,7 +179,7 @@ $depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
 
                                         for(let key in depData) {
                                             html += `
-                                                <option value="${key}">${depData[key]}</option>
+                                                <option value="${depData[key].depid}">${depData[key].depLabel} - ${depData[key].clgLabel}</option>
                                             `;
                                         }
                                         if(html) {

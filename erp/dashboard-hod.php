@@ -3,20 +3,19 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
+$depid = json_decode($_SESSION['depid'], true);
 $collegeid = $_SESSION['collegeid'];
-$depid = $_SESSION['depid'];
-$sql = $conn->mconnect()->prepare("SELECT a.`label` as depLabel, b.`label` as clgLabel FROM `departments` a INNER JOIN `colleges` b ON a.collegeid=b.collegeid WHERE a.`collegeid`='$collegeid' AND a.`depid`='$depid' ");
-$sql->execute();
-$depDetails = $sql->fetch   (PDO::FETCH_ASSOC);
 
+$depidFT = implode(" OR ", $depid);
+$depidin = "'".implode("', '", $depid)."'";
 
-$sql = $conn->mconnect()->prepare("SELECT id FROM `users` WHERE `collegeid`='$collegeid' AND `depid`='$depid' ");
+$sql = $conn->mconnect()->prepare("SELECT id FROM `users` WHERE MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE) AND `usertype`='2' ");
 $sql->execute();
 $totalUsers = $sql->rowCount();
-$sql = $conn->mconnect()->prepare("SELECT id FROM `subjects`  WHERE `collegeid`='$collegeid' AND `depid`='$depid' ");
+$sql = $conn->mconnect()->prepare("SELECT id FROM `subjects` WHERE `depid` IN ($depidin) ");
 $sql->execute();
 $totalSubjects = $sql->rowCount();
-$sql = $conn->mconnect()->prepare("SELECT batchid FROM `batches`  WHERE `collegeid`='$collegeid' AND `depid`='$depid' ORDER BY `id` ASC ");
+$sql = $conn->mconnect()->prepare("SELECT batchid FROM `batches` WHERE `depid` IN ($depidin) ORDER BY `id` ASC ");
 $sql->execute();
 $totalBatches = $sql->rowCount();
 $batches = $sql->fetchAll(PDO::FETCH_COLUMN);
@@ -25,11 +24,11 @@ $sql = $conn->mconnect()->prepare("SELECT id FROM `students` WHERE `batchid` IN 
 $sql->execute();
 $totalStudents = $sql->rowCount();
 
-$sql = $conn->mconnect()->prepare("SELECT batchLabel, sectionCC FROM `batches` WHERE `collegeid`='$collegeid' AND `depid`='$depid' ");
+$sql = $conn->mconnect()->prepare("SELECT batchLabel, sectionCC FROM `batches` WHERE `depid` IN ($depidin) ");
 $sql->execute();
 $ccData = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-$sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` WHERE `collegeid`='$collegeid' AND `depid`='$depid' ");
+$sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` WHERE `depid` IN ($depidin) ");
 $sql->execute();
 $facultyAssignData = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -116,7 +115,7 @@ foreach ($facultyInfo as $key => $value) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title"><?php echo $depDetails['depLabel']."-".$depDetails['clgLabel']; ?> Hod Dashboard</h1>
+                            <h1 class="page-title">HOD Dashboard</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -326,7 +325,7 @@ foreach ($facultyInfo as $key => $value) {
                                                 <tbody>
                                                     <?php
 
-                                                    $sql = $conn->mconnect()->prepare("SELECT subjectcode, subjectname, subjectsem FROM `subjects` WHERE `collegeid`='$collegeid' AND `depid`='$depid' ");
+                                                    $sql = $conn->mconnect()->prepare("SELECT subjectcode, subjectname, subjectsem FROM `subjects` WHERE `depid` IN ($depidin)");
                                                     $sql->execute();
                                                     foreach ($sql->fetchAll(PDO::FETCH_ASSOC) as $key => $value) {
                                                         echo "<tr>";

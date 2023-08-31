@@ -29,8 +29,6 @@ $conn = new Db;
     <link href="../assets/switcher/css/switcher.css" rel="stylesheet">
     <link href="../assets/switcher/demo.css" rel="stylesheet">
 
-     
-    
 </head>
 <body class="app sidebar-mini ltr light-mode">
     <!-- GLOBAL-LOADER -->
@@ -71,9 +69,9 @@ $conn = new Db;
                                     <div class="">
                                         <div class="row">
                                             <div class="form-group col-6">
-                                                <label for="exampleInputEmail1" class="form-label">College</label>
-                                                <select name="collegeid" id="collegeSelect" class="form-control" required>    
-                                                    <option value="" selected disabled>Select College</option>
+                                                <label for="exampleInputEmail1" class="form-label">Select Colleges: </label>
+                                                <select name="collegeid[]" id="collegeSelect" class="form-control form-select select2" multiple required>    
+
                                                     <?php
                                                     $sql = "SELECT collegeid, label FROM `colleges`";
                                                     $query = $conn->mconnect()->prepare($sql);
@@ -88,9 +86,8 @@ $conn = new Db;
                                                 </select>
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="exampleInputEmail1" class="form-label">Department <sup class="text-danger">(Select College First)</sup></label>
-                                                <select name="depid" id="depSelect" class="form-control" onclick="" disabled="1" required>
-                                                    <option value="" selected disabled>Select Department</option>
+                                                <label for="exampleInputEmail1" class="form-label">Select Departments: <sup class="text-danger">(Select College First)</sup></label>
+                                                <select name="depid[]" id="depSelect" class="form-control form-select select2" onclick="" disabled="1" multiple required>
                                                 </select>
                                             </div>
                                         </div>
@@ -98,7 +95,7 @@ $conn = new Db;
                                         <div class="row">
                                             <div class="form-group col-6">
                                                 <label for="" class="form-label">Employee ID</label>
-                                                <input type="number" class="form-control" name="empid" placeholder="Employee ID">
+                                                <input type="number" class="form-control" name="empid" placeholder="Employee ID" required>
                                             </div>
                                             <div class="form-group col-6">
                                                 <label for="" class="form-label">Phone Number</label>
@@ -142,14 +139,23 @@ $conn = new Db;
                         <script>
                             
                             $("#collegeSelect").change(function() {
-                                // alert('prakhar');
+
                                 let val = $(this).val();
-                                if(val) {
-                                    enableDep(val);
+                                if(val.length) {
+                                    enableDep(JSON.stringify(val));
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    // $("#depSelect").html("<option value='' selected disabled>Select Department</option>");
                                 }
                             });
-                            async function enableDep(collegeid) {
-                                let resp = await fetch(`../assets/backend/getCollegeDepartments?collegeid=${collegeid}`);
+                            async function enableDep(collegeids) {
+                                let fd = new FormData();
+                                fd.set('collegeids', collegeids);
+                                let resp = await fetch(`../assets/backend/getCollegeDepartments`, {
+                                    method: "POST",
+                                    body: fd,
+                                });
                                 if(resp.ok) {
                                     const data = await resp.text();
                                     if(data=="0") {
@@ -164,12 +170,13 @@ $conn = new Db;
                                     }
                                     else {
                                         let depData = JSON.parse(data);
-                                        let html = "<option value='' selected disabled>Select Department</option>";
+                                        // let html = "<option value='' selected disabled>Select Department</option>";
+                                        let html = "";
                                         $("#depSelect").text('');
 
                                         for(let key in depData) {
                                             html += `
-                                                <option value="${key}">${depData[key]}</option>
+                                                <option value="${depData[key].depid}">${depData[key].depLabel} - ${depData[key].clgLabel}</option>
                                             `;
                                         }
                                         if(html) {
