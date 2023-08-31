@@ -18,24 +18,8 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     $showFacultyStatus = 1;
 
     $batch = $_GET['batch'];
-    $section = $_GET['section'];
+    $sections = $_GET['section'];
     $subjectID = $_GET['subject'];
-
-    $query = $conn->mconnect()->prepare("SELECT faculty FROM `batches` WHERE `batchid`='$batch' ");
-    $query->execute();
-    
-    $assignHistory = $query->fetch(PDO::FETCH_COLUMN);
-    $assignHistory = json_decode($assignHistory, true);
-
-    $assignedFacultyId = null;
-    if(isset($assignHistory[$section][$subjectID])) {
-        $subjectAssigned = 1;
-        $assignedFacultyId = $assignHistory[$section][$subjectID];
-
-    }else {
-        $subjectAssigned = 0;
-
-    }
     
 }
 
@@ -75,6 +59,11 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
         }
     </style>
 </head>
+<style>
+    .amsify-selection-list {
+        width: 721px !important;
+    }
+</style>
 <body class="app sidebar-mini ltr light-mode">
     <!-- GLOBAL-LOADER -->
     <div id="global-loader">
@@ -119,7 +108,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-4">
-                                                    <select name="batch" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                                    <select name="batch" class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Batch</option>
                                                             <?php 
                                                             if($ut!="3") { 
@@ -141,7 +130,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <select name="section" class='form-control' id="">
+                                                    <select name="section[]" class='form-control form-select select2' id="" multiple>
                                                         <option value="" selected disabled>Select Section</option>
                                                         <?php
                                                             for($i=65;$i<=73;$i++) {
@@ -159,7 +148,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <select name="subject" class='form-control' id="">
+                                                    <select name="subject" class='form-control form-select select2' id="">
                                                         <option value="" selected disabled>Select Subject</option>
                                                         <?php 
                                                         $sql = "SELECT * FROM `subjects` WHERE `collegeid`='$collegeid' AND `depid`='$depid' GROUP BY `subjectsem`, `subjectname` ";
@@ -194,11 +183,37 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                             </div>
                         </div>
                         
-                        <?php if($showFacultyStatus) { ?>
+                        <?php if($showFacultyStatus) { 
+
+
+                            $query = $conn->mconnect()->prepare("SELECT faculty FROM `batches` WHERE `batchid`='$batch' ");
+                            $query->execute();
+
+                            $assignHistory = $query->fetch(PDO::FETCH_COLUMN);
+                            $assignHistory = json_decode($assignHistory, true);
+
+
+                            foreach ($sections as $key => $value) {
+
+                                $assignedFacultyId = null;
+                                if(isset($assignHistory[$value][$subjectID])) {
+                                    $subjectAssigned = 1;
+                                    $assignedFacultyId = $assignHistory[$value][$subjectID];
+
+                                }else {
+                                    $subjectAssigned = 0;
+
+                                }
+
+                                $section = explode('-', $value);
+                                $section = chr($section[0]+64).$section[1];
+
+                            ?>
+
                         <div class="col-12">
-                            <div class="card">
+                            <div class="card card-collapsed">
                                 <div class="card-header">
-                                    <h3 class="card-title">Assign Faculty</h3>
+                                    <h3 class="card-title">Assign Faculty (<?php echo $section; ?>)</h3>
                                     <div class="card-options">
                                         <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
                                         <a href="javascript:void(0)" class="card-options-remove" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a>
@@ -207,7 +222,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                 <div class="card-body">
                                     <form action="../assets/backend/assignSubjectFaculty" method="POST">
                                         <input type="hidden" name="batchid" value="<?php echo $_GET['batch']; ?>">
-                                        <input type="hidden" name="sectionid" value="<?php echo $_GET['section']; ?>">
+                                        <input type="hidden" name="sectionid" value="<?php echo $value; ?>">
                                         <input type="hidden" name="subjectid" value="<?php echo $_GET['subject']; ?>">
                                     <?php
                                     
@@ -250,7 +265,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                     <option value="" disabled selected>Select Faculty</option>
                                                     <?php 
-                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' ";
+                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND `collegeid`='$collegeid' AND `depid`='$depid' ";
                                                     $query = $conn->mconnect()->prepare($sql);
                                                     $query->execute();
                                                     $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -288,6 +303,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                             </div>
                         </div>
 
+                        <?php } ?>
                         <?php } ?>
                         
                         <!-- BODY CONTENT END -->
@@ -328,6 +344,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     <script src="../assets/plugins/chart/utils.js"></script>
     <!-- INTERNAL SELECT2 JS -->
     <script src="../assets/plugins/select2/select2.full.min.js"></script>
+    <script src="../assets/js/select2.js"></script>
     <!-- INTERNAL Data tables js-->
     <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
     <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
