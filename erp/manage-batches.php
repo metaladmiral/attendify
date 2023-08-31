@@ -223,6 +223,41 @@ $conn = new Db;
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+
+                                                <script>
+                                                    async function toggleDep(batchid, appliedDepId, toApplied) {
+                                                        if(confirm("Are you sure to toggle the department to Applied Science?")) {
+                                                            const url = "../assets/backend/toggleDepartment";
+                                                            const formData = new FormData();
+
+                                                            formData.append("batchid", batchid);
+                                                            formData.append("appliedDepId", appliedDepId);
+                                                            formData.append("toApplied", toApplied);
+
+                                                            try {
+                                                                const response = await fetch(url, {
+                                                                    method: "POST",
+                                                                    body: formData,
+                                                                });
+
+                                                                if (response.ok) {
+                                                                    const data = await response.json();
+                                                                    console.log("Response data:", data);
+                                                                    return true;
+                                                                } else {
+                                                                    console.error("Request failed with status:", response.status);
+                                                                    return false;
+                                                                }
+                                                            } catch (error) {
+                                                                return false;
+                                                                console.log("An error occurred:", error);
+                                                            }
+                                                        }
+                                                        else {
+                                                            return false;
+                                                        }
+                                                    }
+                                                </script>
                                                     
                                                         <?php 
                                                         $sql = "SELECT * FROM `batches`";
@@ -231,8 +266,11 @@ $conn = new Db;
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
 
                                                         foreach ($row as $key => $value) {
+                                                            $rand = uniqid();
+                                                            $depid = $value["depid"];
+                                                            $collegeid = $value["collegeid"];
                                                             
-                                                            $sql = "SELECT username FROM `users` WHERE `usertype`='3' AND `collegeid`='".$value['collegeid']."' AND `depid`='".$value['depid']."' ";
+                                                            $sql = "SELECT username FROM `users` WHERE `usertype`='3' AND MATCH(`depid`) AGAINST ('$depid' IN BOOLEAN MODE) ";
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
                                                             $hod = $query->fetch(PDO::FETCH_COLUMN);
@@ -245,8 +283,12 @@ $conn = new Db;
                                                                 <td><?php echo $hod; ?></td>
                                                                 <td>
                                                                     <div class="material-switch">
-                                                                        <input id="someSwitchOptionPrimary" name="someSwitchOption001" type="checkbox">
-                                                                        <label for="someSwitchOptionPrimary" class="label-primary"></label>
+                                                                        <input id="toggleDep_<?php echo $rand; ?>" name="someSwitchOption001" type="checkbox"
+                                                                        <?php if(gettype(array_search($depid, array("asd12a", "asdaqwe123")))=="integer") { $toApplied="0"; echo "checked"; }else {$toApplied = "1";} ?>
+                                                                        <?php if($collegeid == "64ed7eada8d43") {$appliedDepId = "asd12a"; }else {$appliedDepId = "asdaqwe123";} ?>
+                                                                        onchange="toggleDep('<?php echo $value["batchid"] ?>', '<?php echo $appliedDepId; ?>', '<?php echo $toApplied; ?>');"
+                                                                        >
+                                                                        <label for="toggleDep_<?php echo $rand; ?>" class="label-primary"></label>
                                                                     </div>
                                                                 
                                                                 </td>
