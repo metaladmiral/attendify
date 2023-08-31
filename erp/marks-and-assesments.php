@@ -19,14 +19,10 @@ if(is_null($data) || count($data)==0) {
     
     $processedBatchsAssigned = "'".implode("', '", $allBatchesAssigned)."'";
     
-    $sql = $conn->mconnect()->prepare("SELECT batchLabel, batchid FROM `batches` WHERE `batchid` IN (".$processedBatchsAssigned.") ");
+    $sql = $conn->mconnect()->prepare("SELECT batchid, batchLabel FROM `batches` WHERE `batchid` IN (".$processedBatchsAssigned.") ");
     $sql->execute();
-    $batchLabelData = $sql->fetchAll(PDO::FETCH_ASSOC);
+    $batchData = $sql->fetchAll(PDO::FETCH_KEY_PAIR);
     
-    $batchData = array();
-    foreach ($batchLabelData as $key => $value) {
-        $batchData[$value["batchid"]] = $value["batchLabel"];
-    }
 }
 
 ?>
@@ -88,11 +84,12 @@ if(is_null($data) || count($data)==0) {
                         </div>
                         
                         <!-- BODY CONTENT -->
-
-                        <?php
+                        <div id="assignSubjects"><?php
+                        $nullCount = 0;
                         if(!$dataNull) {
                             foreach ($data as $key => $value) {
                                 foreach ($value as $key_ => $value_) {
+                                    if(!$value_) {continue;}
                                     $sectionInfo = explode('-', $key_);
                                     foreach($value_ as $key__ => $subjectDetails) {
                                     $randId = uniqid();
@@ -156,8 +153,7 @@ if(is_null($data) || count($data)==0) {
                             echo "No Subjects are currently assinged to you!";
                         }
 
-                        ?>
-            
+                        ?></div>
                         <!-- BODY CONTENT END -->
                         
                     </div>
@@ -444,6 +440,15 @@ if(is_null($data) || count($data)==0) {
     }
 </script>
 
+<script>
+    $(document).ready(function() {
+        let html = $("#assignSubjects")[0].innerHTML;
+        console.log(html);
+        if(!html) {
+            $("#assignSubjects")[0].innerHTML = "No Subjects are currently assinged to you!";
+        }
+    });
+</script>
 
 </body>
 </html>
