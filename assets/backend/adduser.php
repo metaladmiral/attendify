@@ -8,8 +8,8 @@ if(isset($_POST['submit'])){
         $conn = new Db;
         try{
 
-            $collegeid = $_POST['collegeid'];
-            $depid= $_POST['depid'];
+            $collegeid = json_encode($_POST['collegeid']);
+            $depid= json_encode($_POST['depid']);
             $empid = $_POST['empid'];
             $number = $_POST['phone'];
 
@@ -18,6 +18,12 @@ if(isset($_POST['submit'])){
             $uid = substr($email, 0, 4)."".uniqid();
             $password = md5($_POST['password']);
             $usertype = $_POST['usertype'];
+
+            // if($usertype=="3") {
+            //     $deps = array();
+            //     array_push($deps, $depid);
+            //     $depid = json_encode($deps);
+            // }
             
             $sql = "INSERT INTO `users`(uid, email, username, password, usertype, lastlogin, collegeid, depid, empid, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $query = $conn->mconnect()->prepare($sql);
