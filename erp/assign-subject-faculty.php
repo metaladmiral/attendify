@@ -215,7 +215,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                             ?>
 
                         <div class="col-12">
-                            <div class="card card-collapsed">
+                            <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">Assign Faculty (<?php echo $section; ?>)</h3>
                                     <div class="card-options">
