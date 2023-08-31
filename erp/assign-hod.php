@@ -11,7 +11,7 @@ if(isset($_GET['collegeid']) && isset($_GET['depid'])) {
     $collegeid = $_GET['collegeid'];
     $depid = $_GET['depid'];
 
-    $query = $conn->mconnect()->prepare("SELECT uid, email, username FROM `users` WHERE `collegeid`='$collegeid' AND `depid`='$depid' AND `usertype`='3' ");
+    $query = $conn->mconnect()->prepare("SELECT uid, email, username FROM `users` WHERE MATCH(`depid`) AGAINST ('$depid' IN BOOLEAN MODE) AND `usertype`='3' ");
     $query->execute();
     if($query->rowCount()) {
          $details = $query->fetch(PDO::FETCH_ASSOC);
