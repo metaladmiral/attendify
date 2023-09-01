@@ -198,7 +198,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
 
 
                             foreach ($sections as $key => $value) {
-
+                                $rand = uniqid();
                                 $assignedFacultyId = null;
                                 if(isset($assignHistory[$value][$subjectID])) {
                                     if($assignHistory[$value][$subjectID]) {
@@ -262,7 +262,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                         }
                                         else {
                                             ?>
-                                            <b><label for="">Faculty Assigned: </label></b> <span class='text-success'>Yes</span> : <span class='currFacultyUsername'></span>
+                                            <b><label for="">Faculty Assigned: </label></b> <span class='text-success'>Yes</span> : <span class='currFacultyUsername_<?php echo $rand; ?>'></span>
                                             <br>
                                             <br>
                                             <label for="">Select Faculty (Faculty): </label>
@@ -299,7 +299,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 <button class='btn btn-primary' type='submit' name="updatesubjectfaculty">Update Faculty</button>
 
                                                  <script>
-                                                    document.querySelector(".currFacultyUsername").innerHTML = "(<?php echo $currFacultyusername; ?> - <?php echo $currFacultyEmpID; ?>)";
+                                                    document.querySelector(".currFacultyUsername_<?php echo $rand; ?>").innerHTML = "(<?php echo $currFacultyusername; ?> - <?php echo $currFacultyEmpID; ?>)";
                                                  </script>       
 
                                             <?php
