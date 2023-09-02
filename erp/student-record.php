@@ -6,8 +6,11 @@ $conn = new Db;
 $ut = $_SESSION['usertype'];
 if($ut=="3") {
     $collegeid = $_SESSION['collegeid'];
-    $depid = $_SESSION['depid'];
+    $depid = json_decode($_SESSION['depid'], true);
+    $depidFT = implode(" OR ", $depid);
+    $depidin = "'".implode("', '", $depid)."'";
 }
+
 
 ?>
 <!doctype html>
@@ -77,13 +80,13 @@ if($ut=="3") {
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-4">
-                                                    <select name="batch" id='batchid' class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                                    <select name="batch" id='batchid' class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Batch</option>
                                                             <?php 
                                                             if($ut!="3") { 
                                                                 $sql = "SELECT * FROM `batches`";
                                                             }else {
-                                                                $sql = "SELECT * FROM `batches` WHERE `collegeid`='$collegeid' AND `depid`='$depid' " ;
+                                                                $sql = "SELECT * FROM `batches` WHERE `depid` IN ($depidin) " ;
                                                             }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
@@ -99,7 +102,7 @@ if($ut=="3") {
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <select name="section" id='sectionid' class='form-control' id="">
+                                                    <select name="section" id='sectionid' class='form-control form-select select2' id="">
                                                         <option value="" selected disabled>Select Section</option>
                                                         <?php
                                                             for($i=65;$i<=74;$i++) {
@@ -117,7 +120,7 @@ if($ut=="3") {
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <select name="sem" id='sem' class='form-control' id="">
+                                                    <select name="sem" id='sem' class='form-control form-select select2' id="">
                                                         <option value="" selected disabled>Select Semester</option>
                                                         <?php
                                                             for($i=1;$i<=8;$i++) {

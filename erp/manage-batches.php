@@ -70,7 +70,7 @@ $conn = new Db;
                                         
                                         <div class="form-group col-3">
                                             <label for="exampleInputEmail1" class="form-label">College</label>
-                                            <select name="collegeid" id="collegeSelect" class="form-control" required>    
+                                            <select name="collegeid" id="collegeSelect" class="form-control form-select select2" required>    
                                                 <option value="" selected disabled>Select College</option>
                                                 <?php
                                                 $sql = "SELECT collegeid, label FROM `colleges`";
@@ -88,7 +88,7 @@ $conn = new Db;
                                         </div>
                                         <div class="form-group col-3">
                                             <label for="exampleInputEmail1" class="form-label">Department <sup class="text-danger">(Select College First)</sup></label>
-                                            <select name="depid" id="depSelect" class="form-control" onclick="" disabled="1" required>
+                                            <select name="depid" id="depSelect" class="form-control form-select select2" onclick="" disabled="1" required>
                                                 <option value="" selected disabled>Select Department</option>
                                             </select>
                                         </div>
@@ -112,7 +112,7 @@ $conn = new Db;
                                                     <select name="startDate" id="" class="form-control col-12" required>
                                                             <option value="" disabled selected>Start</option>
                                                         <?php
-                                                        for($i=1995;$i<=2500;$i++) {
+                                                        for($i=2020;$i<=2027;$i++) {
                                                             ?>
                                                             <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                                                             <?php
@@ -125,7 +125,7 @@ $conn = new Db;
                                                     <select name="endDate" id="" class="form-control col-12" required>
                                                         <option value="" disabled selected>End</option>
                                                            <?php
-                                                           for($i=1995;$i<=2500;$i++) {
+                                                           for($i=2020;$i<=2027;$i++) {
                                                             ?>
                                                             <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                                                             <?php
@@ -148,11 +148,21 @@ $conn = new Db;
                                 // alert('prakhar');
                                 let val = $(this).val();
                                 if(val) {
-                                    enableDep(val);
+                                    let arr = [val];
+                                    enableDep(JSON.stringify(arr));
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    // $("#depSelect").html("<option value='' selected disabled>Select Department</option>");
                                 }
                             });
                             async function enableDep(collegeid) {
-                                let resp = await fetch(`../assets/backend/getCollegeDepartments?collegeid=${collegeid}`);
+                                let fd = new FormData();
+                                fd.set('collegeids', collegeid);
+                                let resp = await fetch(`../assets/backend/getCollegeDepartments`, {
+                                    method: "POST",
+                                    body: fd
+                                });
                                 if(resp.ok) {
                                     const data = await resp.text();
                                     if(data=="0") {
@@ -173,7 +183,7 @@ $conn = new Db;
 
                                         for(let key in depData) {
                                             html += `
-                                                <option value="${key}">${depData[key]}</option>
+                                                <option value="${depData[key].depid}">${depData[key].depLabel} - ${depData[key].clgLabel}</option>
                                             `;
                                         }
                                         if(html) {
@@ -213,6 +223,41 @@ $conn = new Db;
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+
+                                                <script>
+                                                    async function toggleDep(batchid, appliedDepId, toApplied) {
+                                                        if(confirm("Are you sure to toggle the department to Applied Science?")) {
+                                                            const url = "../assets/backend/toggleDepartment";
+                                                            const formData = new FormData();
+
+                                                            formData.append("batchid", batchid);
+                                                            formData.append("appliedDepId", appliedDepId);
+                                                            formData.append("toApplied", toApplied);
+
+                                                            try {
+                                                                const response = await fetch(url, {
+                                                                    method: "POST",
+                                                                    body: formData,
+                                                                });
+
+                                                                if (response.ok) {
+                                                                    const data = await response.json();
+                                                                    console.log("Response data:", data);
+                                                                    location.reload();
+                                                                } else {
+                                                                    console.error("Request failed with status:", response.status);
+                                                                    return false;
+                                                                }
+                                                            } catch (error) {
+                                                                return false;
+                                                                console.log("An error occurred:", error);
+                                                            }
+                                                        }
+                                                        else {
+                                                            return false;
+                                                        }
+                                                    }
+                                                </script>
                                                     
                                                         <?php 
                                                         $sql = "SELECT * FROM `batches`";
@@ -221,8 +266,11 @@ $conn = new Db;
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
 
                                                         foreach ($row as $key => $value) {
+                                                            $rand = uniqid();
+                                                            $depid = $value["depid"];
+                                                            $collegeid = $value["collegeid"];
                                                             
-                                                            $sql = "SELECT username FROM `users` WHERE `usertype`='3' AND `collegeid`='".$value['collegeid']."' AND `depid`='".$value['depid']."' ";
+                                                            $sql = "SELECT username FROM `users` WHERE `usertype`='3' AND MATCH(`depid`) AGAINST ('$depid' IN BOOLEAN MODE) ";
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
                                                             $hod = $query->fetch(PDO::FETCH_COLUMN);
@@ -235,8 +283,12 @@ $conn = new Db;
                                                                 <td><?php echo $hod; ?></td>
                                                                 <td>
                                                                     <div class="material-switch">
-                                                                        <input id="someSwitchOptionPrimary" name="someSwitchOption001" type="checkbox">
-                                                                        <label for="someSwitchOptionPrimary" class="label-primary"></label>
+                                                                        <input id="toggleDep_<?php echo $rand; ?>" name="someSwitchOption001" type="checkbox"
+                                                                        <?php if(gettype(array_search($depid, array("asd12a", "asdaqwe123")))=="integer") { $toApplied="0"; echo "checked"; }else {$toApplied = "1";} ?>
+                                                                        <?php if($collegeid == "64ed7eada8d43") {$appliedDepId = "asd12a"; }else {$appliedDepId = "asdaqwe123";} ?>
+                                                                        onchange="toggleDep('<?php echo $value["batchid"] ?>', '<?php echo $appliedDepId; ?>', '<?php echo $toApplied; ?>');"
+                                                                        >
+                                                                        <label for="toggleDep_<?php echo $rand; ?>" class="label-primary"></label>
                                                                     </div>
                                                                 
                                                                 </td>

@@ -5,14 +5,15 @@ require_once 'conn.php';
 
 $conn = new Db;
 
-$collegeid = $_GET['collegeid'];
-
+$collegeidsArr = json_decode($_POST['collegeids'], true);
+$collegeids = "'".implode("', '", $collegeidsArr)."'";
 try {
 
-    $sql = $conn->mconnect()->prepare("SELECT depid, label FROM `departments` WHERE `collegeid`='".$collegeid."' ");
+    $sql = "SELECT depid, b.label as clgLabel, a.label as depLabel FROM `departments` a INNER JOIN `colleges` b ON a.collegeid=b.collegeid  WHERE a.`collegeid` IN ($collegeids) "; 
+    $sql = $conn->mconnect()->prepare($sql);
     
     $sql->execute();
-    $depDetails = $sql->fetchAll(PDO::FETCH_KEY_PAIR);
+    $depDetails = $sql->fetchAll(PDO::FETCH_ASSOC);
     
     echo json_encode($depDetails);
 }

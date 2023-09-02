@@ -8,7 +8,9 @@ $showReports = 0;
 $ut = $_SESSION['usertype'];
 if($ut=="3") {
     $collegeid = $_SESSION['collegeid'];
-    $depid = $_SESSION['depid'];
+    $depid = json_decode($_SESSION['depid'], true);
+    $depidFT = implode(" OR ", $depid);
+    $depidin = "'".implode("', '", $depid)."'";
 }
 
 if(isset($_GET['batch']) && isset($_GET['subject'])) {
@@ -144,7 +146,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                             if($ut!="3") { 
                                                                 $sql = "SELECT * FROM `batches`";
                                                             }else {
-                                                                $sql = "SELECT * FROM `batches` WHERE `collegeid`='$collegeid' AND `depid`='$depid' " ;
+                                                                $sql = "SELECT * FROM `batches` WHERE `depid` IN ($depidin) " ;
                                                             }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
@@ -181,7 +183,12 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     <select name="subject" class='form-control' id="" required>
                                                         <option value="" selected disabled>Select Subject</option>
                                                         <?php 
-                                                        $sql = "SELECT * FROM `subjects` WHERE `collegeid`='$collegeid' AND `depid`='$depid' GROUP BY `subjectsem`, `subjectname` ";
+                                                        if($ut!="3") { 
+                                                            $sql = "SELECT * FROM `subjects`  GROUP BY `subjectsem`, `subjectname`";
+                                                        }else {
+                                                            $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
+                                                        }
+                                                        
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $data= $query->fetchAll(PDO::FETCH_ASSOC);

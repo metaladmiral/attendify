@@ -11,7 +11,7 @@ if(isset($_GET['collegeid']) && isset($_GET['depid'])) {
     $collegeid = $_GET['collegeid'];
     $depid = $_GET['depid'];
 
-    $query = $conn->mconnect()->prepare("SELECT uid, email, username FROM `users` WHERE `collegeid`='$collegeid' AND `depid`='$depid' AND `usertype`='3' ");
+    $query = $conn->mconnect()->prepare("SELECT uid, email, username FROM `users` WHERE MATCH(`depid`) AGAINST ('$depid' IN BOOLEAN MODE) AND `usertype`='3' ");
     $query->execute();
     if($query->rowCount()) {
          $details = $query->fetch(PDO::FETCH_ASSOC);
@@ -106,7 +106,7 @@ if(isset($_GET['collegeid']) && isset($_GET['depid'])) {
                                         <div class="row">
                                             <div class="form-group col-6">
                                                 <label for="exampleInputEmail1" class="form-label">College</label>
-                                                <select name="collegeid" id="collegeSelect" class="form-control" required>    
+                                                <select name="collegeid" id="collegeSelect" class="form-control form-select select2" required>    
                                                     <option value="" selected disabled>Select College</option>
                                                     <?php
                                                     $sql = "SELECT collegeid, label FROM `colleges`";
@@ -124,7 +124,7 @@ if(isset($_GET['collegeid']) && isset($_GET['depid'])) {
                                             </div>
                                             <div class="form-group col-6">
                                                 <label for="exampleInputEmail1" class="form-label">Department <sup class="text-danger">(Select College First)</sup></label>
-                                                <select name="depid" id="depSelect" class="form-control" onclick="" disabled="1" required>
+                                                <select name="depid" id="depSelect" class="form-control form-select select2" onclick="" disabled="1" required>
                                                     <option value="" selected disabled><?php if(isset($_GET['depid'])) { echo "Department Selected"; } else {echo "Select Department";} ?></option>
                                                 </select>
                                             </div>
@@ -145,11 +145,21 @@ if(isset($_GET['collegeid']) && isset($_GET['depid'])) {
                                 // alert('prakhar');
                                 let val = $(this).val();
                                 if(val) {
-                                    enableDep(val);
+                                    let arr = [val];
+                                    enableDep(JSON.stringify(arr));
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    // $("#depSelect").html("<option value='' selected disabled>Select Department</option>");
                                 }
                             });
                             async function enableDep(collegeid) {
-                                let resp = await fetch(`../assets/backend/getCollegeDepartments?collegeid=${collegeid}`);
+                                let fd = new FormData();
+                                fd.set('collegeids', collegeid);
+                                let resp = await fetch(`../assets/backend/getCollegeDepartments`, {
+                                    method: "POST",
+                                    body: fd,
+                                });
                                 if(resp.ok) {
                                     const data = await resp.text();
                                     if(data=="0") {
@@ -170,16 +180,16 @@ if(isset($_GET['collegeid']) && isset($_GET['depid'])) {
                                         for(let key in depData) {
                                             <?php if(isset($_GET['depid'])) { 
                                                 ?>
-                                                if(key=="<?php echo $_GET['depid'] ?>") {
+                                                if(depData[key].depid=="<?php echo $_GET['depid'] ?>") {
                                                     html += `
-                                                        <option value="${key}" selected>${depData[key]}</option>
+                                                        <option value="${depData[key].depid}" selected>${depData[key].depLabel} - ${depData[key].clgLabel}</option>
                                                     `;
                                                     continue;
                                                 }
                                                 <?php
                                              } ?>
                                             html += `
-                                                <option value="${key}" >${depData[key]}</option>
+                                                <option value="${depData[key].depid}" >${depData[key].depLabel} - ${depData[key].clgLabel}</option>
                                             `;
                                         }
                                         if(html) {

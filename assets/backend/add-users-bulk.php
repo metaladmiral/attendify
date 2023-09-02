@@ -48,15 +48,24 @@ else {
            $gender = $value[11];
            $usertype = $value[12];
 
+           $collegeids = array();
+           $depids = array();
+           
+           array_push($collegeids, $collegeid);
+           array_push($depids, $depid);
+           
+           $collegeids = json_encode($collegeids);
+           $depids = json_encode($depids);
+
            $active = "1";
-           if(empty($email) || empty($username) || empty($empid) || empty($password) || empty($collegeid) || empty($depid) || empty($number)  || empty($dob)  || empty($ptuid)  || empty($emailpersonal)  || empty($joinedon)  || empty($gender) || empty($usertype) ) {
+           if(empty($email) || empty($username) || empty($empid) || empty($password) || empty($collegeid) || empty($depid) || empty($number) || empty($usertype) ) {
             continue;
            }
 
            $validatedName = preg_replace('/\s+/', '', $username);
            $uid = substr(strtolower($validatedName), 0, 3).uniqid();
             
-            array_push($queryData, array($uid, $email, $username, $password, $usertype, $active, $collegeid, $depid, $number, $dob, $ptuid, $emailpersonal, $joinedon, $gender, $empid));
+            array_push($queryData, array($uid, $email, $username, $password, $usertype, $active, $collegeids, $depids, $number, $dob, $ptuid, $emailpersonal, $joinedon, $gender, $empid));
 
         }
         
