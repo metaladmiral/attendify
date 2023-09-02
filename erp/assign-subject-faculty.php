@@ -4,7 +4,7 @@ require_once 'conn.php';
 $conn = new Db;
 
 $ut = $_SESSION['usertype'];
-if($ut!="3") {
+if($ut!="3" && $ut!="4") {
     http_response_code(404);
     die();
 }
@@ -37,6 +37,8 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/brand/favicon.ico">
     <!-- TITLE -->
     <title>Attendify - Assign Subject Faculty CGCcms.in</title>
+
+    <script src="../assets/js/jquery.min.js"></script>
     <!-- BOOTSTRAP CSS -->
     <link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- STYLE CSS -->
@@ -109,30 +111,37 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                         
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-4">
-                                                    <label for="" class="form-label">Select Batch:</label>
-                                                    <select name="batch" class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
-                                                            <option value="" disabled selected>Select Batch</option>
+                                                <div class="col-3">
+                                                    <label for="" class="form-label">Select Department:</label>
+                                                    <select name="depid" id='depSelect' class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                                            <option value="" disabled selected>Select Department</option>
                                                             <?php 
-                                                            if($ut!="3") { 
-                                                                $sql = "SELECT * FROM `batches`";
+                                                            if($ut=="4") { 
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid`";
                                                             }else {
-                                                                $sql = "SELECT * FROM `batches` WHERE `depid` IN ($depidin) " ;
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) " ;
                                                             }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
                                                             $data= $query->fetchAll(PDO::FETCH_ASSOC);
                                                             foreach ($data as $key => $value) {
                                                                 ?>
-                                                                <option value="<?php echo $value['batchid']; ?>" 
-                                                                <?php if(isset($_GET['batch'])) { if($_GET['batch']==$value["batchid"]) {echo "selected";} } ?>
-                                                                ><?php echo $value['batchLabel']; ?></option>
+                                                                <option value="<?php echo $value['depid']; ?>" 
+                                                                <?php if(isset($_GET['depid'])) { if($_GET['depid']==$value["depid"]) {echo "selected";} } ?>
+                                                                ><?php echo $value['depLabel']; ?> - <?php echo $value['clgLabel']; ?></option>
                                                             <?php 
                                                             }
                                                             ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-4">
+                                                <div class="col-3">
+                                                    <label for="" class="form-label">Select Batch:</label>
+                                                    <select name="batch" id='batchSelect'  class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required disabled>
+                                                            <option value="" disabled selected>Select Batch</option>
+                                                            
+                                                    </select>
+                                                </div>
+                                                <div class="col-3">
                                                     <label for="" class="form-label">Select Section:</label>
                                                     <select name="section[]" class='form-control form-select select2' id="" required multiple>
                                                         <?php
@@ -141,7 +150,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                                 while($p<=2) {
                                                                     ?>
                                                                     <option value="<?php echo $i-64; ?>-<?php echo $p; ?>"
-                                                                    <?php if(isset($_GET['section'])) { if(  $_GET['section']==(($i-64)."-".$p) ) {echo "selected";} } ?>
+                                                                    <?php if(isset($_GET['section'])) { if(gettype(array_search((($i-64)."-".$p), $_GET['section']))=="integer") {echo "selected";} } ?>
                                                                     ><?php echo chr($i); ?><?php echo $p; ?></option>
                                                                 <?php
                                                                     $p++;
@@ -150,12 +159,18 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                         ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-4">
+                                                <div class="col-3">
                                                     <label for="" class="form-label">Select Subject:</label>
                                                     <select name="subject" class='form-control form-select select2' id="" required>
                                                         <option value="" selected disabled>Select Subject</option>
                                                         <?php 
-                                                        $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
+
+                                                        if($ut=="4") {
+                                                            $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) AND `tpp`='1' GROUP BY `subjectsem`, `subjectname` ";
+                                                        }else {
+                                                            $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
+                                                        }
+
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -186,6 +201,78 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                 </div>
                             </div>
                         </div>
+
+                        <script>
+                            
+                            $("#depSelect").change(function() {
+                                // alert('prakhar');
+                                let val = $(this).val();
+                                if(val) {
+                                    enableDep(val);
+                                }
+                                else {
+                                    $("#batchSelect").attr('disabled', '1');
+                                    // $("#depSelect").html("<option value='' selected disabled>Select Department</option>");
+                                }
+                            });
+                            async function enableDep(depid) {
+                                let fd = new FormData();
+                                fd.set('depid', depid);
+                                let resp = await fetch(`../assets/backend/getBatchesByDepartment`, {
+                                    method: "POST",
+                                    body: fd,
+                                });
+                                if(resp.ok) {
+                                    const data = await resp.text();
+                                    if(data=="0") {
+                                        swal({
+                                            title: "Alert",
+                                            text: "Maintainance Required! Contact Admin",
+                                            type: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Exit'
+                                        });
+                                        $("#depSelect").attr('disabled', '1');
+                                    }
+                                    else {
+                                        let batchData = JSON.parse(data);
+                                        let html = "<option value='' selected disabled>Select Batch</option>";
+                                        $("#batchSelect").text('');
+
+                                        for(let key in batchData) {
+                                            <?php if(isset($_GET['batch'])) { 
+                                                ?>
+                                                if(batchData[key].batchid=="<?php echo $_GET['batch'] ?>") {
+                                                    html += `
+                                                        <option value="${batchData[key].batchid}" selected>${batchData[key].batchLabel}</option>
+                                                    `;
+                                                    continue;
+                                                }
+                                                <?php
+                                             } ?>
+                                            html += `
+                                                <option value="${batchData[key].batchid}" >${batchData[key].batchLabel}</option>
+                                            `;
+                                        }
+                                        if(html) {
+                                            $("#batchSelect").removeAttr('disabled');
+                                            $("#batchSelect").html(html);
+                                        }
+                                        else {$("#batchSelect").attr('disabled', '1');}
+                                    }
+                                }
+                                else {
+                                    $("#batchSelect").attr('disabled', '1');
+                                    swal({
+                                        title: "Alert",
+                                        text: "Maintainance Required! Contact Admin",
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Exit'
+                                    });
+                                }
+                            }
+                        </script>
                         
                         <?php if($showFacultyStatus) { 
 
@@ -328,7 +415,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     <!-- BACK-TO-TOP -->
     <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
     <!-- JQUERY JS -->
-    <script src="../assets/js/jquery.min.js"></script>
+    
     <!-- BOOTSTRAP JS -->
     <script src="../assets/plugins/bootstrap/js/popper.min.js"></script>
     <script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
