@@ -181,7 +181,9 @@ $ut = $_SESSION['usertype'];
                                        <ul class="sidemenu-list">
                                            <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
                                            
-                                           <li><a href="assign-class-counselor" class="slide-item"> Assign CC</a></li>
+                                           <?php if($ut=="3") { ?>
+                                            <li><a href="assign-class-counselor" class="slide-item"> Assign CC</a></li>
+                                            <?php } ?>
                                            <li><a href="assign-subject-faculty" class="slide-item"> Assign Subject Faculty</a></li>
                                            
                                             <!-- <l><a href="#" class="slide-item"> Faculty Dashboard</a></l i> -->
