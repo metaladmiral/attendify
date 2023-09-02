@@ -246,6 +246,9 @@ $conn = new Db;
                                                                     case '3':
                                                                         $utype = "HOD";
                                                                         break;
+                                                                    case '4':
+                                                                        $utype = "TPP HOD";
+                                                                        break;
                                                                     default:
                                                                         break;
                                                                 }
