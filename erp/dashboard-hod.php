@@ -53,7 +53,12 @@ foreach ($facultyAssignData as $key => $value) {
 }
 $subjects = "'".implode("', '", $subjects)."'";
 $faculties = "'".implode("', '", $faculties)."'";
-$sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
+if($_SESSION['usertype']=="3") {
+    $sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
+}
+else if($_SESSION['usertype']=="4") {
+    $sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) AND `tpp`='1' ");
+}
 $sql->execute();
 $subjectInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -193,6 +198,8 @@ foreach ($facultyInfo as $key => $value) {
                             <!-- COL END -->
                         </div>
 
+                        <?php if($_SESSION['usertype']=="3") { ?>
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="card">
@@ -251,6 +258,8 @@ foreach ($facultyInfo as $key => $value) {
                             </div>
                         </div>
 
+                        <?php } ?>
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="card">
@@ -287,7 +296,9 @@ foreach ($facultyInfo as $key => $value) {
                                                                 // echo "<span>".$subjectInfo[$subjectDetails[0]]."</span>";
                                                                 // echo "<span>".$facultyInfo[$subjectDetails[1]]."</span>";
                                                                 foreach ($subjectDetails as $key => $value) {
-                                                                    echo "<b>".$subjectsInfoData[$key]."</b>".": ".$facultyInfoData[$value]."<br>";
+                                                                    if(isset($subjectsInfoData[$key])) {
+                                                                        echo "<b>".$subjectsInfoData[$key]."</b>".": ".$facultyInfoData[$value]."<br>";
+                                                                    }
                                                                 }
                                                             }
                                                             echo "</td>";
