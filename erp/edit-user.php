@@ -102,7 +102,9 @@ header('Location: ../404.php');
                                                     <!-- <option label="Choose one">
                                                     </option> -->
                                                     <option value="1" <?php echo ($row['usertype']=="1") ? "selected" : ""; ?>>Superadmin</option>
-                                                    <option value="2" <?php echo ($row['usertype']=="2") ? "selected" : ""; ?>>Counselor</option>
+                                                    <option value="2" <?php echo ($row['usertype']=="2") ? "selected" : ""; ?>>Faculty</option>
+                                                    <option value="3" <?php echo ($row['usertype']=="3") ? "selected" : ""; ?>>HOD</option>
+                                                    <option value="4" <?php echo ($row['usertype']=="4") ? "selected" : ""; ?>>TPP HOD</option>
                                                 </select>
                                         </div>
                                         
