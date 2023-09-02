@@ -219,7 +219,7 @@ $conn = new Db;
                                                 <tbody>
                                                     
                                                         <?php 
-                                                        $sql = "SELECT * FROM `users` WHERE `usertype`!='1' ";
+                                                        $sql = "SELECT * FROM `users` WHERE `usertype`!='1' ORDER BY `id` DESC ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
