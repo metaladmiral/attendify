@@ -112,7 +112,7 @@ $conn = new Db;
                                                     <select name="startDate" id="" class="form-control col-12" required>
                                                             <option value="" disabled selected>Start</option>
                                                         <?php
-                                                        for($i=1995;$i<=2500;$i++) {
+                                                        for($i=2020;$i<=2027;$i++) {
                                                             ?>
                                                             <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                                                             <?php
@@ -125,7 +125,7 @@ $conn = new Db;
                                                     <select name="endDate" id="" class="form-control col-12" required>
                                                         <option value="" disabled selected>End</option>
                                                            <?php
-                                                           for($i=1995;$i<=2500;$i++) {
+                                                           for($i=2020;$i<=2027;$i++) {
                                                             ?>
                                                             <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                                                             <?php
