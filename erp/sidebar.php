@@ -55,7 +55,7 @@ $ut = $_SESSION['usertype'];
                     </a>
                 </li>
                 <?php } ?>
-                <?php if($ut=="3") { ?>
+                <?php if($ut=="3" || $ut=="4") { ?>
                     <li class="slide">
                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="dashboard-hod"><i class="side-menu__icon lnr lnr-pie-chart"></i>
                         <span class="side-menu__label">Dashboard</span>
@@ -73,12 +73,12 @@ $ut = $_SESSION['usertype'];
                 <?php } ?>
 
 
-                <?php if($ut=="1" || $ut=="3") { ?>
+                <?php if($ut=="1" || $ut=="3" || $ut=="4") { ?>
                 <li class="slide">
                    <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1" || $ut=="3") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-database"></i>
                        <span class="side-menu__label">Reports</span><i class="angle fe fe-chevron-right"></i>
                    </a>
-                   <?php if($ut=="1" || $ut=="3") { ?>
+                   <?php if($ut=="1" || $ut=="3" || $ut=="4") { ?>
                    <ul class="slide-menu">
                        <li class="panel sidetab-menu">
                            <div class="panel-body tabs-menu-body p-0 border-0">
@@ -167,12 +167,12 @@ $ut = $_SESSION['usertype'];
                 </li>
                 <?php } ?> 
                 
-                <?php if($ut=="3") { ?>
+                <?php if($ut=="3" || $ut=="4") { ?>
                 <li class="slide">
-                   <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="3") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-database"></i>
+                   <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="3" || $ut=="4") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-database"></i>
                        <span class="side-menu__label">HOD</span><i class="angle fe fe-chevron-right"></i>
                    </a>
-                   <?php if($ut=="3") { ?>
+                   <?php if($ut=="3" || $ut=="4") { ?>
                    <ul class="slide-menu">
                        <li class="panel sidetab-menu">
                            <div class="panel-body tabs-menu-body p-0 border-0">
@@ -242,7 +242,7 @@ $ut = $_SESSION['usertype'];
                                        <ul class="sidemenu-list">
                                            <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
                                            
-                                           <?php if($ut=="1" || $ut=="3") { ?>
+                                           <?php if($ut=="1" || $ut=="3" || $ut=="4") { ?>
                                                 <li><a href="add-time-table" class="slide-item"> Add Time Table</a></li>
                                             <?php } ?>
 
