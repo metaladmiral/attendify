@@ -3,10 +3,14 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $showReports = 0;
 
 $ut = $_SESSION['usertype'];
-if($ut=="3") {
+if($ut=="3" || $ut=="4") {
     $collegeid = $_SESSION['collegeid'];
     $depid = json_decode($_SESSION['depid'], true);
     $depidFT = implode(" OR ", $depid);
@@ -145,7 +149,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     <select name="depid" id='depSelect' class="form-control form-select select2" data-placeholder="Choose One" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Department</option>
                                                             <?php 
-                                                            if($ut=="4" || $ut=="1") { 
+                                                            if($ut=="4") { 
                                                                 $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid`";
                                                             }else {
                                                                 $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) " ;

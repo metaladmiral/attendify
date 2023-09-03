@@ -14,7 +14,12 @@ $batchData = $sql->fetch(PDO::FETCH_ASSOC);
 $collegeid=$batchData['collegeid'];
 $depid=$batchData['depid'];
 
-$sql = $conn->mconnect()->prepare(" SELECT subjectid, subjectname FROM `subjects` WHERE `subjectsem`='$sem' AND `collegeid`='$collegeid' AND `depid`='$depid' ");
+if(isset($_POST['tpp'])) {
+    $sql = $conn->mconnect()->prepare(" SELECT subjectid, subjectname FROM `subjects` WHERE `subjectsem`='$sem' AND `collegeid`='$collegeid' AND `depid`='$depid' AND `tpp`='1' ");
+}
+else {
+    $sql = $conn->mconnect()->prepare(" SELECT subjectid, subjectname FROM `subjects` WHERE `subjectsem`='$sem' AND `collegeid`='$collegeid' AND `depid`='$depid' ");
+}
 $sql->execute();
 if($sql->rowCount()>0) {
     $subjectData = $sql->fetchAll(PDO::FETCH_ASSOC);

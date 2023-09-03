@@ -135,7 +135,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     </select>
                                                 </div>
                                                 <div class="col-3">
-                                                    <label for="" class="form-label">Select Batch:</label>
+                                                    <label for="" class="form-label">Select Batch: <sup class="text-danger">(Select Department First)</sup></label>
                                                     <select name="batch" id='batchSelect'  class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required disabled>
                                                             <option value="" disabled selected>Select Batch</option>
                                                             
@@ -159,18 +159,17 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                         ?>
                                                     </select>
                                                 </div>
+
+                                                <?php
+                                                if($ut=="3") {
+                                                ?>
                                                 <div class="col-3">
                                                     <label for="" class="form-label">Select Subject:</label>
                                                     <select name="subject" class='form-control form-select select2' id="" required>
                                                         <option value="" selected disabled>Select Subject</option>
                                                         <?php 
 
-                                                        if($ut=="4") {
-                                                            $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) AND `tpp`='1' GROUP BY `subjectsem`, `subjectname` ";
-                                                        }else {
-                                                            $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
-                                                        }
-
+                                                        $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -190,6 +189,16 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                         ?>
                                                     </select>
                                                 </div>
+                                                <?php }else { ?>
+                                                    <div class="col-3">
+                                                    <label for="" class="form-label">Select Subject: <sup class="text-danger">(Select Department First)</sup> </label>
+                                                    
+                                                    <select name="subject" id='subjectSelect'  class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required disabled>
+                                                        <option value="" selected disabled>Select Subject</option>
+                                                        
+                                                    </select>
+                                                </div>
+                                                <?php } ?>
                                             </div>
                                         </div>
                                         
@@ -252,9 +261,12 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                              } ?>
                                             html += `
                                                 <option value="${batchData[key].batchid}" >${batchData[key].batchLabel}</option>
-                                            `;
-                                        }
+                                                `;
+                                            }
                                         if(html) {
+                                            <?php if($ut=="4") { ?>
+                                                getDepartmentSubjects(depid);
+                                            <?php } ?>
                                             $("#batchSelect").removeAttr('disabled');
                                             $("#batchSelect").html(html);
                                         }
@@ -273,6 +285,53 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                 }
                             }
                         </script>
+
+                        <?php if($ut=="4") { ?>
+                            <script>
+                            async function getDepartmentSubjects(depid) {
+                                let fd = new FormData();
+                                fd.set('depid', depid);
+                                fd.set('tpp', "1");
+                                let resp = await fetch(`../assets/backend/getDepartmentSubjects`, {
+                                    method: "POST",
+                                    body: fd,
+                                });
+                                if(resp.ok) {
+                                    const data = await resp.text();
+                                    if(data) {
+                                        let subjectData = JSON.parse(data);
+                                        console.log(subjectData);
+                                        let html = "<option value='' selected disabled>Select Subjects:</option>";
+                                        $("#subjectSelect").text('');
+
+                                        for(let key in subjectData) {
+                                            <?php if(isset($_GET['subject'])) { 
+                                                ?>
+                                                if(subjectData[key].subjectid=="<?php echo $_GET['subject'] ?>") {
+                                                    html += `
+                                                        <option value="${subjectData[key].subjectid}" selected>${subjectData[key].subjectname} - ${subjectData[key].subjectcode}</option>
+                                                    `;
+                                                    continue;
+                                                }
+                                                <?php
+                                             } ?>
+                                            html += `
+                                                <option value="${subjectData[key].subjectid}" >${subjectData[key].subjectname} - ${subjectData[key].subjectcode}</option>
+                                                `;
+                                            }
+                                        if(html) {
+                                            console.log(html);
+                                            $("#subjectSelect").removeAttr('disabled');
+                                            $("#subjectSelect").html(html);
+                                        }
+                                        else {$("#subjectSelect").attr('disabled', '1');}
+                                    }
+                                }
+                            }
+                            </script>
+                        <?php } ?>
+
+                        
                         
                         <?php if($showFacultyStatus) { 
 
