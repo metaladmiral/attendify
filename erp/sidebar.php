@@ -75,7 +75,7 @@ $ut = $_SESSION['usertype'];
 
                 <?php if($ut=="1" || $ut=="3" || $ut=="4") { ?>
                 <li class="slide">
-                   <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1" || $ut=="3") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-database"></i>
+                   <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1" || $ut=="3" || $ut=="4") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-database"></i>
                        <span class="side-menu__label">Reports</span><i class="angle fe fe-chevron-right"></i>
                    </a>
                    <?php if($ut=="1" || $ut=="3" || $ut=="4") { ?>
