@@ -280,8 +280,9 @@ foreach ($facultyInfo as $key => $value) {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php
+                                                <?php
                                                         $counter = 0;
+                                                        // var_dump($subjectsInfoData);
                                                         foreach ($facultyAssignData as $key => $value) {
                                                             $counter++;
                                                             echo "<tr>";
@@ -292,13 +293,17 @@ foreach ($facultyInfo as $key => $value) {
                                                             foreach ($data as $sectionId => $subjectDetails) {
                                                                 $sectionId = explode('-', $sectionId);
                                                                 $section = chr($sectionId[0]+64).$sectionId[1];
+                                                                ob_start();
                                                                 echo "<span class='text-success font-weight-bold'>$section :</span><br>";
-                                                                // echo "<span>".$subjectInfo[$subjectDetails[0]]."</span>";
-                                                                // echo "<span>".$facultyInfo[$subjectDetails[1]]."</span>";
-                                                                foreach ($subjectDetails as $key => $value) {
-                                                                    if(isset($subjectsInfoData[$key])) {
-                                                                        echo "<b>".$subjectsInfoData[$key]."</b>".": ".$facultyInfoData[$value]."<br>";
+                                                                $p = 0;
+                                                                foreach ($subjectDetails as $key_ => $value_) {
+                                                                    if(isset($subjectsInfoData[$key_])) {
+                                                                        $p++;
+                                                                        echo "<b>".$subjectsInfoData[$key_]."</b>".": ".$facultyInfoData[$value_]."<br>";
                                                                     }
+                                                                }
+                                                                if(!$p) {
+                                                                    ob_end_clean();
                                                                 }
                                                             }
                                                             echo "</td>";
