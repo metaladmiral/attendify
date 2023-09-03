@@ -206,15 +206,20 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     </select>
                                                 </div>
                                                 <?php
-                                                if($ut=="3") {
+                                                if($ut=="3" || $ut=="1") {
                                                 ?>
                                                 <div class="col-3">
                                                     <label for="" class="form-label">Select Subject:</label>
                                                     <select name="subject" class='form-control form-select select2' id="" required>
                                                         <option value="" selected disabled>Select Subject</option>
                                                         <?php 
-
-                                                        $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
+                                                        
+                                                        if($ut=="3") {
+                                                            $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
+                                                        }
+                                                        else {
+                                                            $sql = "SELECT * FROM `subjects` GROUP BY `subjectsem`, `subjectname` ";
+                                                        }
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $data= $query->fetchAll(PDO::FETCH_ASSOC);
