@@ -1,8 +1,19 @@
 <?php 
-   session_start();
-   require_once 'conn.php';
-   $conn = new Db;
-   ?>
+
+session_start();
+require_once 'conn.php';
+$conn = new Db;
+
+$uid = $_SESSION['uid'];
+$sql = $conn->mconnect()->prepare("SELECT CC FROM `users` WHERE `uid`='$uid' ");
+$sql->execute();
+$userDetails = $sql->fetch(PDO::FETCH_ASSOC);
+
+$sql = $conn->mconnect()->prepare("SELECT batchid, batchLabel FROM `batches` ");
+$sql->execute();
+$batchData = $sql->fetchAll(PDO::FETCH_KEY_PAIR);
+
+?> 
 <!doctype html>
 <html lang="en" dir="ltr">
    <head>
@@ -80,17 +91,17 @@ input::-webkit-inner-spin-button {
                                              <label class="form-label">Batch</label>
                                              <select name="batch" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                 <option value="" disabled selected>Select Batch</option>
-                                                <?php 
-                                                   $sql = "SELECT * FROM `batches`";
-                                                   $query = $conn->mconnect()->prepare($sql);
-                                                   $query->execute();
-                                                   $data= $query->fetchAll(PDO::FETCH_ASSOC);
-                                                   foreach ($data as $key => $value) {
-                                                       ?>
-                                                <option value="<?php echo $value['batchid']; ?>"><?php echo $value['batchLabel']; ?></option>
-                                                <?php 
-                                                   }
+
+                                                <?php
+                                                $batchAssigned = json_decode($userDetails["CC"], true);
+                                                foreach ($batchAssigned as $key => $value) {
                                                    ?>
+                                                      <option value="<?php echo $key; ?>"><?php echo $batchData[$key]; ?></option>      
+                                                   <?php
+                                                }
+                                                ?>
+
+                                                
                                              </select>
                                           </div>
                                           <!--  -->

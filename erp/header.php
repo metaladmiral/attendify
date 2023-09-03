@@ -213,6 +213,9 @@ if($_SESSION['lockscreen']=="1") {
                                                         else if($_SESSION["usertype"]=="3") {
                                                             $utype= "HOD";
                                                         }
+                                                        else if($_SESSION["usertype"]=="4") {
+                                                            $utype= "TPP HOD";
+                                                        }
                                                         echo $utype;
                                                         ?></small>
                                                     </div>

@@ -53,7 +53,12 @@ foreach ($facultyAssignData as $key => $value) {
 }
 $subjects = "'".implode("', '", $subjects)."'";
 $faculties = "'".implode("', '", $faculties)."'";
-$sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
+if($_SESSION['usertype']=="3") {
+    $sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
+}
+else if($_SESSION['usertype']=="4") {
+    $sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) AND `tpp`='1' ");
+}
 $sql->execute();
 $subjectInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -193,6 +198,8 @@ foreach ($facultyInfo as $key => $value) {
                             <!-- COL END -->
                         </div>
 
+                        <?php if($_SESSION['usertype']=="3") { ?>
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="card">
@@ -251,6 +258,8 @@ foreach ($facultyInfo as $key => $value) {
                             </div>
                         </div>
 
+                        <?php } ?>
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="card">
@@ -271,8 +280,9 @@ foreach ($facultyInfo as $key => $value) {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php
+                                                <?php
                                                         $counter = 0;
+                                                        // var_dump($subjectsInfoData);
                                                         foreach ($facultyAssignData as $key => $value) {
                                                             $counter++;
                                                             echo "<tr>";
@@ -283,11 +293,17 @@ foreach ($facultyInfo as $key => $value) {
                                                             foreach ($data as $sectionId => $subjectDetails) {
                                                                 $sectionId = explode('-', $sectionId);
                                                                 $section = chr($sectionId[0]+64).$sectionId[1];
+                                                                ob_start();
                                                                 echo "<span class='text-success font-weight-bold'>$section :</span><br>";
-                                                                // echo "<span>".$subjectInfo[$subjectDetails[0]]."</span>";
-                                                                // echo "<span>".$facultyInfo[$subjectDetails[1]]."</span>";
-                                                                foreach ($subjectDetails as $key => $value) {
-                                                                    echo "<b>".$subjectsInfoData[$key]."</b>".": ".$facultyInfoData[$value]."<br>";
+                                                                $p = 0;
+                                                                foreach ($subjectDetails as $key_ => $value_) {
+                                                                    if(isset($subjectsInfoData[$key_])) {
+                                                                        $p++;
+                                                                        echo "<b>".$subjectsInfoData[$key_]."</b>".": ".$facultyInfoData[$value_]."<br>";
+                                                                    }
+                                                                }
+                                                                if(!$p) {
+                                                                    ob_end_clean();
                                                                 }
                                                             }
                                                             echo "</td>";

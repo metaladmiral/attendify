@@ -123,6 +123,7 @@ $conn = new Db;
                                                     <option value="1">Superadmin</option>
                                                     <option value="2">Faculty</option>
                                                     <option value="3">HOD</option>
+                                                    <option value="4">TPP HOD</option>
                                                 </select>
                                         </div>
 
@@ -218,7 +219,7 @@ $conn = new Db;
                                                 <tbody>
                                                     
                                                         <?php 
-                                                        $sql = "SELECT * FROM `users` WHERE `usertype`!='1' ";
+                                                        $sql = "SELECT * FROM `users` WHERE `usertype`!='1' ORDER BY `id` DESC ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -244,6 +245,9 @@ $conn = new Db;
                                                                         break;
                                                                     case '3':
                                                                         $utype = "HOD";
+                                                                        break;
+                                                                    case '4':
+                                                                        $utype = "TPP HOD";
                                                                         break;
                                                                     default:
                                                                         break;

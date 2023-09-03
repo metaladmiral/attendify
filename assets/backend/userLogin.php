@@ -29,7 +29,7 @@ class login extends db {
             $fullname = $arr[0]["username"];
             $profilepic = $arr[0]["profilepic"];
 
-            if($ousertype=="3") {
+            if($ousertype=="3" || $ousertype=="4") {
                 $_SESSION['collegeid'] = $arr[0]["collegeid"];
                 $_SESSION['depid'] = $arr[0]["depid"];
             }
