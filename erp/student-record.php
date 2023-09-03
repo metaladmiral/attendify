@@ -91,7 +91,7 @@ if($ut=="3") {
                                                             <?php 
                                                             if($ut=="4" || $ut=="1") { 
                                                                 $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid`";
-                                                            }else {
+                                                            }else{
                                                                 $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) " ;
                                                             }
                                                             $query = $conn->mconnect()->prepare($sql);
