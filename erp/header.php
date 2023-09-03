@@ -206,20 +206,15 @@ if($_SESSION['lockscreen']=="1") {
                                                     <h5 class="text-dark mb-0 fs-14 fw-semibold"><?php echo $_SESSION['fullname']; ?></h5>
                                                         <small class="text-muted"><?php 
                                                         if($_SESSION['usertype']=="1") {
-                                                            $utype = "Operations";
-                                                        } else if($_SESSION['usertype']=="2") {
-                                                            $utype = "Accounts";
-                                                        } else if($_SESSION['usertype']=="3") {
-                                                            $utype = "Counsellor";
-                                                            
-                                                        }else if($_SESSION['usertype']=="4") {
-                                                            $utype = "Dispatch";
-                                                            
-                                                        }else if($_SESSION['usertype']=="5") {
-                                                            $utype = "Support";
-                                                        }else {
                                                             $utype = "Super Admin";
-                                                            
+                                                        } else if($_SESSION['usertype']=="2") {
+                                                            $utype = "Teacher";
+                                                        }
+                                                        else if($_SESSION["usertype"]=="3") {
+                                                            $utype= "HOD";
+                                                        }
+                                                        else if($_SESSION["usertype"]=="4") {
+                                                            $utype= "TPP HOD";
                                                         }
                                                         echo $utype;
                                                         ?></small>

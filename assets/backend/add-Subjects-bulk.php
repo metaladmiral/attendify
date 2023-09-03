@@ -26,7 +26,7 @@ else {
         $spreadsheet = $reader->load($filename);
         $rows = $spreadsheet->getActiveSheet()->toArray();
         
-        $sql = "INSERT INTO `subjects`(subjectcode, subjectid, subjectname, subjectsem) VALUES ";
+        $sql = "INSERT INTO `subjects`(subjectcode, subjectid, subjectname, subjectsem, collegeid, depid) VALUES ";
 
         $docs = array("-","-","-","-","-","-","-", "-");
         $docs = json_encode($docs, JSON_FORCE_OBJECT);
@@ -40,14 +40,16 @@ else {
            $code = $value[0];
            $name = $value[1];
            $sem = $value[2];
-           if(empty($name) || empty($code) || empty($sem)) {
+           $depid = $value[3];
+           $collegeid = $value[4];
+           if(empty($name) || empty($code) || empty($sem) || empty($depid) || empty($collegeid)) {
             continue;
            }
 
            $validatedName = preg_replace('/\s+/', '', $name);
            $subid = substr(strtolower($validatedName), 0, 3).uniqid();
             
-            array_push($queryData, array($code, $subid, $name, $sem));
+            array_push($queryData, array($code, $subid, $name, $sem, $collegeid, $depid));
 
         }
 

@@ -3,27 +3,32 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
-$sql = $conn->mconnect()->prepare("SELECT id FROM `users`");
+$depid = json_decode($_SESSION['depid'], true);
+$collegeid = $_SESSION['collegeid'];
+
+$depidFT = implode(" OR ", $depid);
+$depidin = "'".implode("', '", $depid)."'";
+
+$sql = $conn->mconnect()->prepare("SELECT id FROM `users` WHERE MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE) AND `usertype`='2' ");
 $sql->execute();
 $totalUsers = $sql->rowCount();
-
-$sql = $conn->mconnect()->prepare("SELECT id FROM `students`");
+$sql = $conn->mconnect()->prepare("SELECT id FROM `subjects` WHERE `depid` IN ($depidin) ");
+$sql->execute();
+$totalSubjects = $sql->rowCount();
+$sql = $conn->mconnect()->prepare("SELECT batchid FROM `batches` WHERE `depid` IN ($depidin) ORDER BY `id` ASC ");
+$sql->execute();
+$totalBatches = $sql->rowCount();
+$batches = $sql->fetchAll(PDO::FETCH_COLUMN);
+$inBatches = "'".implode("','",$batches)."'";
+$sql = $conn->mconnect()->prepare("SELECT id FROM `students` WHERE `batchid` IN ($inBatches) ");
 $sql->execute();
 $totalStudents = $sql->rowCount();
 
-$sql = $conn->mconnect()->prepare("SELECT id FROM `subjects` ");
-$sql->execute();
-$totalSubjects = $sql->rowCount();
-
-$sql = $conn->mconnect()->prepare("SELECT id FROM `batches` ");
-$sql->execute();
-$totalBatches = $sql->rowCount();
-
-$sql = $conn->mconnect()->prepare("SELECT batchLabel, sectionCC FROM `batches` ");
+$sql = $conn->mconnect()->prepare("SELECT batchLabel, sectionCC FROM `batches` WHERE `depid` IN ($depidin) ");
 $sql->execute();
 $ccData = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-$sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` ");
+$sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` WHERE `depid` IN ($depidin) ");
 $sql->execute();
 $facultyAssignData = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -48,7 +53,12 @@ foreach ($facultyAssignData as $key => $value) {
 }
 $subjects = "'".implode("', '", $subjects)."'";
 $faculties = "'".implode("', '", $faculties)."'";
-$sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
+if($_SESSION['usertype']=="3") {
+    $sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
+}
+else if($_SESSION['usertype']=="4") {
+    $sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) AND `tpp`='1' ");
+}
 $sql->execute();
 $subjectInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -110,7 +120,7 @@ foreach ($facultyInfo as $key => $value) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">User Dashboard</h1>
+                            <h1 class="page-title">HOD Dashboard</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -188,6 +198,8 @@ foreach ($facultyInfo as $key => $value) {
                             <!-- COL END -->
                         </div>
 
+                        <?php if($_SESSION['usertype']=="3") { ?>
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="card">
@@ -246,6 +258,8 @@ foreach ($facultyInfo as $key => $value) {
                             </div>
                         </div>
 
+                        <?php } ?>
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="card">
@@ -266,8 +280,9 @@ foreach ($facultyInfo as $key => $value) {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php
+                                                <?php
                                                         $counter = 0;
+                                                        // var_dump($subjectsInfoData);
                                                         foreach ($facultyAssignData as $key => $value) {
                                                             $counter++;
                                                             echo "<tr>";
@@ -278,11 +293,17 @@ foreach ($facultyInfo as $key => $value) {
                                                             foreach ($data as $sectionId => $subjectDetails) {
                                                                 $sectionId = explode('-', $sectionId);
                                                                 $section = chr($sectionId[0]+64).$sectionId[1];
+                                                                ob_start();
                                                                 echo "<span class='text-success font-weight-bold'>$section :</span><br>";
-                                                                // echo "<span>".$subjectInfo[$subjectDetails[0]]."</span>";
-                                                                // echo "<span>".$facultyInfo[$subjectDetails[1]]."</span>";
-                                                                foreach ($subjectDetails as $key => $value) {
-                                                                    echo "<b>".$subjectsInfoData[$key]."</b>".": ".$facultyInfoData[$value]."<br>";
+                                                                $p = 0;
+                                                                foreach ($subjectDetails as $key_ => $value_) {
+                                                                    if(isset($subjectsInfoData[$key_])) {
+                                                                        $p++;
+                                                                        echo "<b>".$subjectsInfoData[$key_]."</b>".": ".$facultyInfoData[$value_]."<br>";
+                                                                    }
+                                                                }
+                                                                if(!$p) {
+                                                                    ob_end_clean();
                                                                 }
                                                             }
                                                             echo "</td>";
@@ -320,7 +341,7 @@ foreach ($facultyInfo as $key => $value) {
                                                 <tbody>
                                                     <?php
 
-                                                    $sql = $conn->mconnect()->prepare("SELECT subjectcode, subjectname, subjectsem FROM `subjects` ");
+                                                    $sql = $conn->mconnect()->prepare("SELECT subjectcode, subjectname, subjectsem FROM `subjects` WHERE `depid` IN ($depidin)");
                                                     $sql->execute();
                                                     foreach ($sql->fetchAll(PDO::FETCH_ASSOC) as $key => $value) {
                                                         echo "<tr>";

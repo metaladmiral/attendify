@@ -5,7 +5,7 @@ require_once 'conn.php';
 
 $conn = new Db;
 
-if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
+if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='3' ) {
 
     if(isset($_POST['updatecc']) || isset($_POST['assigncc'])) {
         

@@ -1,27 +1,12 @@
 <?php 
-
 session_start();
-// var_dump($_SESSION);
 require_once 'conn.php';
-
 $conn = new Db;
-$uid = $_SESSION['uid'];
-// if($_SESSION['usertype']=="2") {
-//     header('Location: dashboard');
-// }
 
-if($_SESSION['usertype']=='1') {
-    header('Location: ./dashboard-superadmin');
-}
-else if($_SESSION['usertype']=='2') {
-    header('Location: ./user-dashboard');
-}
-else if($_SESSION['usertype']=='3') {
-    header('Location: ./dashboard-hod');
-}
-else if($_SESSION['usertype']=='4') {
-    header('Location: ./dashboard-hod');
-}
+$sql = "SELECT * FROM `batches` ORDER BY `id` DESC";
+$query = $conn->mconnect()->prepare($sql);
+$query->execute();
+$dataBatch= $query->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!doctype html>
@@ -66,16 +51,48 @@ else if($_SESSION['usertype']=='4') {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Dashboard</h1>
+                            <h1 class="page-title">Time Tables</h1>
                             <div>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                                    <li class="breadcrumb-item"><a href="#">Time Tables</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Add Time Tables</li>
                                 </ol>
                             </div>
                         </div>
                         
                         <!-- BODY CONTENT -->
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Add Time Tables</h3>
+                                    </div>
+                                    <form action="../assets/backend/add-studs-bulk.php" method="POST" id="studForm" enctype="multipart/form-data">
+                                        <div class="card-body body1" style='display: block;'>
+
+                                            <div class="form-group col-md-12">
+                                                <b><label for="batch">Time Table Label:</label></b>
+                                                <input type="text" class="form-control" name="ttLabel" placeholder="Enter Label Here" pattern="[A-Za-z0-9-_]+">
+                                                <span>(Only use Letters, Numbers, Dashes and Underscores in the Label)</span>
+                                            </div>
+
+                                            <div class="form-group col-md-12">
+                                                <div class="">
+                                                    <input type="file" name="file" class="dropify ttFile" data-bs-height="180">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <button class="btn btn-primary">Upload</button>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                        </div>
 
             
                         <!-- BODY CONTENT END -->
@@ -146,17 +163,87 @@ else if($_SESSION['usertype']=='4') {
     <script src="../assets/js/custom-swicher.js"></script>
     <!-- Switcher js -->
     <script src="../assets/switcher/js/switcher.js"></script>
+
+    <!-- FILE UPLOADES JS -->
+    <script src="../assets/plugins/fileuploads/js/fileupload.js"></script>
+
+    <!-- FORMELEMENTS JS -->
+    <script src="../assets/js/formelementadvnced.js"></script>
+    <script src="../assets/js/form-elements.js"></script>
+
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>
+
     <script>
-        function accDenied() {
-            swal({
-                    title: "Alert",
-                    text: "You are unautorized to view this section! Login as Superadmin or authorized user to continue ahead.",
-                    type: "warning",
-                    showCancelButton: false
-                });
-        }
+        $('.dropify').dropify({
+            messages: {
+                'default': 'Drag and drop an PDF file here or click',
+                'replace': 'Drag and drop or click to replace',
+                'remove': 'Remove',
+                'error': 'Ooops, something wrong appended.'
+            },
+            error: {
+                'fileSize': 'The file size is too big (2M max).'
+            },
+            allowedFileExtensions: ['pdf']
+        });
+            
     </script>
+
+    <script>
+        document.querySelector('#studForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const file = document.querySelector('.ttFile').files[0];
+            if(file) {
+                const batch = document.querySelector('input[name="ttLabel"]').value;
+                let xml = new XMLHttpRequest();
+                xml.onreadystatechange = function() {
+                    if(this.readyState==4 && this.status==200) {
+                        console.log(this.responseText);
+                        if(this.responseText=="1") {
+                            swal({
+                                title: "Hooray!",
+                                text: "New Time Table has been added successfully!",
+                                type: "success"
+                            },function() {
+                                location.reload();
+                            });
+                        }
+                        else {
+
+                            swal({
+                                title: "Oops!",
+                                text: "An Error Occured! Contact admin",
+                                type: "warning"
+                            },function() {
+                                location.reload();
+                            });
+                        }
+                    }
+                    else {
+                        swal({
+                            title: "Oops!",
+                            text: "An Error Occured! Contact admin",
+                            type: "warning"
+                        },function() {
+                            location.reload();
+                        });
+
+                    }
+                }
+                let fd = new FormData();
+                fd.set('label', batch);
+                fd.set('file', document.querySelector('.ttFile').files[0]);
+                xml.open("POST", "../assets/backend/upload-tt.php", false);
+                xml.send(fd);
+
+            }
+            else {
+                alert('Upload a File First!');
+            }
+            
+        });
+    </script>
+
 </body>
 </html>

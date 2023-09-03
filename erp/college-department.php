@@ -3,78 +3,16 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
-$uid = $_SESSION['uid'];
-$sql = $conn->mconnect()->prepare("SELECT faculty, CC FROM `users` WHERE `uid`='$uid' ");
+$sql = $conn->mconnect()->prepare("SELECT collegeid, label FROM `colleges` ");
 $sql->execute();
-$userDetails = $sql->fetch(PDO::FETCH_ASSOC);
+$collegeData = $sql->fetchAll(PDO::FETCH_KEY_PAIR);
 
-$totalClasssesAssigned = count(json_decode($userDetails["CC"], true));
-$totalSubjectsAssigned = 0;
-$subjectsAssigned = json_decode($userDetails["faculty"], true);
-foreach ($subjectsAssigned as $key => $sectionId) {
-    foreach ($sectionId as $key => $subjectDetails) {
-        foreach ($subjectDetails as $key => $value) {
-            $totalSubjectsAssigned++;
-        }
-    }
-}
-
-$sql = $conn->mconnect()->prepare("SELECT batchLabel, sectionCC FROM `batches` ");
+$sql = $conn->mconnect()->prepare("SELECT label,depid,collegeid FROM `departments` ");
 $sql->execute();
-$ccData = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-$sql = $conn->mconnect()->prepare("SELECT batchLabel, batchid FROM `batches` ");
-$sql->execute();
-$batchData = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-$sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` ");
-$sql->execute();
-$facultyAssignData = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-$sections = array();
-$subjects = array();
-$faculties = array();
-foreach ($facultyAssignData as $key => $value) {
-    
-    $facultyAssignData_ = json_decode($value["faculty"], true);
-            
-    foreach ($facultyAssignData_ as $sectionId => $subjectData) {
-        array_push($sections, $sectionId);
-        foreach ($subjectData as $subjectId => $facultyId) {
-            if(gettype(array_search($subjectId, $subjects))!='integer') {
-                array_push($subjects, $subjectId);
-            }
-            array_push($faculties, $facultyId);
-        }
-    }
-    
-}
-$subjects = "'".implode("', '", $subjects)."'";
-$faculties = "'".implode("', '", $faculties)."'";
-$sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
-$sql->execute();
-$subjectInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-$sql = $conn->mconnect()->prepare("SELECT uid,email FROM `users` WHERE `uid` IN ($faculties) ");
-$sql->execute();
-$facultyInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-$subjectsInfoData = array();
-foreach ($subjectInfo as $key => $value) {
-    $subjectsInfoData[$value["subjectid"]] = $value["subjectname"];
-}
-
-$facultyInfoData = array();
-foreach ($facultyInfo as $key => $value) {
-    $facultyInfoData[$value["uid"]] = $value["email"];
-}
-
-$batches = array();
-foreach ($batchData as $key => $value) {
-    $batches[$value["batchid"]] = $value["batchLabel"];
-}
+$depData = $sql->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
+
 <!doctype html>
 <html lang="en" dir="ltr">
 <head>
@@ -85,6 +23,7 @@ foreach ($batchData as $key => $value) {
     <!-- FAVICON -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/brand/favicon.ico">
     <!-- TITLE -->
+    <script src="../assets/js/jquery.min.js"></script>
     <title>ERP</title>
     <!-- BOOTSTRAP CSS -->
     <link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -118,88 +57,94 @@ foreach ($batchData as $key => $value) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">User Dashboard</h1>
+                            <h1 class="page-title">Colleges & Department</h1>
                             <div>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">User Dashboard</li>
+                                    <li class="breadcrumb-item"><a href="#">Superadmin</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Colleges & Department</li>
                                 </ol>
                             </div>
                         </div>
                         
                         <!-- BODY CONTENT -->
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="card overflow-hidden">
-                                    <div class="card-body">
-                                        <div class="d-flex">
-                                            <div class="mt-2">
-                                                <h6 class=""> Total Classes Assigned as CC</h6>
-                                                <h2 class="mb-0 number-font"><?php echo $totalClasssesAssigned; ?></h2>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="col-6">
-                                <div class="card overflow-hidden">
-                                    <div class="card-body">
-                                        <div class="d-flex">
-                                            <div class="mt-2">
-                                                <h6 class="">Total Subject Assigned</h6>
-                                                <h2 class="mb-0 number-font"><?php echo $totalSubjectsAssigned; ?></h2>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
+                
                                 <div class="card">
                                     <div class="card-header">
-                                        <h3 class="card-title">Classes Assigned: </h3>
-                                        <div class="card-options">
-                                            <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
-                                        </div>
+                                        <h3 class="card-title">Colleges Details</h3>
                                     </div>
                                     <div class="card-body">
-                                    <div class="table-responsive">
-                                            <table id="dtable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered text-nowrap border-bottom" id='responsive-datatable'>
                                                 <thead>
                                                     <tr>
-                                                        <th class="border-bottom-0">Batch Name</th>
-                                                        <th class="border-bottom-0">Section ID</th>
+                                                        <th>SN.</th>
+                                                        <th>College Name</th>
+                                                        <th>College ID</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                <?php
-                                                $ccData = json_decode($userDetails["CC"], true);
-                                                    foreach ($ccData as $batchid => $sectionid) {
-                                                        $section = explode('-', $sectionid);
-                                                        echo "<tr>";
-                                                        echo "<td>";
-                                                        echo $batches[$batchid];
-                                                        echo "</td>";
-                                                        echo "<td>".chr($section[0]+64).$section[1]."</td>";
-                                                        echo "</td>";
+                                                    <?php
+                                                    $i = 1;
+                                                    foreach ($collegeData as $key => $value) {
+                                                        ?>
+                                                        <tr>
+                                                            <td><?php echo $i; ?></td>
+                                                            <td><?php echo $value; ?></td>
+                                                            <td><?php echo $key; ?></td>
+                                                        </tr>
+                                                        <?php
+                                                        $i++;
                                                     }
-                                               
 
-                                                ?>
+                                                    ?>
+
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                                
+                                
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Department Details</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered text-nowrap border-bottom" id='responsive-datatable'>
+                                                <thead>
+                                                    <tr>
+                                                        <th>SN.</th>
+                                                        <th>College Name</th>
+                                                        <th>Department Name</th>
+                                                        <th>Department ID</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    foreach ($depData as $key => $value) {
+                                                        ?>
+                                                        <tr>
+                                                            <td><?php echo $key+1; ?></td>
+                                                            <td><?php echo $collegeData[$value["collegeid"]]; ?></td>
+                                                            <td><?php echo $value["label"]; ?></td>
+                                                            <td><?php echo $value["depid"]; ?></td>
+                                                        </tr>
+                                                        <?php
+                                                        $i++;
+                                                    }
 
+                                                    ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+            
                         <!-- BODY CONTENT END -->
                         
                     </div>
@@ -214,7 +159,7 @@ foreach ($batchData as $key => $value) {
     <!-- BACK-TO-TOP -->
     <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
     <!-- JQUERY JS -->
-    <script src="../assets/js/jquery.min.js"></script>
+    
     <!-- BOOTSTRAP JS -->
     <script src="../assets/plugins/bootstrap/js/popper.min.js"></script>
     <script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
@@ -278,18 +223,10 @@ foreach ($batchData as $key => $value) {
     <script src="../assets/js/custom-swicher.js"></script>
     <!-- Switcher js -->
     <script src="../assets/switcher/js/switcher.js"></script>
+
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>
-    <script src="../assets/plugins/multipleselect/multiple-select.js"></script>
-    <script src="../assets/plugins/multipleselect/multi-select.js"></script>
-   
-    <script>
-        $("#dtable").DataTable( {
-            dom: 'Bfrtip',
-            buttons: [],
-            "bInfo": false
-        } );
-    </script>
-
+    
+    
 </body>
 </html>

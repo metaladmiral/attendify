@@ -3,42 +3,26 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
+$showHODStatus = 0;
 
-$ut = $_SESSION['usertype'];
-if($ut!="3") {
-    http_response_code(404);
-    die();
-}
-$collegeid = $_SESSION['collegeid'];
-$depid = json_decode($_SESSION['depid'], true);
-$depidFT = implode(" OR ", $depid);
-$depidin = "'".implode("', '", $depid)."'";
+if(isset($_GET['collegeid']) && isset($_GET['depid'])) {
+    $showHODStatus = 1;
 
+    $collegeid = $_GET['collegeid'];
+    $depid = $_GET['depid'];
 
-$showCCStatus = 0;
-
-if(isset($_GET['batch']) && isset($_GET['section'])) {
-    $showCCStatus = 1;
-
-    $batch = $_GET['batch'];
-    $section = $_GET['section'];
-
-    $query = $conn->mconnect()->prepare("SELECT sectionCC FROM `batches` WHERE `batchid`='$batch' ");
+    $query = $conn->mconnect()->prepare("SELECT uid, email, username FROM `users` WHERE MATCH(`depid`) AGAINST ('$depid' IN BOOLEAN MODE) AND `usertype`='3' ");
     $query->execute();
-    
-    $assignHistory = $query->fetch(PDO::FETCH_COLUMN);
-    $assignHistory = json_decode($assignHistory, true);
-
-    $assignedCCId = null;
-    if(isset($assignHistory[$section])) {
-        $sectionAssigned = 1;
-        $assignedCCId = $assignHistory[$section];
-
-    }else {
-        $sectionAssigned = 0;
-
+    if($query->rowCount()) {
+         $details = $query->fetch(PDO::FETCH_ASSOC);
+         $assignHodUid = $details["uid"];
+         $hodemail = $details["email"];
+         $hodusername = $details["username"];
     }
-    
+    else {
+        $assignHodUid = null;
+    }
+
 }
 
 ?>
@@ -51,8 +35,9 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- FAVICON -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/brand/favicon.ico">
+    <script src="../assets/js/jquery.min.js"></script>
     <!-- TITLE -->
-    <title>Attendify - Assign Class Counselor CGCcms.in</title>
+    <title>Attendify - HOD CGCcms.in</title>
     <!-- BOOTSTRAP CSS -->
     <link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- STYLE CSS -->
@@ -96,7 +81,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Assign Class Counselor</h1>
+                            <h1 class="page-title">Assign HOD</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Superadmin</a></li>
@@ -118,88 +103,143 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                                 <div class="card-body">
                                     <form action="">
                                         
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <select name="batch" class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
-                                                            <option value="" disabled selected>Select Batch</option>
-                                                            <?php 
-                                                            if($ut!="3") { 
-                                                                $sql = "SELECT * FROM `batches`";
-                                                            }else {
-                                                                $sql = "SELECT * FROM `batches` WHERE `depid` IN ($depidin) " ;
-                                                            }
-                                                            $query = $conn->mconnect()->prepare($sql);
-                                                            $query->execute();
-                                                            $data= $query->fetchAll(PDO::FETCH_ASSOC);
-                                                            foreach ($data as $key => $value) {
-                                                                ?>
-                                                                <option value="<?php echo $value['batchid']; ?>" 
-                                                                <?php if(isset($_GET['batch'])) { if($_GET['batch']==$value["batchid"]) {echo "selected";} } ?>
-                                                                ><?php echo $value['batchLabel']; ?></option>
-                                                            <?php 
-                                                            }
-                                                            ?>
-                                                    </select>
-                                                </div>
-                                                <div class="col-6">
-                                                    <select name="section" class='form-control' id="">
-                                                        <option value="" selected disabled>Select Section</option>
-                                                        <?php
-                                                            for($i=65;$i<=74;$i++) {
-                                                                $p = 1;
-                                                                while($p<=2) {
-                                                                    ?>
-                                                                    <option value="<?php echo $i-64; ?>-<?php echo $p; ?>"
-                                                                    <?php if(isset($_GET['section'])) { if(  $_GET['section']==(($i-64)."-".$p) ) {echo "selected";} } ?>
-                                                                    ><?php echo chr($i); ?><?php echo $p; ?></option>
-                                                                <?php
-                                                                    $p++;
-                                                                }
-                                                            }
+                                        <div class="row">
+                                            <div class="form-group col-6">
+                                                <label for="exampleInputEmail1" class="form-label">College</label>
+                                                <select name="collegeid" id="collegeSelect" class="form-control form-select select2" required>    
+                                                    <option value="" selected disabled>Select College</option>
+                                                    <?php
+                                                    $sql = "SELECT collegeid, label FROM `colleges`";
+                                                    $query = $conn->mconnect()->prepare($sql);
+                                                    $query->execute();
+                                                    $row = $query->fetchAll(PDO::FETCH_KEY_PAIR);
+                                                    foreach ($row as $key => $value) {
                                                         ?>
-                                                    </select>
-                                                </div>
+                                                            <option value="<?php echo $key; ?>" <?php if(isset($_GET['collegeid'])) { if($_GET['collegeid']==$key) {echo "selected";} } ?>><?php echo $value; ?></option>
+                                                            <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                                <input type="hidden" name="colleges" value="<?php echo base64_encode(json_encode($row)); ?>">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="exampleInputEmail1" class="form-label">Department <sup class="text-danger">(Select College First)</sup></label>
+                                                <select name="depid" id="depSelect" class="form-control form-select select2" onclick="" disabled="1" required>
+                                                    <option value="" selected disabled><?php if(isset($_GET['depid'])) { echo "Department Selected"; } else {echo "Select Department";} ?></option>
+                                                </select>
                                             </div>
                                         </div>
                                         
                                         <div class="form-group">
-                                            <button type="submit" class='btn btn-primary'>Get CC Status</button>
+                                            <button type="submit" class='btn btn-primary'>Get Details</button>
                                         </div>
                                             
                                     </form>
                                 </div>
                             </div>
                         </div>
+
+                        <script>
+                            
+                            $("#collegeSelect").change(function() {
+                                // alert('prakhar');
+                                let val = $(this).val();
+                                if(val) {
+                                    let arr = [val];
+                                    enableDep(JSON.stringify(arr));
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    // $("#depSelect").html("<option value='' selected disabled>Select Department</option>");
+                                }
+                            });
+                            async function enableDep(collegeid) {
+                                let fd = new FormData();
+                                fd.set('collegeids', collegeid);
+                                let resp = await fetch(`../assets/backend/getCollegeDepartments`, {
+                                    method: "POST",
+                                    body: fd,
+                                });
+                                if(resp.ok) {
+                                    const data = await resp.text();
+                                    if(data=="0") {
+                                        swal({
+                                            title: "Alert",
+                                            text: "Maintainance Required! Contact Admin",
+                                            type: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Exit'
+                                        });
+                                        $("#depSelect").attr('disabled', '1');
+                                    }
+                                    else {
+                                        let depData = JSON.parse(data);
+                                        let html = "<option value='' selected disabled>Select Department</option>";
+                                        $("#depSelect").text('');
+
+                                        for(let key in depData) {
+                                            <?php if(isset($_GET['depid'])) { 
+                                                ?>
+                                                if(depData[key].depid=="<?php echo $_GET['depid'] ?>") {
+                                                    html += `
+                                                        <option value="${depData[key].depid}" selected>${depData[key].depLabel} - ${depData[key].clgLabel}</option>
+                                                    `;
+                                                    continue;
+                                                }
+                                                <?php
+                                             } ?>
+                                            html += `
+                                                <option value="${depData[key].depid}" >${depData[key].depLabel} - ${depData[key].clgLabel}</option>
+                                            `;
+                                        }
+                                        if(html) {
+                                            $("#depSelect").removeAttr('disabled');
+                                            $("#depSelect").html(html);
+                                        }
+                                        else {$("#depSelect").attr('disabled', '1');}
+                                    }
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    swal({
+                                        title: "Alert",
+                                        text: "Maintainance Required! Contact Admin",
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Exit'
+                                    });
+                                }
+                            }
+                        </script>
                         
-                        <?php if($showCCStatus) { ?>
+                        <?php if($showHODStatus) { ?>
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Assign CC</h3>
+                                    <h3 class="card-title">Assign/Update</h3>
                                     <div class="card-options">
                                         <a href="javascript:void(0)" class="card-options-collapse" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
                                         <a href="javascript:void(0)" class="card-options-remove" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <form action="../assets/backend/changeCounselor" method="POST">
-                                        <input type="hidden" name="batchid" value="<?php echo $_GET['batch']; ?>">
-                                        <input type="hidden" name="sectionid" value="<?php echo $_GET['section']; ?>">
+                                    <form action="../assets/backend/changehod" method="POST">
+                                        <input type="hidden" name="collegeid" value="<?php echo $_GET['collegeid']; ?>">
+                                        <input type="hidden" name="depid" value="<?php echo $_GET['depid']; ?>">
                                     <?php
                                     
-                                        if(!$sectionAssigned) {
+                                        if(!$assignHodUid) {
                                             ?>
-                                            <b><label for="">CC Assigned: </label></b> <span class='text-danger'>No</span>
+                                            <b><label for="">HOD Assigned: </label></b> <span class='text-danger'>No</span>
                                             <br>
                                             <br>
-                                            <label for="">Select Class Counselor (CC): </label>
+                                            <label for="">Select HOD: </label>
                                             <br>
 
-                                            <select name="cc" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
-                                                <option value="" disabled selected>Select CC</option>
+                                            <select name="hod" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                                <option value="" disabled selected>Select HOD</option>
                                                 <?php 
-                                                   $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE) ";
+                                                   $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='3' ";
                                                    $query = $conn->mconnect()->prepare($sql);
                                                    $query->execute();
                                                    $data= $query->fetchAll(PDO::FETCH_ASSOC);
@@ -211,31 +251,28 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                                                     ?>
                                              </select>
                                             <br>
-                                             <button class='btn btn-primary' type='submit' name='assigncc'>Assign CC</button>
+                                             <button class='btn btn-primary' type='submit' name='assignhod'>Assign HOD</button>
                                             <?php
                                         }
                                         else {
                                             ?>
-                                            <b><label for="">CC Assigned: </label></b> <span class='text-success'>Yes</span> : <span class='currCCUsername'></span>
+                                            <b><label for=""> HOD Assigned: </label></b> <span class='text-success'>Yes</span> : <span class='currHODUsername'></span>
                                             <br>
                                             <br>
-                                            <label for="">Select Class Counselor (CC): </label>
+                                            <label for="">Select HOD: </label>
                                             <br>
 
-                                            <input type="hidden" value="<?php echo $assignedCCId; ?>" name='prevcc'>
+                                            <input type="hidden" value="<?php echo $assignHodUid; ?>" name='prevhod'>
 
-                                                <select name="cc" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
-                                                    <option value="" disabled selected>Select CC</option>
+                                                <select name="hod" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                                    <option value="" disabled selected>Select HOD</option>
                                                     <?php 
-                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE)  ";
-
+                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='3' ";
                                                     $query = $conn->mconnect()->prepare($sql);
                                                     $query->execute();
                                                     $data= $query->fetchAll(PDO::FETCH_ASSOC);
                                                     foreach ($data as $key => $value) {
-                                                            if($assignedCCId==$value["uid"]) {
-                                                                $currCCusername = $value["username"];
-                                                                $currCCEmail = $value["email"];
+                                                            if($assignHodUid==$value["uid"]) {
                                                                 ?>
                                                                  <option class='text-success' value="<?php echo $value['uid']; ?>"><?php echo $value['username']; ?> - <?php echo $value['email']; ?> &#x2022;</option>
                                                                 <?php
@@ -251,10 +288,10 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
 
                                                 <br>
 
-                                                <button class='btn btn-primary' type='submit' name="updatecc">Update CC</button>
+                                                <button class='btn btn-primary' type='submit' name="updatehod">Update HOD</button>
 
                                                  <script>
-                                                    document.querySelector(".currCCUsername").innerHTML = "(<?php echo $currCCusername; ?> - <?php echo $currCCEmail; ?>)";
+                                                    document.querySelector(".currHODUsername").innerHTML = "(<?php echo $hodusername; ?> - <?php echo $hodemail; ?>)";
                                                  </script>       
 
                                             <?php
@@ -282,7 +319,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
     <!-- BACK-TO-TOP -->
     <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
     <!-- JQUERY JS -->
-    <script src="../assets/js/jquery.min.js"></script>
+    
     <!-- BOOTSTRAP JS -->
     <script src="../assets/plugins/bootstrap/js/popper.min.js"></script>
     <script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
@@ -363,7 +400,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
         else {
             ?>
             <script>
-                swal('Hooray!', 'CC Successfully assigned!', 'success');
+                swal('Hooray!', 'HOD Successfully assigned!', 'success');
             </script>
             <?php
         }

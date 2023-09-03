@@ -19,14 +19,10 @@ if(is_null($data) || count($data)==0) {
     
     $processedBatchsAssigned = "'".implode("', '", $allBatchesAssigned)."'";
     
-    $sql = $conn->mconnect()->prepare("SELECT batchLabel, batchid FROM `batches` WHERE `batchid` IN (".$processedBatchsAssigned.") ");
+    $sql = $conn->mconnect()->prepare("SELECT batchid, batchLabel FROM `batches` WHERE `batchid` IN (".$processedBatchsAssigned.") ");
     $sql->execute();
-    $batchLabelData = $sql->fetchAll(PDO::FETCH_ASSOC);
+    $batchData = $sql->fetchAll(PDO::FETCH_KEY_PAIR);
     
-    $batchData = array();
-    foreach ($batchLabelData as $key => $value) {
-        $batchData[$value["batchid"]] = $value["batchLabel"];
-    }
 }
 
 ?>
@@ -46,14 +42,7 @@ if(is_null($data) || count($data)==0) {
     <script src="../assets/js/jquery.min.js"></script>
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.css" />
-    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
-
-    <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
-    <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
-    <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
     
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- BOOTSTRAP CSS -->
     <!-- STYLE CSS -->
@@ -85,31 +74,22 @@ if(is_null($data) || count($data)==0) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Mark Attendance</h1>
+                            <h1 class="page-title">Attendance Details</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Mark Attendance</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Attendance Details</li>
                                 </ol>
                             </div>
                         </div>
                         
                         <!-- BODY CONTENT -->
-                        <script>
-                            function addAttendanceCheckbox(randid) {
-                                // let table = $("."+randid+" .file-datatable");
-                                let table = $("#file-datatable").DataTable();
-                                let totalLec = $(".totalLec_"+randid)[0].getAttribute('value');
-
-                                table.row(':eq(0)').edit({
-                                    title: 'Edit First row'
-                                });
-                            }
-                        </script>
-                        <?php
+                        <div id="assignSubjects"><?php
+                        $nullCount = 0;
                         if(!$dataNull) {
                             foreach ($data as $key => $value) {
                                 foreach ($value as $key_ => $value_) {
+                                    if(!$value_) {continue;}
                                     $sectionInfo = explode('-', $key_);
                                     foreach($value_ as $key__ => $subjectDetails) {
                                     $randId = uniqid();
@@ -122,7 +102,6 @@ if(is_null($data) || count($data)==0) {
                                             <input type="hidden" name="subjectid" value="<?php echo $subjectDetails[0]; ?>">
                                             <input type="hidden" name="date" value="">
                                             <input type="hidden" name="absentStudents" value="">
-                                            <input type="hidden" name="totalLectures" value="">
                                         </form>
                                         <div class="card card-collapsed">
                                             <div class="card-header">
@@ -132,23 +111,10 @@ if(is_null($data) || count($data)==0) {
                                                 </div>
                                             </div>
                                             <div class="card-body">
-                                                <div class="row">
+                                                <div class="row" style='display: none;'>
                                                     <div class="col-3"><label for="">Select Date: </label></div>
                                                     <div class="col-9">
-                                                        <input id='attDate' style='display:none;' class='form-control attDate<?php echo $randId; ?>'>
-                                                    </div>
-                                                </div>
-                                                <br>
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <span><b>Attendance Status:</b> </span> <span class="attStatusText font-weight-bold" style='font-weight: bold;'>Select Date to Get Status and Submit Attendance</span>
-                                                    </div>
-                                                </div>
-                                                <br>
-                                                <div class="row">
-                                                    <div class="col-2"><b>Total No. of Lectures: </b></div>
-                                                    <div class="col-2">
-                                                        <input type="number" min="1" max="3" onchange="addAttendanceCheckbox('<?php echo $randId; ?>');" value="1" class="form-control totalLec_<?php echo $randId; ?>">
+                                                        <input id='attDate' style='display:none;' class='form-control attDate<?php echo $randId; ?> attDate'>
                                                     </div>
                                                 </div>
                                                 <br>
@@ -157,12 +123,15 @@ if(is_null($data) || count($data)==0) {
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id="file-datatable">
+                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id='<?php echo $randId; ?>_dt'>
                                                                     <thead>
-                                                                        <tr>
+                                                                        <tr class='dates-table-row'>
                                                                             <th>Roll No.</th>
                                                                             <th>Name</th>
-                                                                            <th>Present Today</th>
+                                                                            <th>MST 1</th>
+                                                                            <th>Assgn. 1</th>
+                                                                            <th>MST 2</th>
+                                                                            <th>Assgn. 2</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class='student-table-body'>
@@ -171,15 +140,12 @@ if(is_null($data) || count($data)==0) {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
-                                                        <button class="btn btn-primary submitAttendanceBtn <?php echo "btn_".$randId; ?>" onclick='submitAttendance("<?php echo $randId; ?>");' disabled>Submit Attendance</button>
-                                                    </div>
                                                 <!-- </div> -->
                                             </div>
                                         </div>
                                     </div>
                                     <?php
-                                    }
+                                }
                                 }
                             }
                         }
@@ -187,8 +153,7 @@ if(is_null($data) || count($data)==0) {
                             echo "No Subjects are currently assinged to you!";
                         }
 
-                        ?>
-            
+                        ?></div>
                         <!-- BODY CONTENT END -->
                         
                     </div>
@@ -199,25 +164,7 @@ if(is_null($data) || count($data)==0) {
         </div>
      <!-- FOOTER -->
     <?php include 'footer.php' ?>
-    <script>
-        function submitAttendance(randId) {
-            // let classInfo = $(e)[0].classList[3];
-            let checkBoxes= $(".cb_"+randId);
-            let absentStudents = [];
-            for(let k in checkBoxes) {
-                if(!checkBoxes[k].checked) {
-                    absentStudents.push(checkBoxes[k].value);
-                }
-                if(k==(checkBoxes.length-1)) {
-                    break;
-                }
-            }
-            $(".form_"+randId+" input[name='absentStudents']")[0].value = btoa(JSON.stringify(absentStudents));
-            $(".form_"+randId+" input[name='totalLectures']")[0].value = $(".totalLec_"+randId)[0].getAttribute('value');
-            $(".form_"+randId+" input[name='date']")[0].value = $(".attDate"+randId)[0].getAttribute('date-value');
-            $(".form_"+randId)[0].submit();
-        }
-    </script>
+    
     <script>
 
         var dateRanges = [];
@@ -232,25 +179,7 @@ if(is_null($data) || count($data)==0) {
                 fd.set("offset", studentDetailsOffset);
                 fd.set("batchid", batchid);
                 fd.set("sectionid", sectionid);
-                
                 fd.set("subjectid", subjectid);
-                fetch('../assets/backend/getAttendanceMarkedStatus', {
-                    method: 'POST',
-                    body: fd
-                })
-                .then(function (response) {
-                    if (response.ok) {
-                        return response.text(); 
-                    }
-                    throw new Error('Network response was not OK');
-                })
-                .then(function (data) {
-                    initDates(data);
-                    setAbsentees(data);
-                })
-                .catch(function (error) {
-                    console.error('Error:', error);
-                });
 
                 fetch('../assets/backend/getStudentRecords', {
                     method: 'POST',
@@ -263,35 +192,15 @@ if(is_null($data) || count($data)==0) {
                     throw new Error('Network response was not OK');
                 })
                 .then(function (data) {
-                    processStudentDetails(batchid, sectionid, data, randid);
+                    console.log(data);
+                    showStudentDetails(batchid, sectionid, data, randid, subjectid);
                 })
                 .catch(function (error) {
                     console.error('Error:', error);
                 });
 
 
-
             }
-        }
-
-        function processStudentDetails(batchid, sectionid, data, randid) {
-            data = JSON.parse(data);
-           
-            showStudentDetails(batchid, sectionid, data, randid);
-        }
-        let datesWithSubmissionRecords;
-        function initDates(data) {
-            dateRanges = [];
-            data=JSON.parse(data)["dateDetails"];
-            datesWithSubmissionRecords = data;
-            dateRanges.push(Object.keys(data)[0]);
-            dateRanges.push(Object.keys(data)[1]);
-            
-        }
-        let absentees;
-        function setAbsentees(data) {
-            data = JSON.parse(data)["absentStudentsDetails"];
-            absentees = data;
         }
 
     </script>
@@ -353,105 +262,112 @@ if(is_null($data) || count($data)==0) {
 
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
+
+    <script src="../assets/plugins/select2/select2.full.min.js"></script>
+    <!-- INTERNAL Data tables js-->
+    <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.bootstrap5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/pdfmake.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/vfs_fonts.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.colVis.min.js"></script>
+    <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
+    <script src="../assets/plugins/edit-table/bst-edittable.js"></script>
+    <script src="../assets/plugins/edit-table/edit-table.js"></script>
+    <script src="../assets/plugins/datatable/responsive.bootstrap5.min.js"></script>
+    <script src="../assets/js/table-data.js"></script>
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
-       function isInvalidDate(date, log) {
-            if(!dateRanges[1]) {
-                if(date.format('YYYY-MM-DD')==dateRanges[0]) {
-                    return false;
-                }
-            }
-            if(date.format('YYYY-MM-DD')<=dateRanges[0] && date.format('YYYY-MM-DD')>=dateRanges[1]) {
-                return false;
-            }
-            return true;
-        }
-
-        function setHtml(htmlData, date, randid) {
-            let dateKey;
-            try {
-                dateKey = absentees[date];
-            }
-            catch(err) {
-                dateKey = null;
-            }
-            let html = "";
-            if(dateKey) {
-                let absStudsUid = JSON.parse(dateKey);
-                for(const key in htmlData) {
-                    let rollno = (htmlData[key].uniroll) ? htmlData[key].uniroll : htmlData[key].classroll;
-                    if(absStudsUid.includes(htmlData[key].studid)) {
-                        html += `<tr>
-                        <td>${rollno}</td>
-                        <td>${htmlData[key].name}</td>
-                        <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}'></td>
-                        </tr>`;
-                    }
-                    else {
-                        html += `<tr>
-                        <td>${rollno}</td>
-                        <td>${htmlData[key].name}</td>
-                        <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}' checked></td>
-                        </tr>`;
-                    }
-                }
-            }else {
-                
-                for(const key in htmlData) {
-                    let rollno = (htmlData[key].classroll) ? htmlData[key].classroll : htmlData[key].uniroll;
-                    html += `<tr>
-                        <td>${rollno}</td>
-                        <td>${htmlData[key].name}</td>
-                        <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}' checked></td>
-                        </tr>`;
-                }
-            }
-            return html;
-        }   
-        function showStudentDetails(batchid, sectionid, data, randid) {
+        function showStudentDetails(batchid, sectionid, data, randid, subjectid) {
             $("."+randid+" .student-table-body")[0].innerHTML = "";
-            
+            let html = "";
+            data = JSON.parse(data);
+
+            html = "";
+            for(const key in data) {
+                let marks = JSON.parse(data[key].marks);
+
+                if (marks && marks[subjectid]) {
+                    marks = marks[subjectid];
+                } else {
+                    marks = {
+                        mst1: "NA",
+                        assgn1: "NA",
+                        mst2: "NA",
+                        assgn2: "NA"
+                    };
+                }
+
+                let studid = data[key].studid;
+                let rollno = (data[key].uniroll) ? data[key].uniroll : data[key].classroll;
+                html += `<tr data-studid='${data[key].studid}'>
+                <td>${rollno}</td>
+                <td>${data[key].name}</td>
+                <td class='mst1'>${marks.mst1}</td>
+                <td class='assgn1'>${marks.assgn1}</td>
+                <td class='mst2'>${marks.mst2}</td>
+                <td class='assgn2'>${marks.assgn2}</td>
+                `;
+                html += "</tr>";
+            }
             $("."+randid+" .loader")[0].style.display = "none";
-            $(".attDate"+randid)[0].style.display = "block";
-            $(".attDate"+randid).daterangepicker({
-                singleDatePicker: true,
-                autoUpdateInput: true,
-	            autoApply: true,
-                locale: {
-                    "format": "YYYY-MM-DD",
-                },
-                isInvalidDate: isInvalidDate
-            });
-
-            $(".attDate"+randid).on('apply.daterangepicker', function(ev, picker) {
-                $(".attDate"+randid)[0].setAttribute('date-value', picker.startDate.format('YYYY-MM-DD'));
-
-                let html = setHtml(data, picker.startDate.format('YYYY-MM-DD'), randid);
-                $("."+randid+" .student-table-body")[0].innerHTML = html;
-                
-                $("."+randid+" .submitAttendanceBtn").removeAttr('disabled');
-                // console.log(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]);
-                if(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]=="1") {
-                    
-                    $("."+randid+" .attStatusText").addClass('text-success');
-                    $("."+randid+" .attStatusText").removeClass('text-danger');
-                    $("."+randid+" .attStatusText")[0].innerHTML = "Already Submitted!";
-                }
-                else {
-                    $("."+randid+" .attStatusText").removeClass('text-success');
-                    $("."+randid+" .attStatusText").addClass('text-danger');
-                    $("."+randid+" .attStatusText")[0].innerHTML = "Not Submitted Yet!";
-
-                }
-		    });
             
-            let table = new DataTable("."+randid+" .file-datatable", {
-                dom: 'Bfrtip',
-                buttons: [
-                ]
-            });
-        }
+            $("."+randid+" .student-table-body")[0].innerHTML = html;
+            // let table = new DataTable("."+randid+" .file-datatable", {
+            //     dom: 'Bfrtip',
+            //     buttons: [
+            //         'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
+            //     ]
+            // });
+            // $().DataTable({
+            //     dom: 'Bfrtip',
+            //     buttons: [
+            //         'pdf', 'excel'
+            //     ],
+            //     "bInfo": false,
+            //     "pageLength": 40,
+            //     "bPaginate": false
+            // });
 
+            var example3 = new BSTable(randid+"_dt", {
+                editableColumns:"2,3,4,5",
+                onEdit: function(row) {
+                    let studid = $(row).attr('data-studid');
+                    let mst1 = $(row).children(".mst1").html();
+                    let assgn1 = $(row).children(".assgn1").html();
+                    let mst2 = $(row).children(".mst2").html();
+                    let assgn2 = $(row).children(".assgn2").html();
+
+                    updateStudentMarks(studid, mst1, assgn1, mst2, assgn2, subjectid);
+
+                },
+
+                advanced: { // Do not override advanced unless you know what youre doing
+                    columnLabel: 'Actions',
+                    buttonHTML: `<div class="btn-list">
+                    <button id="bEdit" type="button" class="btn btn-sm btn-primary">
+                        <span class="fe fe-edit" > </span>
+                    </button>
+                    <button id="bAcep" type="button" class="btn  btn-sm btn-primary" style="display:none;">
+                        <span class="fe fe-check-circle" > </span>
+                    </button>
+                    <button id="bCanc" type="button" class="btn  btn-sm btn-danger" style="display:none;">
+                        <span class="fe fe-x-circle" > </span>
+                    </button>
+                </div>`
+                }
+                
+            });
+            example3.init();
+        }
         
             </script>
         <?php
@@ -483,6 +399,56 @@ if(is_null($data) || count($data)==0) {
 
     ?>
 
+<script>
+
+    
+    async function updateStudentMarks(studid, mst1, assgn1, mst2, assgn2, subjectid) {
+        const url = '../assets/backend/setStudentMarks'; // Replace with the actual URL
+        
+        // Create a new FormData object and append the required fields
+        const formData = new FormData();
+        formData.append('subjectid', subjectid);
+        formData.append('studid', studid);
+        formData.append('mst1', mst1);
+        formData.append('assgn1', assgn1);
+        formData.append('mst2', mst2);
+        formData.append('assgn2', assgn2);
+  
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const responseData = await response.text();
+                if(responseData!="1") {
+                    swal({
+                        title: "Oops!",
+                        text: "An error occured. Please contact admin!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: 'Exit'
+                    });
+                }
+            } else {
+                console.error('Request failed with status:', response.status);
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function() {
+        let html = $("#assignSubjects")[0].innerHTML;
+        console.log(html);
+        if(!html) {
+            $("#assignSubjects")[0].innerHTML = "No Subjects are currently assinged to you!";
+        }
+    });
+</script>
 
 </body>
 </html>

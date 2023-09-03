@@ -46,14 +46,7 @@ if(is_null($data) || count($data)==0) {
     <script src="../assets/js/jquery.min.js"></script>
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.css" />
-    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
-
-    <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
-    <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
-    <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
     
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- BOOTSTRAP CSS -->
     <!-- STYLE CSS -->
@@ -122,7 +115,10 @@ if(is_null($data) || count($data)==0) {
                                             </div>
                                             <div class="card-body">
                                                 <div class="row" style='display: none;'>
-                                                    <b>Total Lectures: <span class='text-success tl'></span></b>
+                                                    <div class="col-3"><label for="">Select Date: </label></div>
+                                                    <div class="col-9">
+                                                        <input id='attDate' style='display:none;' class='form-control attDate<?php echo $randId; ?> attDate'>
+                                                    </div>
                                                 </div>
                                                 <br>
                                                 <div class="spinner-grow text-primary me-2 loader" style="width: 3rem; height: 3rem;" role="status"></div>
@@ -130,12 +126,14 @@ if(is_null($data) || count($data)==0) {
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id="file-datatable">
+                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable">
                                                                     <thead>
                                                                         <tr class='dates-table-row'>
-                                                                            <th>ID</th>
-                                                                            <th>Roll No.</th>
-                                                                            <th>Name</th>
+                                                                            <th width="1">Roll No.</th>
+                                                                            <th width="1">Name</th>
+                                                                            <abbr title="Total Present"><th width="1" class="border-bottom-0">TP</th></abbr>
+                                                                            <abbr title="Lectures Delivered"><th width="1" class="border-bottom-0">LD</th></abbr>
+                                                                            <abbr title="Attendance Percentage"><th width="1" class="border-bottom-0">AP</th></abbr>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class='student-table-body'>
@@ -277,6 +275,26 @@ if(is_null($data) || count($data)==0) {
 
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
+
+    <script src="../assets/plugins/select2/select2.full.min.js"></script>
+    <!-- INTERNAL Data tables js-->
+    <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.bootstrap5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/pdfmake.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/vfs_fonts.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.colVis.min.js"></script>
+    <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
+    <script src="../assets/plugins/datatable/responsive.bootstrap5.min.js"></script>
+    <script src="../assets/js/table-data.js"></script>
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
        function isInvalidDate(date, log) {
@@ -297,46 +315,59 @@ if(is_null($data) || count($data)==0) {
             // html += "<th>Lectures Present</th>";
             for(const key in data["dates"]) {
                 let date = new Date(key * 1000);
-                let textDate = date.getDate()+" "+monthNames[date.getMonth()]+", "+date.getFullYear();
-                html += `<th>${textDate}</th>`;
+                let year = parseInt(date.getFullYear());
+                year  = year%2000;
+                let textDate = date.getDate()+" "+monthNames[date.getMonth()]+", "+year;
+                html += `<th width="1">${textDate}</th>`;
             }
-            html += "<th>Lectures Absent</th>";
+            // html += "<th>Lectures Absent</th>";
             
             $("."+randid+" .dates-table-row")[0].innerHTML += html;
 
             html = "";
             for(const key in data["students"]) {
 
-                let lp = 0;
-                let lAb = 0;
+                // let lp = 0;
+                // let lAb = 0;
 
                 let studid = data["students"][key].studid;
                 let rollno = (data["students"][key].uniroll) ? data["students"][key].uniroll : data["students"][key].classroll;
                 html += `<tr>
-                <td>${parseInt(key)+1}</td>
                 <td>${rollno}</td>
                 <td>${data["students"][key].name}</td>
                 `;
+
+                let tempHtml = "";
+                let totalClasses = 0;
+                let totalPresent = 0;
                 for(const dateDetails in data["dates"]) {
                     // let unixDate = new Date(dateDeta * 1000);
-                    let studentData = data["dates"][dateDetails];
-                    let dayHTML = "";
-
-                    for (let i=0; i<studentData.length; i++) {
-                        let absStudIds = studentData[i];
-                        if(!absStudIds.includes(studid)) {
-                            dayHTML += "<span class='text-success'>P</span>";
-                            continue;
-                        }
-                        lAb++;
-                        dayHTML += "<span class='text-danger'>A</span>";
+                    let studentData = JSON.parse(data["dates"][dateDetails]);
+                    
+                    totalClasses++;
+                    if(!studentData.includes(studid)) {
+                        totalPresent++;
+                        tempHtml += `<td class='text-success'>P</td>`;
                     }
-
-                    // lp = tl - lAb;
-                    // html += `<td>${lp}</td>`;
-                    html += `<td>${dayHTML}</td>`;
+                    else {
+                        tempHtml += `<td class='text-danger'>A</td>`;
+                    }
                 }
-                html += `<td>${lAb}</td>`;
+
+                let attPercentage;
+                if(totalClasses) {
+                    attPercentage = ((totalPresent/totalClasses)*100)+"%";
+                }else {
+                    attPercentage = "NA";
+                }
+
+                html += `
+                <td>${totalPresent}</td>
+                <td>${totalClasses}</td>
+                <td>${attPercentage}</td>
+                `;
+
+                html += tempHtml;
 
                 html += "</tr>";
             }
@@ -373,11 +404,20 @@ if(is_null($data) || count($data)==0) {
 		    });
             
             $("."+randid+" .student-table-body")[0].innerHTML = html;
-            let table = new DataTable("."+randid+" .file-datatable", {
+            // let table = new DataTable("."+randid+" .file-datatable", {
+            //     dom: 'Bfrtip',
+            //     buttons: [
+            //         'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
+            //     ]
+            // });
+            $("."+randid+" .file-datatable").DataTable({
                 dom: 'Bfrtip',
                 buttons: [
-                    'copyHtml5', 'excelHtml5', 'pdfHtml5', 'csvHtml5'
-                ]
+                    'pdf', 'excel'
+                ],
+                "bInfo": false,
+                "pageLength": 40,
+                "bPaginate": false
             });
         }
 
