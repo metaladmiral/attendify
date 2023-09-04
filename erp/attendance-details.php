@@ -342,16 +342,36 @@ if(is_null($data) || count($data)==0) {
                 let totalPresent = 0;
                 for(const dateDetails in data["dates"]) {
                     // let unixDate = new Date(dateDeta * 1000);
-                    let studentData = JSON.parse(data["dates"][dateDetails]);
-                    
-                    totalClasses++;
-                    if(!studentData.includes(studid)) {
-                        totalPresent++;
-                        tempHtml += `<td class='text-success'>P</td>`;
+                    let studAttData = data["dates"][dateDetails];
+                    let studentData;
+                    if(studAttData.includes('-')) {
+                        studAttData = studAttData.split('-');
+                        tempHtml += `<td>`;
+                        for(let classCount in studAttData) {
+                            totalClasses++;
+                            studentData = JSON.parse(studAttData[classCount]);
+                            if(!studentData.includes(studid)) {
+                                totalPresent++;
+                                tempHtml += `<span style='margin: 5px;' class='text-success'>P</span>`;
+                            }
+                            else {
+                                tempHtml += `<span style='margin: 5px;' class='text-danger'>A</span>`;
+                            }
+                        }
+                        tempHtml += `</td>`;
                     }
                     else {
-                        tempHtml += `<td class='text-danger'>A</td>`;
+                        studentData = JSON.parse(data["dates"][dateDetails]);                    
+                        totalClasses++;
+                        if(!studentData.includes(studid)) {
+                            totalPresent++;
+                            tempHtml += `<td class='text-success'>P</td>`;
+                        }
+                        else {
+                            tempHtml += `<td class='text-danger'>A</td>`;
+                        }
                     }
+
                 }
 
                 let attPercentage;

@@ -40,12 +40,12 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
             
             $endDate = strtotime("today");
         }
-        $sql = "SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' AND `date` BETWEEN $startDate AND $endDate ";
+        $sectionID = $_GET['section'];
+        $sql = "SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' AND `sectionid`='$sectionID' AND `date` BETWEEN $startDate AND $endDate ";
 
         $sql = $conn->mconnect()->prepare($sql);
         $sql->execute();
         $attendanceData = $sql->fetchAll(PDO::FETCH_ASSOC);
-        
         $dates = array();
         
             foreach ($attendanceData as $key => $value) {   
@@ -317,17 +317,35 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                                 $totalPresent = 0;
                                                                 $html = "";
                                                                 foreach ($stickedData["dates"] as $key_ => $value_) {
-                                                                    $absStuds = json_decode($value_, true);
-                                                                    $key = array_search($value["studid"], $absStuds);
-                                                                    $totalClasses++;
-                                                                    $html .= "<td>";
-                                                                    if(gettype($key)=='integer'){
-                                                                        $html .= "<span class='text-danger'>A</span>";
-                                                                    }else {
-                                                                        $totalPresent++;
-                                                                        $html .= "<span class='text-success'>P</span>";
+                                                                    if(strpos($value_, "-")!==false) {
+                                                                        $value_ = explode('-', $value_);
+                                                                        $html .= "<td>";
+                                                                        foreach ($value_ as $k => $absentStudUids) {
+                                                                            $key = array_search($value["studid"], json_decode($absentStudUids, true));
+                                                                            $totalClasses++;
+                                                                            if(gettype($key)=='integer'){
+                                                                                $html .= "<span style='margin: 5px;' class='text-danger'>A</span>";
+                                                                            }else {
+                                                                                $totalPresent++;
+                                                                                $html .= "<span style='margin: 5px;' class='text-success'>P</span>";
+                                                                            }
+                                                                        }
+                                                                        $html .= "</td>";
+                                                                        
                                                                     }
-                                                                    $html .= "</td>";
+                                                                    else {
+                                                                        $absStuds = json_decode($value_, true);
+                                                                        $key = array_search($value["studid"], $absStuds);
+                                                                        $totalClasses++;
+                                                                        $html .= "<td>";
+                                                                        if(gettype($key)=='integer'){
+                                                                            $html .= "<span class='text-danger'>A</span>";
+                                                                        }else {
+                                                                            $totalPresent++;
+                                                                            $html .= "<span class='text-success'>P</span>";
+                                                                        }
+                                                                        $html .= "</td>";
+                                                                    }
                                                                 }
                                                                 if($totalClasses!=0) {
                                                                     $totalAttPercent = floor( (($totalPresent/$totalClasses)*100))."%";
