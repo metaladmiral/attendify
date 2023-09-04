@@ -47,6 +47,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
 <head>
     <!-- META DATA -->
     <meta charset="UTF-8">
+    <script src="../assets/js/jquery.min.js"></script>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- FAVICON -->
@@ -143,7 +144,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                                                     </select>
                                                 </div>
                                                 <div class="col-6">
-                                                    <select name="section" class='form-control' id="">
+                                                    <select name="section" class='form-control form-select select2' id="">
                                                         <option value="" selected disabled>Select Section</option>
                                                         <?php
                                                             for($i=65;$i<=74;$i++) {
@@ -282,7 +283,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
     <!-- BACK-TO-TOP -->
     <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
     <!-- JQUERY JS -->
-    <script src="../assets/js/jquery.min.js"></script>
+    
     <!-- BOOTSTRAP JS -->
     <script src="../assets/plugins/bootstrap/js/popper.min.js"></script>
     <script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
@@ -306,6 +307,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
     <script src="../assets/plugins/chart/utils.js"></script>
     <!-- INTERNAL SELECT2 JS -->
     <script src="../assets/plugins/select2/select2.full.min.js"></script>
+    <script src="../assets/js/select2.js"></script>
     <!-- INTERNAL Data tables js-->
     <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
     <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
