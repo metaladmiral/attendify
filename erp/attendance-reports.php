@@ -146,9 +146,9 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                             <option value="" disabled selected>Select Department</option>
                                                             <?php 
                                                             if($ut=="4" || $ut=="1") { 
-                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid`";
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid`!='tpp765' ";
                                                             }else {
-                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) " ;
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) AND a.`depid`!='tpp765' " ;
                                                             }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
@@ -671,6 +671,17 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                             }
                             </script>
                         <?php } ?>
+
+                        <!-- <script src="../assets/amsify/js/jquery.amsifyselect.js"></script>
+<script>
+    $(document).ready(function() {
+        $("select[name='subject']").amsifySelect({
+            searchable: true,
+            type:'bootstrap'
+        });
+        // $("select[name='facultyId']")[0].style.display = "none";
+    });
+</script> -->
 
 </body>
 </html>
