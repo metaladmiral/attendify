@@ -489,8 +489,9 @@ if(is_null($data) || count($data)==0) {
 
                 let html = setHtml(data, picker.startDate.format('YYYY-MM-DD'), randid, classCount);
                 $("."+randid+" .student-table-body")[0].innerHTML = html;
-                
-                $("."+randid+" .submitAttendanceBtn").removeAttr('disabled');
+                if(html) {
+                    $("."+randid+" .submitAttendanceBtn").removeAttr('disabled');
+                }
                 // console.log(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]);
                 if(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]=="1") {
                     
@@ -508,7 +509,6 @@ if(is_null($data) || count($data)==0) {
             
 
             if(!reOpen) {
-                alert('first open');
                 let table = new DataTable("."+randid+" .file-datatable", {
                     dom: 'Bfrtip',
                     buttons: [
