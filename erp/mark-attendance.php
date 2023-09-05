@@ -133,7 +133,7 @@ if(is_null($data) || count($data)==0) {
                                                 <div class="row classCountContainer<?php echo $randId; ?>" style='display: none;'>
                                                     <div class="col-3"><label for="">No. of Classes Taken: </label></div>
                                                     <div class="col-9">
-                                                        <input type="number" min="1" max="3" class='form-control' onkeyup="addAttChkBox('<?php echo $randId; ?>', this.value);" id="classCount<?php echo $randId; ?>" value="1">
+                                                        <input type="number" min="1" max="3" class='form-control classesTaken' onkeyup="addAttChkBox('<?php echo $randId; ?>', this.value);" id="classCount<?php echo $randId; ?>" value="1">
                                                     </div>
                                                 </div>
                                                 <br>
@@ -243,11 +243,22 @@ if(is_null($data) || count($data)==0) {
         let studentDetailsOffset = 0;
         async function getStudentDetails(e, batchid, sectionid, randid, subjectid) {
             let otherTabs = $(".batchTab");
+            let randClassName;
             for(let i in otherTabs) {
                 if(i=="length") {break;}
                 if($(otherTabs[i]).hasClass(randid)) {continue;}
                 if(!$($(otherTabs[i]).children()[1]).hasClass('card-collapsed')) {
-                    $($(otherTabs[i]).children()[1]).addClass('card-collapsed')
+                    randClassName = "."+$(otherTabs[i]).attr('class').split(' ')[1];
+                    
+                    if($(randClassName+" .card-collapsable").attr('data-loadedRecords')) {
+                        $(randClassName+" .card-collapsable").attr('data-loadCount', "1");
+                    }
+                    $(randClassName+" .card-collapsable").attr('data-loadedRecords', "0");
+
+                    $(randClassName+" .attStatusText").html('Select Date to Get Status and Submit Attendance');
+                    $(randClassName+" .attStatusText").removeClass('text-success');
+                    $(randClassName+" .classesTaken")[0].value = "";
+                    $($(otherTabs[i]).children()[1]).addClass('card-collapsed');
                 }
             }
             if($(e).attr('data-loadedRecords')=="0") {
@@ -289,7 +300,13 @@ if(is_null($data) || count($data)==0) {
                     throw new Error('Network response was not OK');
                 })
                 .then(function (data) {
-                    processStudentDetails(batchid, sectionid, data, randid);
+                    if($(e).attr('data-loadCount')) {
+                        processStudentDetails(batchid, sectionid, data, randid, 1);
+                    }
+                    else {
+
+                        processStudentDetails(batchid, sectionid, data, randid);
+                    }
                 })
                 .catch(function (error) {
                     console.error('Error:', error);
@@ -300,10 +317,10 @@ if(is_null($data) || count($data)==0) {
             }
         }
 
-        function processStudentDetails(batchid, sectionid, data, randid) {
+        function processStudentDetails(batchid, sectionid, data, randid, reOpen) {
             data = JSON.parse(data);
            
-            showStudentDetails(batchid, sectionid, data, randid);
+            showStudentDetails(batchid, sectionid, data, randid, reOpen);
         }
         let datesWithSubmissionRecords;
         function initDates(data) {
@@ -449,7 +466,7 @@ if(is_null($data) || count($data)==0) {
             }
             return html;
         }   
-        function showStudentDetails(batchid, sectionid, data, randid, classCount=1) {
+        function showStudentDetails(batchid, sectionid, data, randid, reOpen=0, classCount=1) {
             $("."+randid+" .student-table-body")[0].innerHTML = "";
             
             $("."+randid+" .loader")[0].style.display = "none";
@@ -489,11 +506,15 @@ if(is_null($data) || count($data)==0) {
                 }
 		    });
             
-            let table = new DataTable("."+randid+" .file-datatable", {
-                dom: 'Bfrtip',
-                buttons: [
-                ]
-            });
+
+            if(!reOpen) {
+                alert('first open');
+                let table = new DataTable("."+randid+" .file-datatable", {
+                    dom: 'Bfrtip',
+                    buttons: [
+                    ]
+                });
+            }
         }
 
         
