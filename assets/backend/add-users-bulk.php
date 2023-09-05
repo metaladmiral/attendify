@@ -60,9 +60,13 @@ else {
            $depids = array();
 
            if(strpos($collegeid, ",")!==false) {
+            $collegeid = str_replace('/\s+/', '', $collegeid);
             $collegeidsArr = explode(",", $collegeid);
             foreach ($collegeidsArr as $key => $value) {
-                array_push($collegeids);
+                if(!trim($value)) {
+                    continue;
+                }
+                array_push($collegeids, str_replace('/\s+/', '', $value));
             }
            }
            else {
@@ -70,9 +74,13 @@ else {
            }
 
            if(strpos($depid, ",")!==false) {
+            $depid = str_replace('/\s+/', '', $depid);
             $depidsArr = explode(",", $depid);
             foreach ($depidsArr as $key => $value) {
-                array_push($depids);
+                if(!trim($value)) {
+                    continue;
+                }
+                array_push($depids, str_replace('/\s+/', '', $value));
             }
            }
            else {
