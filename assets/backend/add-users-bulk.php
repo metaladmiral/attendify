@@ -48,19 +48,39 @@ else {
            $gender = $value[11];
            $usertype = $value[12];
 
-           $collegeids = array();
-           $depids = array();
-           
-           array_push($collegeids, $collegeid);
-           array_push($depids, $depid);
-           
-           $collegeids = json_encode($collegeids);
-           $depids = json_encode($depids);
-
            $active = "1";
            if(empty($email) || empty($username) || empty($empid) || empty($password) || empty($collegeid) || empty($depid) || empty($number) || empty($usertype) ) {
             continue;
            }
+           if($usertype=="1") {
+            continue;
+           }
+           
+           $collegeids = array();
+           $depids = array();
+
+           if(strpos($collegeid, ",")!==false) {
+            $collegeidsArr = explode(",", $collegeid);
+            foreach ($collegeidsArr as $key => $value) {
+                array_push($collegeids);
+            }
+           }
+           else {
+               array_push($collegeids, $collegeid);
+           }
+
+           if(strpos($depid, ",")!==false) {
+            $depidsArr = explode(",", $depid);
+            foreach ($depidsArr as $key => $value) {
+                array_push($depids);
+            }
+           }
+           else {
+               array_push($depids, $depid);
+           }
+
+           $collegeids = json_encode($collegeids);
+           $depids = json_encode($depids);
 
            $validatedName = preg_replace('/\s+/', '', $username);
            $uid = substr(strtolower($validatedName), 0, 3).uniqid();
