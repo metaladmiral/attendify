@@ -10,6 +10,8 @@ if(!empty($uid)) {
     $query->execute();
     if($query->rowCount()>0) {
         $row = $query->fetchAll(PDO::FETCH_ASSOC)[0];
+        $collegeids = json_decode($row['collegeid'], true);
+        $depids = json_decode($row['depid'], true);
     }
     else {
         header('Location: ../404.php');
@@ -25,6 +27,7 @@ header('Location: ../404.php');
 <head>
     <!-- META DATA -->
     <meta charset="UTF-8">
+    <script src="../assets/js/jquery.min.js"></script>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- FAVICON -->
@@ -84,8 +87,34 @@ header('Location: ../404.php');
                                 <form method="POST" action="../assets/backend/updateuser.php">
                                     <div class="">
                                         <input type="hidden" name="uid" value="<?php echo $_GET['uid']; ?>">
+
+                                        <div class="row">
+                                            <div class="form-group col-6">
+                                                <label for="exampleInputEmail1" class="form-label">Select Colleges: </label>
+                                                <select name="collegeid[]" id="collegeSelect" class="form-control form-select select2" multiple required>    
+
+                                                    <?php
+                                                    $sql = "SELECT collegeid, label FROM `colleges`";
+                                                    $query = $conn->mconnect()->prepare($sql);
+                                                    $query->execute();
+                                                    $row_ = $query->fetchAll(PDO::FETCH_KEY_PAIR);
+                                                    foreach ($row_ as $key => $value) {
+                                                        ?>
+                                                            <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                                                            <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="exampleInputEmail1" class="form-label">Select Departments: <sup class="text-danger">(Select College First)</sup></label>
+                                                <select name="depid[]" id="depSelect" class="form-control form-select select2" onclick="" disabled="1" multiple required>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="form-group">
-                                            <label for="exampleInputEmail1" class="form-label">Email address</label>
+                                            <label for="exampleInputEmail1" class="form-label">Email Address</label>
                                             <input value="<?php echo $row['email']; ?>" name="email" type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email" autocomplete="username">
                                         </div>
                                         <div class="form-group">
@@ -131,7 +160,7 @@ header('Location: ../404.php');
     <!-- BACK-TO-TOP -->
     <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
     <!-- JQUERY JS -->
-    <script src="../assets/js/jquery.min.js"></script>
+    
     <!-- BOOTSTRAP JS -->
     <script src="../assets/plugins/bootstrap/js/popper.min.js"></script>
     <script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
@@ -155,6 +184,7 @@ header('Location: ../404.php');
     <script src="../assets/plugins/chart/utils.js"></script>
     <!-- INTERNAL SELECT2 JS -->
     <script src="../assets/plugins/select2/select2.full.min.js"></script>
+    <script src="../assets/js/select2.js"></script>
     <!-- INTERNAL Data tables js-->
     <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
     <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
@@ -183,6 +213,69 @@ header('Location: ../404.php');
     <script src="../assets/js/custom.js"></script>
     <!-- Custom-switcher -->
     
+
+    <script>
+                            
+                            $("#collegeSelect").change(function() {
+
+                                let val = $(this).val();
+                                if(val.length) {
+                                    enableDep(JSON.stringify(val));
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    // $("#depSelect").html("<option value='' selected disabled>Select Department</option>");
+                                }
+                            });
+                            async function enableDep(collegeids) {
+                                let fd = new FormData();
+                                fd.set('collegeids', collegeids);
+                                let resp = await fetch(`../assets/backend/getCollegeDepartments`, {
+                                    method: "POST",
+                                    body: fd,
+                                });
+                                if(resp.ok) {
+                                    const data = await resp.text();
+                                    if(data=="0") {
+                                        swal({
+                                            title: "Alert",
+                                            text: "Maintainance Required! Contact Admin",
+                                            type: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Exit'
+                                        });
+                                        $("#depSelect").attr('disabled', '1');
+                                    }
+                                    else {
+                                        let depData = JSON.parse(data);
+                                        // let html = "<option value='' selected disabled>Select Department</option>";
+                                        let html = "";
+                                        $("#depSelect").text('');
+
+                                        for(let key in depData) {
+                                            html += `
+                                                <option value="${depData[key].depid}">${depData[key].depLabel} - ${depData[key].clgLabel}</option>
+                                            `;
+                                        }
+                                        if(html) {
+                                            $("#depSelect").removeAttr('disabled');
+                                            $("#depSelect").html(html);
+                                        }
+                                        else {$("#depSelect").attr('disabled', '1');}
+                                    }
+                                }
+                                else {
+                                    $("#depSelect").attr('disabled', '1');
+                                    swal({
+                                        title: "Alert",
+                                        text: "Maintainance Required! Contact Admin",
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Exit'
+                                    });
+                                }
+                            }
+                        </script>
 
     <script src="../assets/plugins/sweet-alert/sweetalert.min.js"></script>
     <script src="../assets/js/sweet-alert.js"></script>

@@ -6,6 +6,8 @@ require_once 'conn.php';
 if(isset($_POST['submit'])){
         $conn = new Db;
         try{
+            $collegeid = json_encode($_POST['collegeid']);
+            $depid= json_encode($_POST['depid']);
             $email = $_POST['email'];
             $uid = $_POST['uid'];
             $username = $_POST['fullname'];
@@ -13,16 +15,22 @@ if(isset($_POST['submit'])){
             $usertype = $_POST['usertype'];
             
             $password = $_POST['password'];
+
+            if($usertype=="3") {
+                $depid = "[]";
+                $collegeid = "[]";
+            }
+
             if(!empty($password) && !is_null($password)) {
                 $password = md5($password);
-                $sql = "UPDATE `users` SET email=?, username=?, password=?, usertype=? WHERE `uid`='$uid' ";
+                $sql = "UPDATE `users` SET email=?, username=?, password=?, usertype=?, collegeid=?, depid=? WHERE `uid`='$uid' ";
                 $query = $conn->mconnect()->prepare($sql);
-                $query->execute(array($email, $username,$password,$usertype));
+                $query->execute(array($email, $username,$password,$usertype, $collegeid, $depid));
             }
             else {
-                $sql = "UPDATE `users` SET email=?, username=?, usertype=? WHERE `uid`='$uid' ";
+                $sql = "UPDATE `users` SET email=?, username=?, usertype=?, collegeid=?, depid=? WHERE `uid`='$uid' ";
                 $query = $conn->mconnect()->prepare($sql);
-                $query->execute(array($email, $username,$usertype));
+                $query->execute(array($email, $username,$usertype, $collegeid, $depid));
             }
 
             $_SESSION['message']="1";
