@@ -167,8 +167,8 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                 <div class="card-header">
                                     <div class="card-title">Student Records in the Section</div>
                                 </div>
-                                <div class="card-body">
-                                    <table class="table table-bordered text-nowrap border-bottom" id="recordTable">
+                                <div class="card-body cardBody">
+                                    <table class="table table-bordered text-nowrap border-bottom recordTable">
                                         <thead>
                                             <tr>
                                                 <th class="wd-15p border-bottom-0">Student Name</th>
@@ -205,6 +205,19 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                 if(resp.ok) {
                                     const data = await resp.json();
                                     let html = "";
+                                    $(".cardBody")[0].innerHTML = `
+                                    <table class="table table-bordered text-nowrap border-bottom recordTable">
+                                        <thead>
+                                            <tr>
+                                                <th class="wd-15p border-bottom-0">Student Name</th>
+                                                <th class="wd-15p border-bottom-0">Student ID</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class='studentRecordBody'>
+
+                                        </tbody>
+                                    </table>
+                                    `;
                                     for(let key in data) {
                                         html += `
                                             <tr>
@@ -215,17 +228,16 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                     }
                                     $(".studentIdTable")[0].style.display = "block";
                                     document.querySelector(".studentRecordBody").innerHTML = html;
-                                    try {
-                                        $("#recordTable").DataTable({
-                                            dom: 'Bfrtip',
-                                            buttons: [
-                                                {
-                                                    extend: 'excel',
-                                                    title: ''
-                                                },
-                                            ]
-                                        });
-                                    }catch(err) {console.log(err);}
+                                    
+                                    $(".recordTable").DataTable({
+                                        dom: 'Bfrtip',
+                                        buttons: [
+                                            {
+                                                extend: 'excel',
+                                                title: ''
+                                            },
+                                        ]
+                                    });
                                 }
                             }
                         </script>
