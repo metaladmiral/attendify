@@ -173,6 +173,8 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                             <tr>
                                                 <th class="wd-15p border-bottom-0">Student Name</th>
                                                 <th class="wd-15p border-bottom-0">Student ID</th>
+                                                <th class="wd-15p border-bottom-0">Class Roll</th>
+                                                <th class="wd-15p border-bottom-0">Univ. Roll</th>
                                             </tr>
                                         </thead>
                                         <tbody class='studentRecordBody'>
@@ -211,6 +213,8 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                             <tr>
                                                 <th class="wd-15p border-bottom-0">Student Name</th>
                                                 <th class="wd-15p border-bottom-0">Student ID</th>
+                                                <th class="wd-15p border-bottom-0">Class Roll</th>
+                                                <th class="wd-15p border-bottom-0">Univ. Roll</th>
                                             </tr>
                                         </thead>
                                         <tbody class='studentRecordBody'>
@@ -219,10 +223,15 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                     </table>
                                     `;
                                     for(let key in data) {
+                                        let cr, ur;
+                                        if(data[key].classroll) {cr = data[key].classroll;}else {cr='NA';}
+                                        if(data[key].uniroll) {cr = data[key].uniroll;}else {ur='NA';}
                                         html += `
                                             <tr>
-                                                <td>${key}</td>
-                                                <td>${data[key]}</td>
+                                                <td>${data[key].name}</td>
+                                                <td>${data[key].studid}</td>
+                                                <td>${cr}</td>
+                                                <td>${ur}</td>
                                             </tr>
                                         `;
                                     }
