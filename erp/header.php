@@ -75,7 +75,7 @@ if($_SESSION['lockscreen']=="1") {
                         <!-- LOGO -->
                         <div class="main-header-center ms-3 d-none d-lg-block">
                             <?php if($_SESSION['usertype']=='1') { ?>
-                            <input type="text" class="form-control" id="" placeholder="Search for results..." onkeyup="search(this.value);">
+                            <input type="text" class="form-control" id="" placeholder="Type For Master Student Search..." onkeyup="search(this.value);">
                             <!-- <input type="text" class="form-control dropdown-toggle show" id="typehead" placeholder="Search for results..." data-bs-toggle="dropdown" aria-expanded="true"> -->
                             <!-- <input type="text" class="form-control" placeholder="Search for results..."> -->
                             <!-- <input type="text" class="form-control" onchange="return false;" placeholder="Search for results..."> -->
