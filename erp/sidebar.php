@@ -64,13 +64,13 @@ $ut = $_SESSION['usertype'];
                 <?php } ?>
                 
                 
-                <?php if($ut=="2") { ?>
+                <!-- <?php if($ut=="2") { ?>
                     <li class="slide">
-                        <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="2") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?> ><i class="side-menu__icon fe fe-users"></i>
+                        <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?> ><i class="side-menu__icon fe fe-users"></i>
                         <span onclick='window.location = "<?php echo $operationsURLS[1]; ?>" ' class="side-menu__label">Add Student</span></i>
                     </a>
                 </li>
-                <?php } ?>
+                <?php } ?> -->
 
 
                 <?php if($ut=="1" || $ut=="3" || $ut=="4") { ?>
