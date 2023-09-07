@@ -160,37 +160,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     </select>
                                                 </div>
 
-                                                <?php
-                                                if($ut=="3") {
-                                                ?>
                                                 <div class="col-3">
-                                                    <label for="" class="form-label">Select Subject:</label>
-                                                    <select name="subject" class='form-control form-select select2' id="" required>
-                                                        <option value="" selected disabled>Select Subject</option>
-                                                        <?php 
-
-                                                        $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
-                                                        $query = $conn->mconnect()->prepare($sql);
-                                                        $query->execute();
-                                                        $data= $query->fetchAll(PDO::FETCH_ASSOC);
-                                                        $currOptGrp = 0;
-                                                        foreach ($data as $key => $value) {
-                                                            if($value['subjectsem']!=$currOptGrp) {
-                                                                echo "</optgroup>";
-                                                                echo "<optgroup label='Sem: ".$value['subjectsem']." ' >";
-                                                                $currOptGrp = $value['subjectsem'];
-                                                            }
-                                                            ?>
-                                                            <option value="<?php echo $value['subjectid']; ?>" 
-                                                                <?php if(isset($_GET['subject'])) { if($_GET['subject']==$value["subjectid"]) {echo "selected";} } ?>><?php echo $value['subjectname']; ?> - <?php echo $value['subjectcode']; ?></option>
-                                                        <?php 
-                                                        }
-                                                        echo "</optgroup>";
-                                                        ?>
-                                                    </select>
-                                                </div>
-                                                <?php }else { ?>
-                                                    <div class="col-3">
                                                     <label for="" class="form-label">Select Subject: <sup class="text-danger">(Select Department First)</sup> </label>
                                                     
                                                     <select name="subject" id='subjectSelect'  class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required disabled>
@@ -198,7 +168,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                         
                                                     </select>
                                                 </div>
-                                                <?php } ?>
+
                                             </div>
                                         </div>
                                         
@@ -264,9 +234,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 `;
                                             }
                                         if(html) {
-                                            <?php if($ut=="4") { ?>
-                                                getDepartmentSubjects(depid);
-                                            <?php } ?>
+                                            getDepartmentSubjects(depid);
                                             $("#batchSelect").removeAttr('disabled');
                                             $("#batchSelect").html(html);
                                         }
@@ -286,12 +254,16 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                             }
                         </script>
 
-                        <?php if($ut=="4") { ?>
+                        
                             <script>
                             async function getDepartmentSubjects(depid) {
                                 let fd = new FormData();
                                 fd.set('depid', depid);
-                                fd.set('tpp', "1");
+                                <?php if($ut=="4") { ?>
+                                    fd.set('tpp', "1");
+                                <?php } else { ?>
+                                    fd.set('tpp', "0");
+                                <?php }  ?>
                                 let resp = await fetch(`../assets/backend/getDepartmentSubjects`, {
                                     method: "POST",
                                     body: fd,
@@ -304,7 +276,14 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                         let html = "<option value='' selected disabled>Select Subjects:</option>";
                                         $("#subjectSelect").text('');
 
+                                        let sem = "0";
+
                                         for(let key in subjectData) {
+                                            if(subjectData[key].subjectsem != sem) {
+                                                html += `</optgroup>`;
+                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '`;
+                                                sem = subjectData[key].subjectsem;
+                                            }
                                             <?php if(isset($_GET['subject'])) { 
                                                 ?>
                                                 if(subjectData[key].subjectid=="<?php echo $_GET['subject'] ?>") {
@@ -320,7 +299,6 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 `;
                                             }
                                         if(html) {
-                                            console.log(html);
                                             $("#subjectSelect").removeAttr('disabled');
                                             $("#subjectSelect").html(html);
                                         }
@@ -329,7 +307,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                 }
                             }
                             </script>
-                        <?php } ?>
+                        
 
                         
                         
