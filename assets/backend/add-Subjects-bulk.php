@@ -42,7 +42,7 @@ else {
            $sem = $value[2];
            $depid = $value[3];
            $collegeid = $value[4];
-           $tpp = $value[4];
+           $tpp = $value[5];
            if(empty($tpp)) {
             $tpp = 0;
            }
