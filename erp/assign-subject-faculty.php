@@ -273,15 +273,16 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                     if(data) {
                                         let subjectData = JSON.parse(data);
                                         console.log(subjectData);
-                                        let html = "<option value='' selected disabled>Select Subjects:</option>";
+                                        let html = "";
                                         $("#subjectSelect").text('');
 
                                         let sem = "0";
 
                                         for(let key in subjectData) {
+                                            console.log(key);
                                             if(subjectData[key].subjectsem != sem) {
                                                 html += `</optgroup>`;
-                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '`;
+                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '>`;
                                                 sem = subjectData[key].subjectsem;
                                             }
                                             <?php if(isset($_GET['subject'])) { 
@@ -298,6 +299,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 <option value="${subjectData[key].subjectid}" >${subjectData[key].subjectname} - ${subjectData[key].subjectcode}</option>
                                                 `;
                                             }
+                                            console.log(html);
                                         if(html) {
                                             $("#subjectSelect").removeAttr('disabled');
                                             $("#subjectSelect").html(html);
