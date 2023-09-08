@@ -422,7 +422,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
 
                                                 <br>
 
-                                                <button class='btn btn-primary' type='submit' name="updatesubjectfaculty">Update Faculty</button>
+                                                <button class='btn btn-primary' type='submit' name="updatesubjectfaculty" onclick="$(this).attr('disabled', 'true');">Update Faculty</button>
 
                                                  <script>
                                                     document.querySelector(".currFacultyUsername_<?php echo $rand; ?>").innerHTML = "(<?php echo $currFacultyusername; ?> - <?php echo $currFacultyEmpID; ?>)";
