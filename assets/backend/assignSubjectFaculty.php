@@ -24,6 +24,42 @@ if(isset($_SESSION['usertype']) && ($_SESSION['usertype']=='3' || $_SESSION['use
             $sectionId = $_POST['sectionid'];
             $subjectId = $_POST['subjectid'];
 
+            if(isset($_POST['updatesubjectfaculty'])) {
+                $prevFacultyId = $_POST['prevfaculty'];
+                
+                    $sql = "SELECT faculty from `users` WHERE `uid`='$prevFacultyId' ";
+                    $query = $conn->mconnect()->prepare($sql);
+                    $query->execute();
+                    $prevfacultyAssignHistory = $query->fetch(PDO::FETCH_COLUMN);
+                    $prevfacultyAssignHistory = json_decode($prevfacultyAssignHistory, true);
+
+                    // $prevFacultyArrayInfo = array();
+                    // foreach ($prevfacultyAssignHistory as $key => $value) {
+                    //     $inBatchKey = array_search($sectionId, $prevfacultyAssignHistory[$key]);
+                    //     array_push($prevFacultyArrayInfo, $key, $inBatchKey);
+                    // }
+                    // array_splice($prevfacultyAssignHistory[$prevFacultyArrayInfo[0]], $prevFacultyArrayInfo[1], 1);
+
+                    // unset($prevfacultyAssignHistory[$batchId][$sectionId]);
+                    // if(!count($prevfacultyAssignHistory[$batchId])) {
+                    //     unset($prevfacultyAssignHistory[$batchId]);
+                    // }
+
+                    foreach ($prevfacultyAssignHistory[$batchId][$sectionId] as $key => $value) {
+                        // var_dump($value);
+                        $eKey = array_search($subjectId, $value);
+                        if(gettype($eKey)=="integer") {
+                            unset($prevfacultyAssignHistory[$batchId][$sectionId][$key]);
+                        }
+                    }
+                     $prevfacultyAssignNew = json_encode($prevfacultyAssignHistory);
+                    $sql = "UPDATE `users` SET `faculty`='$prevfacultyAssignNew' WHERE `uid`='$prevFacultyId' ";
+                    $query = $conn->mconnect()->prepare($sql);
+                    $query->execute();
+                
+            }
+
+
             $sql = "SELECT subjectname from `subjects` WHERE `subjectid`='$subjectId' ";
             $query = $conn->mconnect()->prepare($sql);
             $query->execute();
@@ -79,41 +115,7 @@ if(isset($_SESSION['usertype']) && ($_SESSION['usertype']=='3' || $_SESSION['use
             $query = $conn->mconnect()->prepare($sql);
             $query->execute();
 
-            if(isset($_POST['updatesubjectfaculty'])) {
-                $prevFacultyId = $_POST['prevfaculty'];
-                
-                    $sql = "SELECT faculty from `users` WHERE `uid`='$prevFacultyId' ";
-                    $query = $conn->mconnect()->prepare($sql);
-                    $query->execute();
-                    $prevfacultyAssignHistory = $query->fetch(PDO::FETCH_COLUMN);
-                    $prevfacultyAssignHistory = json_decode($prevfacultyAssignHistory, true);
-
-                    // $prevFacultyArrayInfo = array();
-                    // foreach ($prevfacultyAssignHistory as $key => $value) {
-                    //     $inBatchKey = array_search($sectionId, $prevfacultyAssignHistory[$key]);
-                    //     array_push($prevFacultyArrayInfo, $key, $inBatchKey);
-                    // }
-                    // array_splice($prevfacultyAssignHistory[$prevFacultyArrayInfo[0]], $prevFacultyArrayInfo[1], 1);
-
-                    // unset($prevfacultyAssignHistory[$batchId][$sectionId]);
-                    // if(!count($prevfacultyAssignHistory[$batchId])) {
-                    //     unset($prevfacultyAssignHistory[$batchId]);
-                    // }
-
-                    foreach ($prevfacultyAssignHistory[$batchId][$sectionId] as $key => $value) {
-                        // var_dump($value);
-                        $eKey = array_search($subjectId, $value);
-                        if(gettype($eKey)=="integer") {
-                            unset($prevfacultyAssignHistory[$batchId][$sectionId][$key]);
-                            break;
-                        }
-                    }
-                     $prevfacultyAssignNew = json_encode($prevfacultyAssignHistory);
-                    $sql = "UPDATE `users` SET `faculty`='$prevfacultyAssignNew' WHERE `uid`='$prevFacultyId' ";
-                    $query = $conn->mconnect()->prepare($sql);
-                    $query->execute();
-                
-            }
+            
             $_SESSION['sufaculty'] = 1;
             header('Location: '.$_SERVER['HTTP_REFERER']);
             
