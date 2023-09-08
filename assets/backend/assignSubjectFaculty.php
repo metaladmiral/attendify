@@ -19,6 +19,12 @@ if(isset($_SESSION['usertype']) && ($_SESSION['usertype']=='3' || $_SESSION['use
             }
         }
 
+        if(empty($facultyId)) {
+            $_SESSION['sufaculty'] = 2;
+            header('Location: '.$_SERVER['HTTP_REFERER']);
+            die();
+        }
+
         try {    
             $batchId = $_POST['batchid'];
             $sectionId = $_POST['sectionid'];

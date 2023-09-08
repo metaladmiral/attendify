@@ -354,7 +354,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <form action="../assets/backend/assignSubjectFaculty" method="POST" class="assignForm">
+                                    <form action="../assets/backend/assignSubjectFaculty" method="POST" class="assignForm_<?php echo $rand; ?>">
                                         <input type="hidden" name="batchid" value="<?php echo $_GET['batch']; ?>">
                                         <input type="hidden" name="sectionid" value="<?php echo $value; ?>">
                                         <input type="hidden" name="subjectid" value="<?php echo $_GET['subject']; ?>">
@@ -384,7 +384,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                              </select>
                                             <br>   
                                             <input type="hidden" name="assignsubjectfaculty">
-                                             <button class='btn btn-primary' type='submit' name='assignsubjectfaculty' onclick="$(this).attr('disabled', 'true');$('.assignForm').submit();">Assign Faculty</button>
+                                             <button class='btn btn-primary' type='submit' name='assignsubjectfaculty' onclick="$(this).attr('disabled', 'true');$('.assignForm_<?php echo $rand; ?>').submit();">Assign Faculty</button>
                                             <?php
                                         }
                                         else {
@@ -424,7 +424,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 <br>
                                                     
                                                 <input type="hidden" name="updatesubjectfaculty">
-                                                <button class='btn btn-primary' type='submit' name="updatesubjectfaculty" onclick="$(this).attr('disabled', 'true');$('.assignForm').submit();">Update Faculty</button>
+                                                <button class='btn btn-primary' type='submit' name="updatesubjectfaculty" onclick="$(this).attr('disabled', 'true');$('.assignForm_<?php echo $rand; ?>').submit();">Update Faculty</button>
 
                                                  <script>
                                                     document.querySelector(".currFacultyUsername_<?php echo $rand; ?>").innerHTML = "(<?php echo $currFacultyusername; ?> - <?php echo $currFacultyEmpID; ?>)";
@@ -519,7 +519,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     
     if(isset($_SESSION['sufaculty']))
     {
-        if($_SESSION['sufaculty']!="1")  {
+        if($_SESSION['sufaculty']!="1" && $_SESSION['sufaculty']!="2")  {
 
             ?>
             <script>swal({
@@ -532,7 +532,18 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
             <?php
 
         }
-        else {
+        else if($_SESSION['sufaculty']=="2") {
+            ?>
+            <script>swal({
+             title: "Error!",
+             text: "You didn't select any faculty!",
+             type: "warning",
+             showCancelButton: true,
+             confirmButtonText: 'Exit'
+         });</script>
+            <?php
+        }
+        else  {
             ?>
             <script>
                 swal('Hooray!', 'Faculty Successfully assigned!', 'success');
