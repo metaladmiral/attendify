@@ -38,7 +38,8 @@ else {
             continue;
            }
             $batchid = $value[0];
-            $section = explode('-', $value[1]);
+            $sectionFromExcel = $value[1];
+            $section = explode('-', $sectionFromExcel);
             $sectionid = (ord($section[0])-64)."-".$section[1];
 
             $name = $value[2]." ".$value[3];
@@ -79,6 +80,10 @@ else {
             $commskills = $value[37];
 
             $studid = substr($batchid, 0, 2).substr(strtolower($name), 0, 3).uniqid();
+
+            if(empty($batchid) || empty($sectionFromExcel) || empty($name) ) {
+                continue;
+            }
             
             array_push($queryData, array($studid,$batchid, $sectionid, $name, $sem, $bloodgrp, $dob, $dep, "1", $classroll, $uniroll, $email, $paremail, $fname, $mname, $category, $mobile,$mano, $wano,$permaddr,$localaddr, $state,$district,$hosteldetails,$parentdetails,$loandetails,$unhealthyhabits,$marksinschool, $aimofedu,$traits,$natureofstud,$commskills, ""));
 
