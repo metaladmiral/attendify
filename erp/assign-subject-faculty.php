@@ -354,7 +354,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <form action="../assets/backend/assignSubjectFaculty" method="POST">
+                                    <form action="../assets/backend/assignSubjectFaculty" method="POST" class="assignForm">
                                         <input type="hidden" name="batchid" value="<?php echo $_GET['batch']; ?>">
                                         <input type="hidden" name="sectionid" value="<?php echo $value; ?>">
                                         <input type="hidden" name="subjectid" value="<?php echo $_GET['subject']; ?>">
@@ -368,7 +368,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                             <label for="">Select Faculty (Faculty): </label>
                                             <br>
 
-                                            <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required searchable>
+                                            <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                 <option value="" disabled selected>Select Faculty</option>
                                                 <?php 
                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE) ";
@@ -382,8 +382,9 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     }
                                                     ?>
                                              </select>
-                                            <br>
-                                             <button class='btn btn-primary' type='submit' name='assignsubjectfaculty'>Assign Faculty</button>
+                                            <br>   
+                                            <input type="hidden" name="assignsubjectfaculty">
+                                             <button class='btn btn-primary' type='submit' name='assignsubjectfaculty' onclick="$(this).attr('disabled', 'true');$('.assignForm').submit();">Assign Faculty</button>
                                             <?php
                                         }
                                         else {
@@ -421,8 +422,9 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 </select>
 
                                                 <br>
-
-                                                <button class='btn btn-primary' type='submit' name="updatesubjectfaculty" onclick="$(this).attr('disabled', 'true');">Update Faculty</button>
+                                                    
+                                                <input type="hidden" name="updatesubjectfaculty">
+                                                <button class='btn btn-primary' type='submit' name="updatesubjectfaculty" onclick="$(this).attr('disabled', 'true');$('.assignForm').submit();">Update Faculty</button>
 
                                                  <script>
                                                     document.querySelector(".currFacultyUsername_<?php echo $rand; ?>").innerHTML = "(<?php echo $currFacultyusername; ?> - <?php echo $currFacultyEmpID; ?>)";
