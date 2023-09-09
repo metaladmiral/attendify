@@ -40,12 +40,12 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
             
             $endDate = strtotime("today");
         }
-        $sql = "SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' AND `date` BETWEEN $startDate AND $endDate ";
+        $sectionID = $_GET['section'];
+        $sql = "SELECT date, absentStudents FROM `att_$batch` WHERE `subjectid`='$subjectID' AND `sectionid`='$sectionID' AND `date` BETWEEN $startDate AND $endDate ";
 
         $sql = $conn->mconnect()->prepare($sql);
         $sql->execute();
         $attendanceData = $sql->fetchAll(PDO::FETCH_ASSOC);
-        
         $dates = array();
         
             foreach ($attendanceData as $key => $value) {   
@@ -146,9 +146,9 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                             <option value="" disabled selected>Select Department</option>
                                                             <?php 
                                                             if($ut=="4" || $ut=="1") { 
-                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid`";
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid`!='tpp765' ";
                                                             }else {
-                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) " ;
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) AND a.`depid`!='tpp765' " ;
                                                             }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
@@ -205,41 +205,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                         ?>
                                                     </select>
                                                 </div>
-                                                <?php
-                                                if($ut=="3" || $ut=="1") {
-                                                ?>
-                                                <div class="col-3">
-                                                    <label for="" class="form-label">Select Subject:</label>
-                                                    <select name="subject" class='form-control form-select select2' id="" required>
-                                                        <option value="" selected disabled>Select Subject</option>
-                                                        <?php 
-                                                        
-                                                        if($ut=="3") {
-                                                            $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
-                                                        }
-                                                        else {
-                                                            $sql = "SELECT * FROM `subjects` GROUP BY `subjectsem`, `subjectname` ";
-                                                        }
-                                                        $query = $conn->mconnect()->prepare($sql);
-                                                        $query->execute();
-                                                        $data= $query->fetchAll(PDO::FETCH_ASSOC);
-                                                        $currOptGrp = 0;
-                                                        foreach ($data as $key => $value) {
-                                                            if($value['subjectsem']!=$currOptGrp) {
-                                                                echo "</optgroup>";
-                                                                echo "<optgroup label='Sem: ".$value['subjectsem']." ' >";
-                                                                $currOptGrp = $value['subjectsem'];
-                                                            }
-                                                            ?>
-                                                            <option value="<?php echo $value['subjectid']; ?>" 
-                                                                <?php if(isset($_GET['subject'])) { if($_GET['subject']==$value["subjectid"]) {echo "selected";} } ?>><?php echo $value['subjectname']; ?> - <?php echo $value['subjectcode']; ?></option>
-                                                        <?php 
-                                                        }
-                                                        echo "</optgroup>";
-                                                        ?>
-                                                    </select>
-                                                </div>
-                                                <?php }else { ?>
+                                               
                                                     <div class="col-3">
                                                     <label for="" class="form-label">Select Subject: <sup class="text-danger">(Select Department First)</sup> </label>
                                                     
@@ -248,7 +214,6 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                         
                                                     </select>
                                                 </div>
-                                                <?php } ?>
                                             </div>
                                         </div>
                                         
@@ -317,17 +282,35 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                                 $totalPresent = 0;
                                                                 $html = "";
                                                                 foreach ($stickedData["dates"] as $key_ => $value_) {
-                                                                    $absStuds = json_decode($value_, true);
-                                                                    $key = array_search($value["studid"], $absStuds);
-                                                                    $totalClasses++;
-                                                                    $html .= "<td>";
-                                                                    if(gettype($key)=='integer'){
-                                                                        $html .= "<span class='text-danger'>A</span>";
-                                                                    }else {
-                                                                        $totalPresent++;
-                                                                        $html .= "<span class='text-success'>P</span>";
+                                                                    if(strpos($value_, "-")!==false) {
+                                                                        $value_ = explode('-', $value_);
+                                                                        $html .= "<td>";
+                                                                        foreach ($value_ as $k => $absentStudUids) {
+                                                                            $key = array_search($value["studid"], json_decode($absentStudUids, true));
+                                                                            $totalClasses++;
+                                                                            if(gettype($key)=='integer'){
+                                                                                $html .= "<span style='margin: 5px;' class='text-danger'>A</span>";
+                                                                            }else {
+                                                                                $totalPresent++;
+                                                                                $html .= "<span style='margin: 5px;' class='text-success'>P</span>";
+                                                                            }
+                                                                        }
+                                                                        $html .= "</td>";
+                                                                        
                                                                     }
-                                                                    $html .= "</td>";
+                                                                    else {
+                                                                        $absStuds = json_decode($value_, true);
+                                                                        $key = array_search($value["studid"], $absStuds);
+                                                                        $totalClasses++;
+                                                                        $html .= "<td>";
+                                                                        if(gettype($key)=='integer'){
+                                                                            $html .= "<span class='text-danger'>A</span>";
+                                                                        }else {
+                                                                            $totalPresent++;
+                                                                            $html .= "<span class='text-success'>P</span>";
+                                                                        }
+                                                                        $html .= "</td>";
+                                                                    }
                                                                 }
                                                                 if($totalClasses!=0) {
                                                                     $totalAttPercent = floor( (($totalPresent/$totalClasses)*100))."%";
@@ -587,9 +570,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                 `;
                                             }
                                         if(html) {
-                                            <?php if($ut=="4") { ?>
                                                 getDepartmentSubjects(depid);
-                                            <?php } ?>
                                             $("#batchSelect").removeAttr('disabled');
                                             $("#batchSelect").html(html);
                                         }
@@ -609,12 +590,13 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                             }
                         </script>
 
-                        <?php if($ut=="4") { ?>
                             <script>
                             async function getDepartmentSubjects(depid) {
                                 let fd = new FormData();
                                 fd.set('depid', depid);
-                                fd.set('tpp', "1");
+                                <?php if($ut=="4") { ?>
+                                    fd.set('tpp', "1");
+                                <?php } ?>
                                 let resp = await fetch(`../assets/backend/getDepartmentSubjects`, {
                                     method: "POST",
                                     body: fd,
@@ -627,7 +609,14 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                         let html = "<option value='' selected disabled>Select Subjects:</option>";
                                         $("#subjectSelect").text('');
 
+                                        let sem = "0";
+
                                         for(let key in subjectData) {
+                                            if(subjectData[key].subjectsem != sem) {
+                                                html += `</optgroup>`;
+                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '`;
+                                                sem = subjectData[key].subjectsem;
+                                            }
                                             <?php if(isset($_GET['subject'])) { 
                                                 ?>
                                                 if(subjectData[key].subjectid=="<?php echo $_GET['subject'] ?>") {
@@ -643,7 +632,6 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                 `;
                                             }
                                         if(html) {
-                                            console.log(html);
                                             $("#subjectSelect").removeAttr('disabled');
                                             $("#subjectSelect").html(html);
                                         }
@@ -652,7 +640,17 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                 }
                             }
                             </script>
-                        <?php } ?>
+
+                        <!-- <script src="../assets/amsify/js/jquery.amsifyselect.js"></script>
+<script>
+    $(document).ready(function() {
+        $("select[name='subject']").amsifySelect({
+            searchable: true,
+            type:'bootstrap'
+        });
+        // $("select[name='facultyId']")[0].style.display = "none";
+    });
+</script> -->
 
 </body>
 </html>

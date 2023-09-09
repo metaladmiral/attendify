@@ -23,7 +23,7 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
     <!-- FAVICON -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/images/brand/favicon.ico">
     <!-- TITLE -->
-    <title>ERP</title>
+    <title></title>
     <!-- BOOTSTRAP CSS -->
     <link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- STYLE CSS -->
@@ -114,6 +114,11 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                                 </select>
                                                 
                                                 <br>
+                                                
+                                                <button href="" class="btn-pill btn btn-info btn-sm" onclick="getAutoExcel();" type="button">Get Automated Student Excel</button>
+                                                
+                                                <br>
+                                                <br>
 
                                                 <b><label for="batch">Select Subject:</label></b>
                                                 <select id='subject' class='form-control' name="subject" required>
@@ -157,6 +162,94 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                             
                         </div>
 
+                        <div class="col-12">
+                            <div class="card studentIdTable" style="display: none;">
+                                <div class="card-header">
+                                    <div class="card-title">Student Records in the Section</div>
+                                </div>
+                                <div class="card-body cardBody">
+                                    <table class="table table-bordered text-nowrap border-bottom recordTable">
+                                        <thead>
+                                            <tr>
+                                                <th class="wd-15p border-bottom-0">Student Name</th>
+                                                <th class="wd-15p border-bottom-0">Student ID</th>
+                                                <th class="wd-15p border-bottom-0">Class Roll</th>
+                                                <th class="wd-15p border-bottom-0">Univ. Roll</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class='studentRecordBody'>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            async function getAutoExcel() {
+
+                                let batch = $("#batch").val();
+                                let section = $("#section").val();
+
+                                if(!batch || !section) {
+                                    alert("Select Batch and Section Firstly!");
+                                    return;
+                                }
+
+                                let fd = new FormData();
+                                fd.set('batchid', batch);
+                                fd.set('sectionid', section);
+                                fd.set('autoExcel', "1");
+                                let resp = await fetch(`../assets/backend/getStudentRecords`, {
+                                    method: "POST",
+                                    body: fd,
+                                });
+                                if(resp.ok) {
+                                    const data = await resp.json();
+                                    let html = "";
+                                    $(".cardBody")[0].innerHTML = `
+                                    <table class="table table-bordered text-nowrap border-bottom recordTable">
+                                        <thead>
+                                            <tr>
+                                                <th class="wd-15p border-bottom-0">Student Name</th>
+                                                <th class="wd-15p border-bottom-0">Student ID</th>
+                                                <th class="wd-15p border-bottom-0">Class Roll</th>
+                                                <th class="wd-15p border-bottom-0">Univ. Roll</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class='studentRecordBody'>
+
+                                        </tbody>
+                                    </table>
+                                    `;
+                                    for(let key in data) {
+                                        let cr, ur;
+                                        if(data[key].classroll) {cr = data[key].classroll;}else {cr='NA';}
+                                        if(data[key].uniroll) {cr = data[key].uniroll;}else {ur='NA';}
+                                        html += `
+                                            <tr>
+                                                <td>${data[key].name}</td>
+                                                <td>${data[key].studid}</td>
+                                                <td>${cr}</td>
+                                                <td>${ur}</td>
+                                            </tr>
+                                        `;
+                                    }
+                                    $(".studentIdTable")[0].style.display = "block";
+                                    document.querySelector(".studentRecordBody").innerHTML = html;
+                                    
+                                    $(".recordTable").DataTable({
+                                        dom: 'Bfrtip',
+                                        buttons: [
+                                            {
+                                                extend: 'excel',
+                                                title: ''
+                                            },
+                                        ]
+                                    });
+                                }
+                            }
+                        </script>
             
                         <!-- BODY CONTENT END -->
                         
@@ -199,7 +292,17 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
     <!-- INTERNAL Data tables js-->
     <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
     <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.bootstrap5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/pdfmake.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/vfs_fonts.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.colVis.min.js"></script>
     <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
+    <script src="../assets/plugins/datatable/responsive.bootstrap5.min.js"></script>
+    <script src="../assets/js/table-data.js"></script>
     <!-- INTERNAL APEXCHART JS -->
     <script src="../assets/js/apexcharts.js"></script>
     <script src="../assets/plugins/apexchart/irregular-data-series.js"></script>

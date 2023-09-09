@@ -33,7 +33,7 @@ else {
         $absStuds = array();
 
         foreach ($worksheet->getColumnIterator() as $key=>$col) {
-            if($key=='A' || $key=='B') {
+            if($key=='A' || $key=='B' || $key=='C' || $key=="D") {
                 continue;
             }
             $cellIterator = $col->getCellIterator();

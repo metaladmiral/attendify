@@ -48,19 +48,47 @@ else {
            $gender = $value[11];
            $usertype = $value[12];
 
-           $collegeids = array();
-           $depids = array();
-           
-           array_push($collegeids, $collegeid);
-           array_push($depids, $depid);
-           
-           $collegeids = json_encode($collegeids);
-           $depids = json_encode($depids);
-
            $active = "1";
            if(empty($email) || empty($username) || empty($empid) || empty($password) || empty($collegeid) || empty($depid) || empty($number) || empty($usertype) ) {
             continue;
            }
+           if($usertype=="1") {
+            continue;
+           }
+           
+           $collegeids = array();
+           $depids = array();
+
+           if(strpos($collegeid, ",")!==false) {
+            $collegeid = str_replace('/\s+/', '', $collegeid);
+            $collegeidsArr = explode(",", $collegeid);
+            foreach ($collegeidsArr as $key => $value) {
+                if(!trim($value)) {
+                    continue;
+                }
+                array_push($collegeids, str_replace('/\s+/', '', $value));
+            }
+           }
+           else {
+               array_push($collegeids, $collegeid);
+           }
+
+           if(strpos($depid, ",")!==false) {
+            $depid = str_replace('/\s+/', '', $depid);
+            $depidsArr = explode(",", $depid);
+            foreach ($depidsArr as $key => $value) {
+                if(!trim($value)) {
+                    continue;
+                }
+                array_push($depids, str_replace('/\s+/', '', $value));
+            }
+           }
+           else {
+               array_push($depids, $depid);
+           }
+
+           $collegeids = json_encode($collegeids);
+           $depids = json_encode($depids);
 
            $validatedName = preg_replace('/\s+/', '', $username);
            $uid = substr(strtolower($validatedName), 0, 3).uniqid();

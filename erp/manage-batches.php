@@ -285,7 +285,7 @@ $conn = new Db;
                                                                     <div class="material-switch">
                                                                         <input id="toggleDep_<?php echo $rand; ?>" name="someSwitchOption001" type="checkbox"
                                                                         <?php if(gettype(array_search($depid, array("asd12a", "asdaqwe123")))=="integer") { $toApplied="0"; echo "checked"; }else {$toApplied = "1";} ?>
-                                                                        <?php if($collegeid == "64ed7eada8d43") {$appliedDepId = "asd12a"; }else {$appliedDepId = "asdaqwe123";} ?>
+                                                                        <?php if($collegeid == "64ed7eada8d43") {$appliedDepId = "asdaqwe123"; }else {$appliedDepId = "asd12a";} ?>
                                                                         onchange="toggleDep('<?php echo $value["batchid"] ?>', '<?php echo $appliedDepId; ?>', '<?php echo $toApplied; ?>');"
                                                                         >
                                                                         <label for="toggleDep_<?php echo $rand; ?>" class="label-primary"></label>

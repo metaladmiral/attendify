@@ -21,6 +21,9 @@ if(isset($_SESSION['usertype']) && $_SESSION['usertype']=='1' ) {
             $depIdsPrev = $query->fetch(PDO::FETCH_COLUMN);
             
             $depIdsNew = json_decode($depIdsPrev, true);
+            if(array_search($depid, $depIdsNew)===false) {
+                array_push($depIdsNew, $depid);
+            }
             array_push($depIdsNew, $depid);
 
             $depIdsNew = json_encode($depIdsNew);

@@ -105,19 +105,21 @@ if(is_null($data) || count($data)==0) {
                                     $randId = uniqid();
                                     ?>
                                     
-                                    <div class="col-12 <?php echo $randId; ?>">
-                                        <form class='form_<?php echo $randId; ?>' method="POST" action='../assets/backend/submitAttendance'>
+                                    <div class="col-12 <?php echo $randId; ?> batchTab">
+                                        <form class='form_<?php echo $randId; ?>' method="POST" onsubmit="return false;" action='../assets/backend/submitAttendance'>
+                                        <!-- <form class='form_<?php echo $randId; ?>' method="POST" onsubmit="return false;"> -->
                                             <input type="hidden" name="batchid" value="<?php echo $key; ?>">
                                             <input type="hidden" name="sectionid" value="<?php echo $key_; ?>">
                                             <input type="hidden" name="subjectid" value="<?php echo $subjectDetails[0]; ?>">
                                             <input type="hidden" name="date" value="">
                                             <input type="hidden" name="absentStudents" value="">
+                                            <input type="hidden" name="classCount" value="">
                                         </form>
                                         <div class="card card-collapsed">
                                             <div class="card-header">
                                                 <h3 class="card-title"><?php echo $batchData[$key]; ?> (section: <?php echo chr($sectionInfo[0]+64).$sectionInfo[1]; ?>) - <?php echo $subjectDetails[1]; ?> </h3>
                                                 <div class="card-options">
-                                                    <a href="javascript:void(0)" class="card-options-collapse" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $key_; ?>", "<?php echo $randId; ?>", "<?php echo $subjectDetails[0]; ?>");'data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
+                                                    <a href="javascript:void(0)" class="card-options-collapse card-collapsable" onclick='getStudentDetails(this, "<?php echo $key; ?>", "<?php echo $key_; ?>", "<?php echo $randId; ?>", "<?php echo $subjectDetails[0]; ?>");' data-bs-toggle="card-collapse" data-loadedRecords="0" ><i class="fe fe-chevron-up"></i></a>
                                                 </div>
                                             </div>
                                             <div class="card-body">
@@ -125,6 +127,13 @@ if(is_null($data) || count($data)==0) {
                                                     <div class="col-3"><label for="">Select Date: </label></div>
                                                     <div class="col-9">
                                                         <input id='attDate' style='display:none;' class='form-control attDate<?php echo $randId; ?>'>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row classCountContainer<?php echo $randId; ?>" style='display: none;'>
+                                                    <div class="col-3"><label for="">No. of Classes Taken: </label></div>
+                                                    <div class="col-9">
+                                                        <input type="number" min="1" max="3" class='form-control classesTaken' onkeyup="addAttChkBox('<?php echo $randId; ?>', this.value);" id="classCount<?php echo $randId; ?>" value="1">
                                                     </div>
                                                 </div>
                                                 <br>
@@ -154,7 +163,7 @@ if(is_null($data) || count($data)==0) {
                                                         </div>
                                                     </div>
                                                     <div class="col-4">
-                                                        <button class="btn btn-primary submitAttendanceBtn <?php echo "btn_".$randId; ?>" onclick='submitAttendance("<?php echo $randId; ?>");' disabled>Submit Attendance</button>
+                                                        <button class="btn btn-primary submitAttendanceBtn <?php echo "btn_".$randId; ?>" onclick='return submitAttendance("<?php echo $randId; ?>");' disabled>Submit Attendance</button>
                                                     </div>
                                                 <!-- </div> -->
                                             </div>
@@ -182,21 +191,49 @@ if(is_null($data) || count($data)==0) {
      <!-- FOOTER -->
     <?php include 'footer.php' ?>
     <script>
+        function addAttChkBox(randId, classCount) {
+            // let html = "";
+            
+            // $("."+randId+" .chkBoxes")
+
+            let chkBoxesCont = $("."+randId+" .chkBoxes");
+            for(let key in chkBoxesCont) {
+                if(key=="length") {break;}
+                let studid = chkBoxesCont[key].children[0].value;
+                let html = "";
+                for (let i = 0; i < classCount; i++) {
+                    html += `
+                    <input type='checkbox' style='position: unset;margin-block-start: unset;margin-inline-start: unset;' class='cb_${randId} cb${i} form-check-input' value='${studid}' checked>
+                    `;
+                }
+                chkBoxesCont[key].innerHTML = html;
+            }
+
+        }
         function submitAttendance(randId) {
             // let classInfo = $(e)[0].classList[3];
             let checkBoxes= $(".cb_"+randId);
+            let classCount= $("#classCount"+randId)[0].value;
             let absentStudents = [];
-            for(let k in checkBoxes) {
-                if(!checkBoxes[k].checked) {
-                    absentStudents.push(checkBoxes[k].value);
-                }
-                if(k==(checkBoxes.length-1)) {
-                    break;
+
+            for (let i = 0; i < classCount; i++) { 
+                let chkBoxes = $("."+randId+" .cb"+i);
+                // console.log("."+randId+" .cb"+i);
+                absentStudents.push([]);
+                for(k in chkBoxes) {
+                    if(!chkBoxes[k].checked) {
+                        absentStudents[i].push(chkBoxes[k].value);
+                    }
+                    if(k==(chkBoxes.length-1)) {
+                        break;
+                    }    
                 }
             }
+
             $(".form_"+randId+" input[name='absentStudents']")[0].value = btoa(JSON.stringify(absentStudents));
             $(".form_"+randId+" input[name='date']")[0].value = $(".attDate"+randId)[0].getAttribute('date-value');
             $(".form_"+randId)[0].submit();
+            // console.log(JSON.stringify(absentStudents));
         }
     </script>
     <script>
@@ -204,7 +241,26 @@ if(is_null($data) || count($data)==0) {
         var dateRanges = [];
 
         let studentDetailsOffset = 0;
-        function getStudentDetails(e, batchid, sectionid, randid, subjectid) {
+        async function getStudentDetails(e, batchid, sectionid, randid, subjectid) {
+            let otherTabs = $(".batchTab");
+            let randClassName;
+            for(let i in otherTabs) {
+                if(i=="length") {break;}
+                if($(otherTabs[i]).hasClass(randid)) {continue;}
+                if(!$($(otherTabs[i]).children()[1]).hasClass('card-collapsed')) {
+                    randClassName = "."+$(otherTabs[i]).attr('class').split(' ')[1];
+                    
+                    if($(randClassName+" .card-collapsable").attr('data-loadedRecords')) {
+                        $(randClassName+" .card-collapsable").attr('data-loadCount', "1");
+                    }
+                    $(randClassName+" .card-collapsable").attr('data-loadedRecords', "0");
+
+                    $(randClassName+" .attStatusText").html('Select Date to Get Status and Submit Attendance');
+                    $(randClassName+" .attStatusText").removeClass('text-success');
+                    $(randClassName+" .classesTaken")[0].value = "";
+                    $($(otherTabs[i]).children()[1]).addClass('card-collapsed');
+                }
+            }
             if($(e).attr('data-loadedRecords')=="0") {
                 $(e).attr('data-loadedRecords', "1");
                 // $(".student-records")[0].style.display = "block";
@@ -215,7 +271,7 @@ if(is_null($data) || count($data)==0) {
                 fd.set("sectionid", sectionid);
                 
                 fd.set("subjectid", subjectid);
-                fetch('../assets/backend/getAttendanceMarkedStatus', {
+                await fetch('../assets/backend/getAttendanceMarkedStatus', {
                     method: 'POST',
                     body: fd
                 })
@@ -225,15 +281,15 @@ if(is_null($data) || count($data)==0) {
                     }
                     throw new Error('Network response was not OK');
                 })
-                .then(function (data) {
-                    initDates(data);
+                .then(async function (data) {
+                    await initDates(data);
                     setAbsentees(data);
                 })
                 .catch(function (error) {
                     console.error('Error:', error);
                 });
 
-                fetch('../assets/backend/getStudentRecords', {
+                await fetch('../assets/backend/getStudentRecords', {
                     method: 'POST',
                     body: fd
                 })
@@ -244,7 +300,13 @@ if(is_null($data) || count($data)==0) {
                     throw new Error('Network response was not OK');
                 })
                 .then(function (data) {
-                    processStudentDetails(batchid, sectionid, data, randid);
+                    if($(e).attr('data-loadCount')) {
+                        processStudentDetails(batchid, sectionid, data, randid, 1);
+                    }
+                    else {
+
+                        processStudentDetails(batchid, sectionid, data, randid);
+                    }
                 })
                 .catch(function (error) {
                     console.error('Error:', error);
@@ -255,10 +317,10 @@ if(is_null($data) || count($data)==0) {
             }
         }
 
-        function processStudentDetails(batchid, sectionid, data, randid) {
+        function processStudentDetails(batchid, sectionid, data, randid, reOpen) {
             data = JSON.parse(data);
            
-            showStudentDetails(batchid, sectionid, data, randid);
+            showStudentDetails(batchid, sectionid, data, randid, reOpen);
         }
         let datesWithSubmissionRecords;
         function initDates(data) {
@@ -270,6 +332,7 @@ if(is_null($data) || count($data)==0) {
             
         }
         let absentees;
+        let classesCount = 0;
         function setAbsentees(data) {
             data = JSON.parse(data)["absentStudentsDetails"];
             absentees = data;
@@ -336,7 +399,7 @@ if(is_null($data) || count($data)==0) {
     <script src="../assets/js/sweet-alert.js"></script>
 
     <script>
-       function isInvalidDate(date, log) {
+        function isInvalidDate(date, log) {
             if(!dateRanges[1]) {
                 if(date.format('YYYY-MM-DD')==dateRanges[0]) {
                     return false;
@@ -348,7 +411,7 @@ if(is_null($data) || count($data)==0) {
             return true;
         }
 
-        function setHtml(htmlData, date, randid) {
+        function setHtml(htmlData, date, randid, classCount) {
             let dateKey;
             try {
                 dateKey = absentees[date];
@@ -358,38 +421,52 @@ if(is_null($data) || count($data)==0) {
             }
             let html = "";
             if(dateKey) {
-                let absStudsUid = JSON.parse(dateKey);
+                let absDataObj;
+                if(Object.values(dateKey).includes("-")) {
+                    absDataObj = dateKey.split('-');
+                    classesCount = absDataObj.length;
+                }else {
+                    absDataObj = JSON.parse(dateKey);
+                    absDataObj = [absDataObj];
+                    classesCount = 1;
+                }
+
+                $(".classCountContainer"+randid+" input")[0].value = classesCount;
+                
+                
                 for(const key in htmlData) {
                     let rollno = (htmlData[key].uniroll) ? htmlData[key].uniroll : htmlData[key].classroll;
-                    if(absStudsUid.includes(htmlData[key].studid)) {
-                        html += `<tr>
-                        <td>${rollno}</td>
-                        <td>${htmlData[key].name}</td>
-                        <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}'></td>
-                        </tr>`;
+                    html += `<tr>
+                    <td>${rollno}</td>
+                    <td>${htmlData[key].name}</td>
+                    <td class='chkBoxes row' style='justify-content:center;'>`;
+                    for(let k in absDataObj) {
+                        let absStudsUid = absDataObj[k]; 
+                        if(absStudsUid.includes(htmlData[key].studid)) {
+                            html += `<input type='checkbox' style='position: unset;margin-block-start: unset;margin-inline-start: unset;' class='cb_${randid} form-check-input cb${k}' value='${htmlData[key].studid}'>`;
+                        }
+                        else {
+                            html += `<input type='checkbox' style='position: unset;margin-block-start: unset;margin-inline-start: unset;' class='cb_${randid} form-check-input cb${k}' value='${htmlData[key].studid}' checked>`;
+                        }
+
                     }
-                    else {
-                        html += `<tr>
-                        <td>${rollno}</td>
-                        <td>${htmlData[key].name}</td>
-                        <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}' checked></td>
-                        </tr>`;
-                    }
+                    html += `</td>
+                    </tr>`;
+
                 }
             }else {
-                
                 for(const key in htmlData) {
                     let rollno = (htmlData[key].classroll) ? htmlData[key].classroll : htmlData[key].uniroll;
                     html += `<tr>
                         <td>${rollno}</td>
                         <td>${htmlData[key].name}</td>
-                        <td><input type='checkbox' class='cb_${randid}' value='${htmlData[key].studid}' checked></td>
+                        <td class='chkBoxes'><input type='checkbox' style='position: unset;margin-block-start: unset;margin-inline-start: unset;' class='cb_${randid} form-check-input cb0' value='${htmlData[key].studid}' checked></td>
                         </tr>`;
                 }
             }
             return html;
         }   
-        function showStudentDetails(batchid, sectionid, data, randid) {
+        function showStudentDetails(batchid, sectionid, data, randid, reOpen=0, classCount=1) {
             $("."+randid+" .student-table-body")[0].innerHTML = "";
             
             $("."+randid+" .loader")[0].style.display = "none";
@@ -407,10 +484,14 @@ if(is_null($data) || count($data)==0) {
             $(".attDate"+randid).on('apply.daterangepicker', function(ev, picker) {
                 $(".attDate"+randid)[0].setAttribute('date-value', picker.startDate.format('YYYY-MM-DD'));
 
-                let html = setHtml(data, picker.startDate.format('YYYY-MM-DD'), randid);
+                $(".classCountContainer"+randid)[0].style.display = "flex";
+                // $(".classCountContainer"+randid+" input")[0].setAttribute('onkeyup', 'showStudentDetails("'+batchid+'","'+sectionid+'","'+data+'", "'+randid+'", this.value)');
+
+                let html = setHtml(data, picker.startDate.format('YYYY-MM-DD'), randid, classCount);
                 $("."+randid+" .student-table-body")[0].innerHTML = html;
-                
-                $("."+randid+" .submitAttendanceBtn").removeAttr('disabled');
+                if(html) {
+                    $("."+randid+" .submitAttendanceBtn").removeAttr('disabled');
+                }
                 // console.log(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]);
                 if(datesWithSubmissionRecords[picker.startDate.format('YYYY-MM-DD')]=="1") {
                     
@@ -426,11 +507,14 @@ if(is_null($data) || count($data)==0) {
                 }
 		    });
             
-            let table = new DataTable("."+randid+" .file-datatable", {
-                dom: 'Bfrtip',
-                buttons: [
-                ]
-            });
+
+            if(!reOpen) {
+                let table = new DataTable("."+randid+" .file-datatable", {
+                    dom: 'Bfrtip',
+                    buttons: [
+                    ]
+                });
+            }
         }
 
         

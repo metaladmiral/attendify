@@ -345,64 +345,7 @@ $studid = $pdata["studid"];
                                              <textarea class="form-control" placeholder="Start typing here..." disabled><?php echo $pdata["initcommskill"]; ?></textarea>
                                           </div>    
 
-                                        <br>
-                                        <?php
-                                             $marks = json_decode($pdata["marks"], true);
-                                        ?>
-                                        <form action="../assets/backend/editstud_script.php" method="POST" class='addStudForm'>
-                                        <input type="hidden" name="studid" class='studid' value='<?php echo $pdata["studid"]; ?>'>
-                                          <div class="row">
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label for="" class='form-label'>MST 1</label>
-                                                    <input class='form-control' type="number" name='mst1' value='<?php echo $marks["phase1"]["mst"]; ?>'>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label for="" class='form-label'>Assignment 1</label>
-                                                    <input class='form-control' type="number" name='assign1' value='<?php echo $marks["phase1"]["assign"]; ?>'>
-                                                </div>
-                                            </div>
-                                          </div>
-                                          
-                                          <div class="row">
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label for="" class='form-label'>MST 2</label>
-                                                    <input class='form-control' type="number" name='mst2' value='<?php echo $marks["phase2"]["mst"]; ?>'>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="form-group">
-                                                    <label for="" class='form-label'>Assignment 2</label>
-                                                    <input class='form-control' type="number" name='assign2' value='<?php echo $marks["phase2"]["assign"]; ?>'>
-                                                </div>
-                                            </div>
-                                          </div>
-
-                                          <div class="row">
-                                            <div class="col-12">
-                                                <label for="" class='form-label'>Total Attendance (in %) </label>
-                                                <input type="number" class='form-control' name='totalattendance' value='<?php echo $pdata["totalattendance"]; ?>'>
-                                            </div>
-                                          </div>
-
-                                 <br>
-                                 <button class="btn btn-primary" type="submit">Update Student Details</button>
-                                 <div class="modal fade effect-scale hidden" id="loaderModal" style="display: none;" aria-modal="true" role="dialog">
-                                 <div class="modal-dialog modal-dialog-centered text-center" role="document">
-                                 <div class="modal-content modal-content-demo" style='background: rgba(0,0,0,0);border: none;box-shadow:none;'>
-                                 <div class="dimmer active">
-                                 <div class="spinner"></div>
-                                 </div>
-                                 </div>
-                                 </div>
-                                 </div>
-                                 <button style='width: 0;height: 0;opacity:0;' type="submit" class="addStudFormBtn"></button>
-
-
-                            </form>
+                                        
                                  <button type="button" style='width:0;height:0;font-size: 0.1;opacity:0;position:absolute;' class="modalLoader modal-effect btn btn-primary-light d-grid mb-3" data-bs-effect="effect-scale" data-bs-toggle="modal" data-bs-target="#loaderModal" onclick="return false;">Scale</button>
                                  <button class="modalLoaderClose btn btn-light" style='width:0;height:0;font-size: 0.1;opacity:0;position:absolute;' data-bs-dismiss="modal">a</button>
                                 

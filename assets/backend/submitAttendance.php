@@ -34,6 +34,14 @@ catch(PDOException $e) {
     $sql = $conn->mconnect()->prepare("SELECT count(*) as c FROM `$tableName` WHERE `date`='$date' AND `sectionid`='$sectionId' AND `subjectid`='$subjectId' ");
     $sql->execute();
     $count = $sql->fetch(PDO::FETCH_COLUMN);
+
+    $abs = array();
+    $absentStudents = json_decode($absentStudents, true);
+    foreach ($absentStudents as $key => $value) {
+        array_push($abs, json_encode($value));
+    }
+    echo $absentStudents = implode("-", $abs);
+
     if($count) {
         try {
             $sql = $conn->mconnect()->prepare("UPDATE `$tableName` SET absentStudents=? WHERE `date`='$date' AND `sectionid`='$sectionId' AND `subjectid`='$subjectId' ");
@@ -53,7 +61,7 @@ catch(PDOException $e) {
             header('Location: ../../erp/mark-attendance.php');
         }
         catch(PDOException $ef) {
-            // echo $ef->getMessage();
+            echo $ef->getMessage();
             $_SESSION["succ"] = "0";
             header('Location: ../../erp/mark-attendance.php');
         }

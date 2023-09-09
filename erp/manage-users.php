@@ -3,7 +3,6 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
-
 ?>
 <!doctype html>
 <html lang="en" dir="ltr">
@@ -212,6 +211,7 @@ $conn = new Db;
                                                         <th>Fullname</th>
                                                         <th>Last Login</th>
                                                         <th>Email</th>
+                                                        <th>TPP</th>
                                                         <th>User Type</th>
                                                         <th name="bstable-actions">Actions</th>
                                                         <th name="bstable-active">Active</th></tr>
@@ -219,13 +219,20 @@ $conn = new Db;
                                                 <tbody>
                                                     
                                                         <?php 
-                                                        $sql = "SELECT * FROM `users` WHERE `usertype`!='1' ORDER BY `id` DESC ";
+                                                        $sql = "SELECT a.`id`, a.`username`, a.`lastlogin`, a.`email`, a.`usertype`, a.`active`,a.`uid`, a.`depid` FROM `users` a WHERE a.`usertype`!='1' ORDER BY a.`id` DESC ";
                                                         $query = $conn->mconnect()->prepare($sql);
                                                         $query->execute();
                                                         $row = $query->fetchAll(PDO::FETCH_ASSOC);
 
                                                         foreach ($row as $key => $value) {
                                                             $ll = $value["lastlogin"];
+                                                            $depids = json_decode($value["depid"], true);
+                                                            if(array_search("tpp765", $depids)!==false) {
+                                                                $tpp = "<span class='text-success'>Yes</span>";
+                                                            }
+                                                            else {
+                                                                $tpp = "<span class='text-danger'>No</span>";
+                                                            }
                                                             ?>
 
                                                                 <tr style='position:relative;'>
@@ -233,6 +240,7 @@ $conn = new Db;
                                                                 <td><?php echo $value["username"]; ?></td>
                                                                 <td><?php if($ll!="0"  && $ll!="" ) { echo Date("d M,y h:i A", $value["lastlogin"]); }else {echo "Never";} ?></td>
                                                                 <td><?php echo $value["email"]; ?></td>
+                                                                <td><?php echo $tpp; ?></td>
                                                                 <?php 
                                                                 $utype="";
                                                                 switch ($value["usertype"]) {

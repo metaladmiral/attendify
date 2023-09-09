@@ -117,9 +117,9 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                             <option value="" disabled selected>Select Department</option>
                                                             <?php 
                                                             if($ut=="4") { 
-                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid`";
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid`!='tpp765' AND a.`depid`!='asdaqwe123'";
                                                             }else {
-                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) " ;
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) AND a.`depid`!='tpp765' " ;
                                                             }
                                                             $query = $conn->mconnect()->prepare($sql);
                                                             $query->execute();
@@ -160,37 +160,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     </select>
                                                 </div>
 
-                                                <?php
-                                                if($ut=="3") {
-                                                ?>
                                                 <div class="col-3">
-                                                    <label for="" class="form-label">Select Subject:</label>
-                                                    <select name="subject" class='form-control form-select select2' id="" required>
-                                                        <option value="" selected disabled>Select Subject</option>
-                                                        <?php 
-
-                                                        $sql = "SELECT * FROM `subjects` WHERE `depid` IN ($depidin) GROUP BY `subjectsem`, `subjectname` ";
-                                                        $query = $conn->mconnect()->prepare($sql);
-                                                        $query->execute();
-                                                        $data= $query->fetchAll(PDO::FETCH_ASSOC);
-                                                        $currOptGrp = 0;
-                                                        foreach ($data as $key => $value) {
-                                                            if($value['subjectsem']!=$currOptGrp) {
-                                                                echo "</optgroup>";
-                                                                echo "<optgroup label='Sem: ".$value['subjectsem']." ' >";
-                                                                $currOptGrp = $value['subjectsem'];
-                                                            }
-                                                            ?>
-                                                            <option value="<?php echo $value['subjectid']; ?>" 
-                                                                <?php if(isset($_GET['subject'])) { if($_GET['subject']==$value["subjectid"]) {echo "selected";} } ?>><?php echo $value['subjectname']; ?> - <?php echo $value['subjectcode']; ?></option>
-                                                        <?php 
-                                                        }
-                                                        echo "</optgroup>";
-                                                        ?>
-                                                    </select>
-                                                </div>
-                                                <?php }else { ?>
-                                                    <div class="col-3">
                                                     <label for="" class="form-label">Select Subject: <sup class="text-danger">(Select Department First)</sup> </label>
                                                     
                                                     <select name="subject" id='subjectSelect'  class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required disabled>
@@ -198,7 +168,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                         
                                                     </select>
                                                 </div>
-                                                <?php } ?>
+
                                             </div>
                                         </div>
                                         
@@ -264,9 +234,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 `;
                                             }
                                         if(html) {
-                                            <?php if($ut=="4") { ?>
-                                                getDepartmentSubjects(depid);
-                                            <?php } ?>
+                                            getDepartmentSubjects(depid);
                                             $("#batchSelect").removeAttr('disabled');
                                             $("#batchSelect").html(html);
                                         }
@@ -286,12 +254,16 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                             }
                         </script>
 
-                        <?php if($ut=="4") { ?>
+                        
                             <script>
                             async function getDepartmentSubjects(depid) {
                                 let fd = new FormData();
                                 fd.set('depid', depid);
-                                fd.set('tpp', "1");
+                                <?php if($ut=="4") { ?>
+                                    fd.set('tpp', "1");
+                                <?php } else { ?>
+                                    fd.set('tpp', "0");
+                                <?php }  ?>
                                 let resp = await fetch(`../assets/backend/getDepartmentSubjects`, {
                                     method: "POST",
                                     body: fd,
@@ -301,10 +273,18 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                     if(data) {
                                         let subjectData = JSON.parse(data);
                                         console.log(subjectData);
-                                        let html = "<option value='' selected disabled>Select Subjects:</option>";
+                                        let html = "";
                                         $("#subjectSelect").text('');
 
+                                        let sem = "0";
+
                                         for(let key in subjectData) {
+                                            console.log(key);
+                                            if(subjectData[key].subjectsem != sem) {
+                                                html += `</optgroup>`;
+                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '>`;
+                                                sem = subjectData[key].subjectsem;
+                                            }
                                             <?php if(isset($_GET['subject'])) { 
                                                 ?>
                                                 if(subjectData[key].subjectid=="<?php echo $_GET['subject'] ?>") {
@@ -319,8 +299,8 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 <option value="${subjectData[key].subjectid}" >${subjectData[key].subjectname} - ${subjectData[key].subjectcode}</option>
                                                 `;
                                             }
-                                        if(html) {
                                             console.log(html);
+                                        if(html) {
                                             $("#subjectSelect").removeAttr('disabled');
                                             $("#subjectSelect").html(html);
                                         }
@@ -329,7 +309,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                 }
                             }
                             </script>
-                        <?php } ?>
+                        
 
                         
                         
@@ -374,7 +354,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <form action="../assets/backend/assignSubjectFaculty" method="POST">
+                                    <form action="../assets/backend/assignSubjectFaculty" method="POST" class="assignForm_<?php echo $rand; ?>">
                                         <input type="hidden" name="batchid" value="<?php echo $_GET['batch']; ?>">
                                         <input type="hidden" name="sectionid" value="<?php echo $value; ?>">
                                         <input type="hidden" name="subjectid" value="<?php echo $_GET['subject']; ?>">
@@ -388,7 +368,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                             <label for="">Select Faculty (Faculty): </label>
                                             <br>
 
-                                            <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required searchable>
+                                            <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                 <option value="" disabled selected>Select Faculty</option>
                                                 <?php 
                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE) ";
@@ -402,8 +382,9 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     }
                                                     ?>
                                              </select>
-                                            <br>
-                                             <button class='btn btn-primary' type='submit' name='assignsubjectfaculty'>Assign Faculty</button>
+                                            <br>   
+                                            <input type="hidden" name="assignsubjectfaculty">
+                                             <button class='btn btn-primary' type='submit' name='assignsubjectfaculty' onclick="$(this).attr('disabled', 'true');$('.assignForm_<?php echo $rand; ?>').submit();">Assign Faculty</button>
                                             <?php
                                         }
                                         else {
@@ -441,8 +422,9 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 </select>
 
                                                 <br>
-
-                                                <button class='btn btn-primary' type='submit' name="updatesubjectfaculty">Update Faculty</button>
+                                                    
+                                                <input type="hidden" name="updatesubjectfaculty">
+                                                <button class='btn btn-primary' type='submit' name="updatesubjectfaculty" onclick="$(this).attr('disabled', 'true');$('.assignForm_<?php echo $rand; ?>').submit();">Update Faculty</button>
 
                                                  <script>
                                                     document.querySelector(".currFacultyUsername_<?php echo $rand; ?>").innerHTML = "(<?php echo $currFacultyusername; ?> - <?php echo $currFacultyEmpID; ?>)";
@@ -537,7 +519,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     
     if(isset($_SESSION['sufaculty']))
     {
-        if($_SESSION['sufaculty']!="1")  {
+        if($_SESSION['sufaculty']!="1" && $_SESSION['sufaculty']!="2")  {
 
             ?>
             <script>swal({
@@ -550,7 +532,18 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
             <?php
 
         }
-        else {
+        else if($_SESSION['sufaculty']=="2") {
+            ?>
+            <script>swal({
+             title: "Error!",
+             text: "You didn't select any faculty!",
+             type: "warning",
+             showCancelButton: true,
+             confirmButtonText: 'Exit'
+         });</script>
+            <?php
+        }
+        else  {
             ?>
             <script>
                 swal('Hooray!', 'Faculty Successfully assigned!', 'success');
