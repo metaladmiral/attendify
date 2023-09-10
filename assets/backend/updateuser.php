@@ -13,6 +13,7 @@ if(isset($_POST['submit'])){
             $username = $_POST['fullname'];
             
             $usertype = $_POST['usertype'];
+            $empid = $_POST['empid'];
             
             $password = $_POST['password'];
 
@@ -23,14 +24,14 @@ if(isset($_POST['submit'])){
 
             if(!empty($password) && !is_null($password)) {
                 $password = md5($password);
-                $sql = "UPDATE `users` SET email=?, username=?, password=?, usertype=?, collegeid=?, depid=? WHERE `uid`='$uid' ";
+                $sql = "UPDATE `users` SET email=?, username=?, password=?, usertype=?, collegeid=?, depid=?, empid=? WHERE `uid`='$uid' ";
                 $query = $conn->mconnect()->prepare($sql);
-                $query->execute(array($email, $username,$password,$usertype, $collegeid, $depid));
+                $query->execute(array($email, $username,$password,$usertype, $collegeid, $depid, $empid));
             }
             else {
-                $sql = "UPDATE `users` SET email=?, username=?, usertype=?, collegeid=?, depid=? WHERE `uid`='$uid' ";
+                $sql = "UPDATE `users` SET email=?, username=?, usertype=?, collegeid=?, depid=?, empid=? WHERE `uid`='$uid' ";
                 $query = $conn->mconnect()->prepare($sql);
-                $query->execute(array($email, $username,$usertype, $collegeid, $depid));
+                $query->execute(array($email, $username,$usertype, $collegeid, $depid, $empid));
             }
 
             $_SESSION['message']="1";

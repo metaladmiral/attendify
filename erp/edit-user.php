@@ -99,9 +99,16 @@ header('Location: ../404.php');
                                                     $query->execute();
                                                     $row_ = $query->fetchAll(PDO::FETCH_KEY_PAIR);
                                                     foreach ($row_ as $key => $value) {
+                                                        if(in_array($key, $collegeids)) {
                                                         ?>
+                                                            <option value="<?php echo $key; ?>" selected><?php echo $value; ?></option>
+                                                            <?php
+                                                        }
+                                                        else {
+                                                            ?>
                                                             <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
                                                             <?php
+                                                        }
                                                     }
                                                     ?>
                                                 </select>
@@ -113,6 +120,10 @@ header('Location: ../404.php');
                                             </div>
                                         </div>
 
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="form-label">Employ ID</label>
+                                            <input value="<?php echo $row['empid']; ?>" name="empid" type="number" class="form-control" id="exampleInputEmail1" placeholder="Enter Employ ID">
+                                        </div>
                                         <div class="form-group">
                                             <label for="exampleInputEmail1" class="form-label">Email Address</label>
                                             <input value="<?php echo $row['email']; ?>" name="email" type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email" autocomplete="username">
@@ -251,11 +262,18 @@ header('Location: ../404.php');
                                         // let html = "<option value='' selected disabled>Select Department</option>";
                                         let html = "";
                                         $("#depSelect").text('');
-
+                                        let depids = [<?php echo "'".implode("', '",$depids)."'"; ?>];
                                         for(let key in depData) {
+                                            if(depids.includes(depData[key].depid)) {
+                                                html += `
+                                                    <option value="${depData[key].depid}" selected>${depData[key].depLabel} - ${depData[key].clgLabel}</option>
+                                                `;
+                                                continue;
+                                            }
                                             html += `
                                                 <option value="${depData[key].depid}">${depData[key].depLabel} - ${depData[key].clgLabel}</option>
                                             `;
+                                            
                                         }
                                         if(html) {
                                             $("#depSelect").removeAttr('disabled');
