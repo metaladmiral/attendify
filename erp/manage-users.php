@@ -308,6 +308,9 @@ $conn = new Db;
 
                                 <script>
                                     function deleteUser(uid, e) {
+                                        if(!confirm("Are you sure to delete this user?")) {
+                                            return ;
+                                        }
                                         $(e)[0].offsetParent.offsetParent.style.display = "none";
                                         var xhttp = new XMLHttpRequest();
                                         xhttp.onreadystatechange = function() {
