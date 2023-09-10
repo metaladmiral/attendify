@@ -240,6 +240,7 @@ $depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
                                                                 <button id="bEdit" type="button" class="btn btn-sm btn-primary" onclick="window.location = 'edit-subject?sid=<?php echo $value['id']; ?>';">
                                                                     <span class="fe fe-edit"> </span>
                                                                 </button>
+                                                                <button type="button" onclick="deleteSubject('<?php echo $value['id']; ?>')" class="btn btn-sm btn-danger"><span class="fe fe-trash-2"></span></button>
                                                             </div></td>
                                                             
                                                                 </tr>
@@ -255,6 +256,12 @@ $depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
                                 </div>
 
                                 <script>
+                                    function deleteSubject(subjectid) {
+                                        if(!confirm("Are you sure to delete the subject?")) {
+                                            return ;
+                                        }
+                                        window.location = "../assets/backend/deleteSubject?subjectid="+subjectid;
+                                    }
                                     function deleteUser(uid, e) {
                                         $(e)[0].offsetParent.offsetParent.style.display = "none";
                                         var xhttp = new XMLHttpRequest();
@@ -417,6 +424,25 @@ $depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
             <?php
         }
         unset($_SESSION['message']);
+    } ?>
+    
+    <?php if(isset($_SESSION['messageDel'])) {
+        if($_SESSION['messageDel']=="1") {
+            ?>
+            <script>swal('Operation Successfull!', 'Subject Has Been Deleted!', 'success');</script>
+            <?php
+        }else {
+            ?>
+            <script>
+                swal({
+                    title: "Alert",
+                    text: "Deletion was unsuccessfull! Contact Admin",
+                    type: "warning"
+                });
+                </script>
+            <?php
+        }
+        unset($_SESSION['messageDel']);
     } ?>
     
 </body>
