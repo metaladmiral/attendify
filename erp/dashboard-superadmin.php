@@ -52,7 +52,7 @@ $sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects`
 $sql->execute();
 $subjectInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-$sql = $conn->mconnect()->prepare("SELECT uid,email FROM `users` WHERE `uid` IN ($faculties) ");
+$sql = $conn->mconnect()->prepare("SELECT uid,email, username, empid FROM `users` WHERE `uid` IN ($faculties) ");
 $sql->execute();
 $facultyInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -63,7 +63,7 @@ foreach ($subjectInfo as $key => $value) {
 
 $facultyInfoData = array();
 foreach ($facultyInfo as $key => $value) {
-    $facultyInfoData[$value["uid"]] = $value["email"];
+    $facultyInfoData[$value["uid"]] = array($value["username"], $value["empid"]);
 }
 
 ?>
@@ -282,7 +282,7 @@ foreach ($facultyInfo as $key => $value) {
                                                                 // echo "<span>".$subjectInfo[$subjectDetails[0]]."</span>";
                                                                 // echo "<span>".$facultyInfo[$subjectDetails[1]]."</span>";
                                                                 foreach ($subjectDetails as $key => $value) {
-                                                                    echo "<b>".$subjectsInfoData[$key]."</b>".": ".$facultyInfoData[$value]."<br>";
+                                                                    echo "<b>".$subjectsInfoData[$key]."</b>".": ".$facultyInfoData[$value][0]." - " .$facultyInfoData[$value][1]."<br>";
                                                                 }
                                                             }
                                                             echo "</td>";
