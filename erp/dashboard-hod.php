@@ -28,7 +28,12 @@ $sql = $conn->mconnect()->prepare("SELECT batchLabel, sectionCC FROM `batches` W
 $sql->execute();
 $ccData = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-$sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` WHERE `depid` IN ($depidin) ");
+if($_SESSION["usertype"]=="4") {
+    $sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` ");
+}else {
+    $sql = $conn->mconnect()->prepare("SELECT faculty, batchLabel FROM `batches` WHERE `depid` IN ($depidin) ");
+}
+
 $sql->execute();
 $facultyAssignData = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -53,6 +58,7 @@ foreach ($facultyAssignData as $key => $value) {
 }
 $subjects = "'".implode("', '", $subjects)."'";
 $faculties = "'".implode("', '", $faculties)."'";
+// var_dump($subjects);
 if($_SESSION['usertype']=="3") {
     $sql = $conn->mconnect()->prepare("SELECT subjectid, subjectname FROM `subjects` WHERE `subjectid` IN ($subjects) ");
 }
@@ -62,7 +68,9 @@ else if($_SESSION['usertype']=="4") {
 $sql->execute();
 $subjectInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-$sql = $conn->mconnect()->prepare("SELECT uid,email FROM `users` WHERE `uid` IN ($faculties) ");
+// var_dump($subjectInfo);
+
+$sql = $conn->mconnect()->prepare("SELECT uid,username,empid FROM `users` WHERE `uid` IN ($faculties) ");
 $sql->execute();
 $facultyInfo = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -73,7 +81,8 @@ foreach ($subjectInfo as $key => $value) {
 
 $facultyInfoData = array();
 foreach ($facultyInfo as $key => $value) {
-    $facultyInfoData[$value["uid"]] = $value["email"];
+    $facultyInfoData[$value["uid"]] = array($value["username"], $value["empid"]);
+
 }
 
 ?>
@@ -299,7 +308,7 @@ foreach ($facultyInfo as $key => $value) {
                                                                 foreach ($subjectDetails as $key_ => $value_) {
                                                                     if(isset($subjectsInfoData[$key_])) {
                                                                         $p++;
-                                                                        echo "<b>".$subjectsInfoData[$key_]."</b>".": ".$facultyInfoData[$value_]."<br>";
+                                                                        echo "<b>".$subjectsInfoData[$key_]."</b>".": ".$facultyInfoData[$value_][0]." - " .$facultyInfoData[$value_][1]."<br>";
                                                                     }
                                                                 }
                                                                 if(!$p) {
@@ -340,8 +349,12 @@ foreach ($facultyInfo as $key => $value) {
                                                 </thead>
                                                 <tbody>
                                                     <?php
-
-                                                    $sql = $conn->mconnect()->prepare("SELECT subjectcode, subjectname, subjectsem FROM `subjects` WHERE `depid` IN ($depidin)");
+                                                    if($_SESSION["usertype"]=="4") {
+                                                        $sql = $conn->mconnect()->prepare("SELECT subjectcode, subjectname, subjectsem FROM `subjects` WHERE `tpp`='1'");
+                                                    }
+                                                    else {
+                                                        $sql = $conn->mconnect()->prepare("SELECT subjectcode, subjectname, subjectsem FROM `subjects` WHERE `depid` IN ($depidin)");
+                                                    }
                                                     $sql->execute();
                                                     foreach ($sql->fetchAll(PDO::FETCH_ASSOC) as $key => $value) {
                                                         echo "<tr>";

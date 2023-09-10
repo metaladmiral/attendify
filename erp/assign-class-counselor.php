@@ -228,7 +228,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                                                 <select name="cc" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                     <option value="" disabled selected>Select CC</option>
                                                     <?php 
-                                                    $sql = "SELECT uid, username, email FROM `users` WHERE `usertype`='2' AND MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE)  ";
+                                                    $sql = "SELECT uid, username, empid FROM `users` WHERE `usertype`='2' AND MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE)  ";
 
                                                     $query = $conn->mconnect()->prepare($sql);
                                                     $query->execute();
@@ -236,14 +236,14 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                                                     foreach ($data as $key => $value) {
                                                             if($assignedCCId==$value["uid"]) {
                                                                 $currCCusername = $value["username"];
-                                                                $currCCEmail = $value["email"];
+                                                                $currCCEmpid = $value["empid"];
                                                                 ?>
-                                                                 <option class='text-success' value="<?php echo $value['uid']; ?>"><?php echo $value['username']; ?> - <?php echo $value['email']; ?> &#x2022;</option>
+                                                                 <option class='text-success' value="<?php echo $value['uid']; ?>"><?php echo $value['username']; ?> - <?php echo $value['empid']; ?> &#x2022;</option>
                                                                 <?php
                                                             }
                                                             else {
                                                                 ?>
-                                                                <option value="<?php echo $value['uid']; ?>"><?php echo $value['username']; ?> - <?php echo $value['email']; ?></option>
+                                                                <option value="<?php echo $value['uid']; ?>"><?php echo $value['username']; ?> - <?php echo $value['empid']; ?></option>
                                                                 <?php
                                                             }
                                                         }
@@ -255,7 +255,7 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
                                                 <button class='btn btn-primary' type='submit' name="updatecc">Update CC</button>
 
                                                  <script>
-                                                    document.querySelector(".currCCUsername").innerHTML = "(<?php echo $currCCusername; ?> - <?php echo $currCCEmail; ?>)";
+                                                    document.querySelector(".currCCUsername").innerHTML = "(<?php echo $currCCusername; ?> - <?php echo $currCCEmpid; ?>)";
                                                  </script>       
 
                                             <?php
