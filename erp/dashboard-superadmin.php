@@ -454,5 +454,27 @@ foreach ($facultyInfo as $key => $value) {
             });
         // });
     </script>
+
+<?php if(isset($_SESSION['delSucc'])) {
+        if($_SESSION['delSucc']=="1") {
+            ?>
+            <script>swal('Hooray!', 'Student Deletion Successfull!', 'success');</script>
+            <?php
+        }else {
+            ?>
+            <script>
+                swal({
+                    title: "Alert",
+                    text: "Deletion was unsuccessfull! Please contact administrator",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Exit'
+                });
+                </script>
+            <?php
+        }
+        unset($_SESSION['delSucc']);
+    } ?>
+
 </body>
 </html>
