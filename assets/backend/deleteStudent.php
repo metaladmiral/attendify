@@ -3,6 +3,17 @@
 session_start();
 require_once 'conn.php';
 
+if(isset($_SESSION['usertype'])) {
+    if($_SESSION['usertype']!="1") {
+        http_response_code(404);
+        die();
+    }
+}
+else {
+    http_response_code(404);
+    die();
+}
+
 $conn = new Db;
 try{
     $sid = $_GET['sid'];
