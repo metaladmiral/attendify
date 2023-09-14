@@ -151,7 +151,7 @@ $ut = $_SESSION['usertype'];
                                            
                                            <li><a href="assign-hod" class="slide-item"> Assign HOD</a></li>
                                            <li><a href="<?php echo $superadminURLS[0]; ?>" class="slide-item"> Manage Batches</a></li>
-                                           <li><a href="<?php echo $superadminURLS[1]; ?>" class="slide-item"> Manage Users</a></li>
+                                           <li><a href="<?php echo $superadminURLS[1]; ?>" class="slide-item"> Manage Faculties</a></li>
                                            <li><a href="manage-subjects" class="slide-item"> Manage Subjects</a></li>
                                            <li><a href="college-department" class="slide-item"> College & Departments IDs</a></li>
                                            
@@ -216,7 +216,7 @@ $ut = $_SESSION['usertype'];
                                            <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
                                            
                                            <li><a href="add-students-bulk" class="slide-item"> Add Students</a></li>
-                                           <li><a href="add-users-bulk" class="slide-item"> Add Users</a></li>
+                                           <li><a href="add-users-bulk" class="slide-item"> Add Faculties</a></li>
                                            <li><a href="add-subjects-bulk" class="slide-item"> Add Subjects</a></li>
                                            <li><a href="add-attendance-bulk" class="slide-item"> Add Attendance</a></li>
                                            
