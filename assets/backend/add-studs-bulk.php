@@ -99,11 +99,11 @@ else {
         $queryData_ = implode(',', $str);
         $sql .= $queryData_;
 
-        echo $sql;
+        // echo $sql;
         try {
 
-            // $query = $db->mconnect()->prepare($sql);
-            // $query->execute();
+            $query = $db->mconnect()->prepare($sql);
+            $query->execute();
             sleep(3);
             echo "1";
         }catch(PDOException $e) {

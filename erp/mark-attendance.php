@@ -44,13 +44,6 @@ if(is_null($data) || count($data)==0) {
     <link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <script src="../assets/js/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.css" />
-    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.js"></script>
-
-    <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
-    <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
-    <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
     
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -133,7 +126,7 @@ if(is_null($data) || count($data)==0) {
                                                 <div class="row classCountContainer<?php echo $randId; ?>" style='display: none;'>
                                                     <div class="col-3"><label for="">No. of Classes Taken: </label></div>
                                                     <div class="col-9">
-                                                        <input type="number" min="1" max="3" class='form-control classesTaken' onkeyup="addAttChkBox('<?php echo $randId; ?>', this.value);" id="classCount<?php echo $randId; ?>" value="1">
+                                                        <input type="number" min="1" max="3" class='form-control classesTaken' onchange="addAttChkBox('<?php echo $randId; ?>', this.value);" id="classCount<?php echo $randId; ?>" value="1">
                                                     </div>
                                                 </div>
                                                 <br>
@@ -148,7 +141,7 @@ if(is_null($data) || count($data)==0) {
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id="file-datatable">
+                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id="basic-datatable">
                                                                     <thead>
                                                                         <tr>
                                                                             <th>Roll No.</th>
@@ -368,6 +361,19 @@ if(is_null($data) || count($data)==0) {
     <script src="../assets/plugins/select2/select2.full.min.js"></script>
     <!-- INTERNAL Data tables js-->
     
+    <script src="../assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.bootstrap5.js"></script>
+    <script src="../assets/plugins/datatable/js/dataTables.buttons.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.bootstrap5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/jszip.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/pdfmake.min.js"></script>
+    <script src="../assets/plugins/datatable/pdfmake/vfs_fonts.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.html5.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.print.min.js"></script>
+    <script src="../assets/plugins/datatable/js/buttons.colVis.min.js"></script>
+    <script src="../assets/plugins/datatable/dataTables.responsive.min.js"></script>
+    <script src="../assets/plugins/datatable/responsive.bootstrap5.min.js"></script>
+    <script src="../assets/js/table-data.js"></script>
     <!-- INTERNAL APEXCHART JS -->
     <script src="../assets/js/apexcharts.js"></script>
     <script src="../assets/plugins/apexchart/irregular-data-series.js"></script>
@@ -456,7 +462,7 @@ if(is_null($data) || count($data)==0) {
                 }
             }else {
                 for(const key in htmlData) {
-                    let rollno = (htmlData[key].classroll) ? htmlData[key].classroll : htmlData[key].uniroll;
+                    let rollno = (htmlData[key].uniroll) ? htmlData[key].uniroll : htmlData[key].classroll;
                     html += `<tr>
                         <td>${rollno}</td>
                         <td>${htmlData[key].name}</td>
@@ -509,11 +515,19 @@ if(is_null($data) || count($data)==0) {
             
 
             if(!reOpen) {
-                let table = new DataTable("."+randid+" .file-datatable", {
-                    dom: 'Bfrtip',
-                    buttons: [
-                    ]
-                });
+                // alert('op');
+                // let table = new DataTable("."+randid+" .file-datatable", {
+                //     dom: 'Bfrtip',
+                //     buttons: [
+                //         'colvis'
+                //     ]
+                // });
+
+                $("."+randid+" .file-datatable").DataTable( {
+                    bPaginate: false,
+                    bInfo: false,
+                    sorting: false
+                } );
             }
         }
 
