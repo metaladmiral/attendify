@@ -9,7 +9,6 @@ $sectionId = $_POST['sectionid'];
 $subjectId = $_POST['subjectid'];
 $date = strtotime($_POST['date']);
 $absentStudents = base64_decode($_POST['absentStudents']);
-
 try {
     $sql = $conn->mconnect()->prepare("SELECT date FROM $tableName");
     $sql->execute();
@@ -40,7 +39,7 @@ catch(PDOException $e) {
     foreach ($absentStudents as $key => $value) {
         array_push($abs, json_encode($value));
     }
-    echo $absentStudents = implode("-", $abs);
+   $absentStudents = implode("-", $abs);
 
     if($count) {
         try {
@@ -49,6 +48,7 @@ catch(PDOException $e) {
             $_SESSION["succ"] = "1";
             header('Location: ../../erp/mark-attendance.php');
         } catch (PDOException $e) {
+            echo $e->getMessage();
             $_SESSION["succ"] = "0";
             header('Location: ../../erp/mark-attendance.php');
         }
@@ -61,7 +61,7 @@ catch(PDOException $e) {
             header('Location: ../../erp/mark-attendance.php');
         }
         catch(PDOException $ef) {
-            echo $ef->getMessage();
+            // echo $ef->getMessage();
             $_SESSION["succ"] = "0";
             header('Location: ../../erp/mark-attendance.php');
         }

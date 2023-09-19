@@ -89,6 +89,21 @@ if(is_null($data) || count($data)==0) {
                         
                         <!-- BODY CONTENT -->
 
+                        <div class="col-12">
+                            <div class="card text-white bg-info">
+                                <div class="card-body">
+                                    <h4 class="card-title">Directions To Use</h4>
+                                    <p class="card-text">
+                                        <label for="" class="form-label">Attendance: </label>
+                                        <ul>
+                                            <li>CheckBox Ticked: <b>Present</b></li>
+                                            <li>CheckBox Unticked: <b>Absent</b></li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                         <?php
                         if(!$dataNull) {
                             foreach ($data as $key => $value) {
@@ -126,7 +141,7 @@ if(is_null($data) || count($data)==0) {
                                                 <div class="row classCountContainer<?php echo $randId; ?>" style='display: none;'>
                                                     <div class="col-3"><label for="">No. of Classes Taken: </label></div>
                                                     <div class="col-9">
-                                                        <input type="number" min="1" max="3" class='form-control classesTaken' onchange="addAttChkBox('<?php echo $randId; ?>', this.value);" id="classCount<?php echo $randId; ?>" value="1">
+                                                        <input type="number" min="1" max="3" class='form-control classesTaken' onkeyup="addAttChkBox('<?php echo $randId; ?>', this.value);" onchange="addAttChkBox('<?php echo $randId; ?>', this.value);" id="classCount<?php echo $randId; ?>" value="1">
                                                     </div>
                                                 </div>
                                                 <br>
@@ -141,7 +156,7 @@ if(is_null($data) || count($data)==0) {
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id="basic-datatable">
+                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable">
                                                                     <thead>
                                                                         <tr>
                                                                             <th>Roll No.</th>
@@ -188,18 +203,21 @@ if(is_null($data) || count($data)==0) {
             // let html = "";
             
             // $("."+randId+" .chkBoxes")
-
-            let chkBoxesCont = $("."+randId+" .chkBoxes");
-            for(let key in chkBoxesCont) {
-                if(key=="length") {break;}
-                let studid = chkBoxesCont[key].children[0].value;
-                let html = "";
-                for (let i = 0; i < classCount; i++) {
-                    html += `
-                    <input type='checkbox' style='position: unset;margin-block-start: unset;margin-inline-start: unset;' class='cb_${randId} cb${i} form-check-input' value='${studid}' checked>
-                    `;
+            classCount = parseInt(classCount);
+            if(classCount>0 && classCount<4) {
+                console.log(typeof(classCount));
+                let chkBoxesCont = $("."+randId+" .chkBoxes");
+                for(let key in chkBoxesCont) {
+                    if(key=="length") {break;}
+                    let studid = chkBoxesCont[key].children[0].value;
+                    let html = "";
+                    for (let i = 0; i < classCount; i++) {
+                        html += `
+                        <input type='checkbox' style='position: unset;margin-block-start: unset;margin-inline-start: unset;' class='cb_${randId} cb${i} form-check-input' value='${studid}' checked>
+                        `;
+                    }
+                    chkBoxesCont[key].innerHTML = html;
                 }
-                chkBoxesCont[key].innerHTML = html;
             }
 
         }
@@ -207,19 +225,26 @@ if(is_null($data) || count($data)==0) {
             // let classInfo = $(e)[0].classList[3];
             let checkBoxes= $(".cb_"+randId);
             let classCount= $("#classCount"+randId)[0].value;
+            // alert(classCount);
             let absentStudents = [];
 
             for (let i = 0; i < classCount; i++) { 
                 let chkBoxes = $("."+randId+" .cb"+i);
-                // console.log("."+randId+" .cb"+i);
+
+                console.log("."+randId+" .cb"+i);
                 absentStudents.push([]);
                 for(k in chkBoxes) {
-                    if(!chkBoxes[k].checked) {
-                        absentStudents[i].push(chkBoxes[k].value);
+                    if(chkBoxes[k].value) {
+                        if(!chkBoxes[k].checked) {
+                            absentStudents[i].push(chkBoxes[k].value);
+                        }
+                        if(k==(chkBoxes.length-1)) {
+                            break;
+                        }    
                     }
-                    if(k==(chkBoxes.length-1)) {
+                    else {
                         break;
-                    }    
+                    }
                 }
             }
 
@@ -239,8 +264,10 @@ if(is_null($data) || count($data)==0) {
             let randClassName;
             for(let i in otherTabs) {
                 if(i=="length") {break;}
+                $("#classCount"+randid)[0].value = "1";
                 if($(otherTabs[i]).hasClass(randid)) {continue;}
                 if(!$($(otherTabs[i]).children()[1]).hasClass('card-collapsed')) {
+
                     randClassName = "."+$(otherTabs[i]).attr('class').split(' ')[1];
                     
                     if($(randClassName+" .card-collapsable").attr('data-loadedRecords')) {
