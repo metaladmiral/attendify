@@ -81,13 +81,14 @@ $studid = $pdata["studid"];
                               <div class="tab-pane active show" id="tab20" role="tabpanel">
 
                               <form method="POST" action="../assets/backend/editstud_script.php">
+                                 <input type="hidden" name="studid" value="<?php echo $studid; ?>">
                                  <!-- Batch select tag -->
                                  <div class="row">
                                     <div class="col-6">
                                        
                                           <div class="form-group">
                                              <label class="form-label">Batch</label>
-                                             <input type="text" class='form-control' value='<?php echo $pdata["batchLabel"]; ?>' required>
+                                             <input type="text" class='form-control' value='<?php echo $pdata["batchLabel"]; ?>' disabled>
                                           </div>
                                           <!--  -->
                                     </div>
@@ -95,7 +96,7 @@ $studid = $pdata["studid"];
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="form-label">Section</label>
                                         <?php $sectionDetails = explode('-', $pdata["sectionid"]);  ?>
-                                        <select name="section" class="form-control form-select select2" id="">
+                                        <select name="section" class="form-control form-select select2" id="" required>
                                         <?php
                                         for($i=65;$i<=74;$i++) {
                                              $p = 1;
@@ -116,7 +117,7 @@ $studid = $pdata["studid"];
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1" class="form-label">Name</label>
-                                            <input type="text" class='form-control' value='<?php echo $pdata["name"]; ?>' required>
+                                            <input type="text" name="name" class='form-control' value='<?php echo $pdata["name"]; ?>' required>
                                         </div>
                                     </div>
                                  </div>
@@ -124,13 +125,13 @@ $studid = $pdata["studid"];
                                     <div class="col-6">
                                         <div class="form-group">
                                              <label for="exampleInputEmail1" class="form-label">Semester</label>
-                                             <input type="text" class='form-control' value='<?php echo $pdata["semester"]; ?>' required>
+                                             <input type="text" name="sem" class='form-control' value='<?php echo $pdata["semester"]; ?>' required>
                                         </div>
                                     </div>
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Blood Group</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["bloodgrp"]; ?>' required>
+                                 <input type="text" class='form-control' name="bldgrp" value='<?php echo $pdata["bloodgrp"]; ?>' required>
                                  </div>
                                  </div>
                                  </div>
@@ -138,13 +139,13 @@ $studid = $pdata["studid"];
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label class="form-label">Date of Birth</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["dob"]; ?>' required>
+                                 <input type="text" class='form-control' name="dob" value='<?php echo $pdata["dob"]; ?>' required>
                                  </div>
                                  </div>
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label class="form-label">Name of the department/Institute</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["dep"]; ?>' required>
+                                 <input type="text" class='form-control' name="depname" value='<?php echo $pdata["dep"]; ?>' required>
                                  </div>
                                  </div>
                                  </div>
@@ -152,35 +153,35 @@ $studid = $pdata["studid"];
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Class Roll Number</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["classroll"]; ?>' required>
+                                 <input type="text" class='form-control' name="classroll" value='<?php echo $pdata["classroll"]; ?>' required>
                                  </div>
                                  </div>
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">University Roll Number</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["uniroll"]; ?>' required>
+                                 <input type="text" class='form-control' name="uniroll" value='<?php echo $pdata["uniroll"]; ?>'>
                                  </div>
                                  </div>
                                  </div>
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Student Email ID</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["studemail"]; ?>' required>
+                                 <input type="text" class='form-control' name="studemail" value='<?php echo $pdata["studemail"]; ?>' required>
                                  </div>
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Parent Email ID</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["parentemail"]; ?>' required>
+                                 <input type="text" class='form-control' name="pemail" value='<?php echo $pdata["parentemail"]; ?>' required>
                                  </div>
                                  <div class="row">
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Father's Name</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["fname"]; ?>' required>
+                                 <input type="text" class='form-control' name="fname" value='<?php echo $pdata["fname"]; ?>' required>
                                  </div>
                                  </div>
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Mother's Name</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["mname"]; ?>' required>
+                                 <input type="text" class='form-control' name="mname" value='<?php echo $pdata["mname"]; ?>' required>
                                  </div>
                                  </div>
                                  </div>
@@ -188,7 +189,7 @@ $studid = $pdata["studid"];
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Category</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["category"]; ?>' required>
+                                 <input type="text" class='form-control' name="category" value='<?php echo $pdata["category"]; ?>' required>
                                  </select>
                                  </div>
                                  </div>
@@ -197,7 +198,7 @@ $studid = $pdata["studid"];
                                  <div class="row">
                                  <div class="col-12">
                                  <div class="form-group">
-                                 <input type="text" class='form-control' value='<?php echo $pdata["mno"]; ?>' required>
+                                 <input type="text" class='form-control' name="mno" value='<?php echo $pdata["mno"]; ?>' required>
                                  </div>
                                  </div>
                                  </div>
@@ -210,7 +211,7 @@ $studid = $pdata["studid"];
                                  
                                  <div class="col-12">
                                  <div class="form-group">
-                                 <input type="text" class='form-control' value='<?php echo $pdata["mano"]; ?>' required>
+                                 <input type="text" class='form-control' name="mano" value='<?php echo $pdata["mano"]; ?>' required>
                                  </div>
                                  </div>
                                  </div>
@@ -220,7 +221,7 @@ $studid = $pdata["studid"];
                                  <div class="row">
                                  <div class="col-12">
                                  <div class="form-group">
-                                 <input type="text" class='form-control' value='<?php echo $pdata["wno"]; ?>' required>
+                                 <input type="text" class='form-control' name="wno" value='<?php echo $pdata["wno"]; ?>' required>
                                  </div>
                                  </div>
                                  </div>
@@ -228,23 +229,23 @@ $studid = $pdata["studid"];
                                  </div>
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Permanent Address</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["permaddr"]; ?>' required>
+                                 <input type="text" class='form-control' name="permaddr" value='<?php echo $pdata["permaddr"]; ?>' required>
                                  </div>
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">Local Address</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["localaddr"]; ?>' required>
+                                 <input type="text" class='form-control' name="localaddr" value='<?php echo $pdata["localaddr"]; ?>' required>
                                  </div>
                                  <div class="row">
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">State</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["state"]; ?>' required>
+                                 <input type="text" name="state" class='form-control' value='<?php echo $pdata["state"]; ?>' required>
                                  </div>
                                  </div>
                                  <div class="col-6">
                                  <div class="form-group">
                                  <label for="exampleInputEmail1" class="form-label">District</label>
-                                 <input type="text" class='form-control' value='<?php echo $pdata["district"]; ?>' required>
+                                 <input type="text" name="district" class='form-control' value='<?php echo $pdata["district"]; ?>' required>
                                  </div>
                                  </div>
                                  <?php
@@ -253,15 +254,15 @@ $studid = $pdata["studid"];
                                  <div class="row">
                                  <div class="col-4">
                                  <label for="exampleInputEmail1" class="form-label">Hosteler</label>
-                                 <input type="text" class='form-control' value='<?php echo $hostelDetails["hosteler"]; ?>' required>
+                                 <input type="text" name="hosteler" class='form-control' value='<?php echo $hostelDetails["hosteler"]; ?>' required>
                                  </div>
                                  <div class="col-4">
                                  <label for="exampleInputEmail1" class="form-label">Room No.</label>
-                                 <input type="text" class='form-control' value='<?php echo $hostelDetails["roomno"]; ?>' required>
+                                 <input type="text" name="roomno" class='form-control' value='<?php echo $hostelDetails["roomno"]; ?>'>
                                  </div>
                                  <div class="col-4">
                                  <label for="exampleInputEmail1" class="form-label">Hostel Name</label>
-                                 <input type="text" class='form-control' value='<?php echo $hostelDetails["hostelname"]; ?>' required>
+                                 <input type="text" name="hostelname" class='form-control' value='<?php echo $hostelDetails["hostelname"]; ?>'>
                                  </div>
                                  </div>
                                  </div>
@@ -274,13 +275,13 @@ $studid = $pdata["studid"];
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1" class="form-label">Parent Occupation</label>
-                                            <input type="text" class='form-control' value='<?php echo $parentDetails["parentoccupation"]; ?>' required>
+                                            <input type="text" name="parentoccupation" class='form-control' value='<?php echo $parentDetails["parentoccupation"]; ?>' required>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1" class="form-label">Parent Annual Income</label>
-                                            <input type="text" class='form-control' value='<?php echo $parentDetails["parannualincome"]; ?>' required>
+                                            <input type="text" name="parannualincome" class='form-control' value='<?php echo $parentDetails["parannualincome"]; ?>' required>
                                         </div>
                                     </div>
                                     </div>
@@ -294,13 +295,13 @@ $studid = $pdata["studid"];
                                         <div class="form-group">
                                             <label for="exampleInputEmail1" class="form-label">Applied for Loan</label>
                                             <!--<input name="parocc" type="text" class="form-control" placeholder="Enter Parent Occupation" required>-->
-                                            <input type="text" class='form-control' value='<?php echo $loanDetails["loanstatus"]; ?>' required>
+                                            <input type="text" class='form-control' name="loanstatus" value='<?php echo $loanDetails["loanstatus"]; ?>' required>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1" class="form-label">Loan Amount</label>
-                                            <input type="text" class='form-control' value='<?php echo $loanDetails["loanamount"]; ?>' required>
+                                            <input type="text" class='form-control' name="loanamount" value='<?php echo $loanDetails["loanamount"]; ?>' >
                                         </div>
                                     </div>
                                 </div>
@@ -308,20 +309,20 @@ $studid = $pdata["studid"];
                                 
                                           <div class="form-group">
                                              <label for="exampleInputEmail1" class="form-label">Unhealthy Habits (if any)</label>
-                                             <textarea type="text" class='form-control' required><?php echo $pdata["unhealthyhabits"]; ?></textarea>
+                                             <textarea type="text" class='form-control' name="unhealthyhabits" required><?php echo $pdata["unhealthyhabits"]; ?></textarea>
                                           </div>
                                           <?php $marks = json_decode($pdata["marksinschool"], true); ?>
                                           <div class="row">
                                              <div class="col-6">
                                                 <div class="form-group">
                                                    <label for="exampleInputEmail1" class="form-label">% Marks in 10th</label>
-                                                   <input type="text" class='form-control' value='<?php echo $marks[0]; ?>' required>
+                                                   <input type="text" class='form-control' name="10thmarks" value='<?php echo $marks[0]; ?>' required>
                                                 </div>
                                              </div>
                                              <div class="col-6">
                                                 <div class="form-group">
                                                    <label for="exampleInputEmail1" class="form-label">% Marks in 12th</label>
-                                                   <input type="text" class='form-control' value='<?php echo $marks[1]; ?>' required>
+                                                   <input type="text" class='form-control' value='<?php echo $marks[1]; ?>' name="12thmarks" required>
                                                 </div>
                                              </div>
                                           </div>
@@ -339,24 +340,24 @@ $studid = $pdata["studid"];
                                                 <div class="form-group">
                                                    <label for="exampleInputEmail1" class="form-label">Nature of Student 1</label>
                                                    
-                                                   <input type="text" class='form-control' value='<?php echo ($natureofstud=="0") ? "Aggresive" :  "Non-Aggresive" ; ?>' required>
+                                                   <input type="text" name="natureofstud[]" class='form-control' value='<?php echo ($natureofstud[0]=="0") ? "Aggresive" :  "Non-Aggresive" ; ?>' required>
                                                 </div>
                                              </div>
                                              <div class="col-4">
                                                 <div class="form-group">
                                                    <label for="exampleInputEmail1" class="form-label">Nature of Student 2</label>
-                                                   <input type="text" class='form-control' value='<?php echo ($natureofstud=="0") ? "Extrovert" :  "Introvert" ; ?>' required>
+                                                   <input type="text" class='form-control' name="natureofstud[]" value='<?php echo ($natureofstud[1]=="0") ? "Extrovert" :  "Introvert" ; ?>' required>
                                                 </div>
                                              </div>
                                              <div class="col-4">
                                                 <div class="form-group">
                                                    <label for="exampleInputEmail1" class="form-label">Nature of Student 3</label>
-                                                   <input type="text" class='form-control' value='<?php echo ($natureofstud=="0") ? "Positive Thinker" :  "Negative Thinker" ; ?>' required>
+                                                   <input type="text" class='form-control' name="natureofstud[]" value='<?php echo ($natureofstud[2]=="0") ? "Positive Thinker" :  "Negative Thinker" ; ?>' required>
                                                 </div>
                                              </div>
                                              <div class="col-12">
                                                 <label for="exampleInputEmail1" class="form-label">Communication Skill at the time of Admission</label>
-                                                <textarea class="form-control" placeholder="Start typing here..." required><?php echo $pdata["initcommskill"]; ?></textarea>
+                                                <textarea class="form-control" name="initcommskill" placeholder="Start typing here..." required><?php echo $pdata["initcommskill"]; ?></textarea>
                                              </div>    
                                           </div>
 
@@ -367,13 +368,26 @@ $studid = $pdata["studid"];
                                  <br>
 
                                  <div class="row">
-                                    <div class="col-2">
+                                    <!-- <div class="col-2">
                                        <button type="submit" class="btn btn-primary">Save Details</button>
+                                    </div> -->
+                                    <div class="col-2">
+                                        <button type="submit" class="btn btn-primary col-12">Save Details</button>
                                     </div>
-                                    <div class="col-1">
-                                       <button onclick="window.location = '../assets/backend/deleteStudent?sid=<?php echo $_GET['sid']; ?>';" class="btn btn-danger">Delete Student</button>
+
+                                    <div class="col-2">
+                                       <button onclick="deleteStudent();" class="btn btn-danger col-12">Delete Student</button>
                                     </div>
+                                       
                                  </div>
+
+                                 <script>
+                                    let deleteStudent = () => {
+                                       if(confirm("Are you sure to delete this student")) { 
+                                          window.location = '../assets/backend/deleteStudent?sid=<?php echo $_GET['sid']; ?>'; 
+                                       }
+                                    };
+                                 </script>
 
                                  </form>
                                 
