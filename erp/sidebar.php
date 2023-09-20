@@ -88,6 +88,7 @@ $ut = $_SESSION['usertype'];
                                            <!-- <li class="side-menu-label1"><a href="javascript:void(0)">Admin</a></li> -->
                                            
                                            <li><a href="student-record" class="slide-item"> Student Record</a></li>
+                                           <?php if($ut=="3") { ?><li><a href="consolidated-reports" class="slide-item"> Consolidated Reports</a></li> <?php } ?>
                                            <li><a href="attendance-reports" class="slide-item"> Attendance Reports</a></li>
                                        </ul>
                                    </div>
