@@ -362,19 +362,19 @@ if(isset($_GET['batch'])) {
                                                             $tp = 0;
                                                             if(isset($sectionWiseDetails[$value["sectionid"]][$subjectid])) {
                                                                 foreach ($sectionWiseDetails[$value["sectionid"]][$subjectid] as $date_timestamp => $absStuds) {
-                                                                    $ld++;
                                                                     if(is_null($absStuds) || empty($absStuds)) {
                                                                         continue;
                                                                     }
                                                                     $absStuds = explode('-', $absStuds);
                                                                     foreach ($absStuds as $classNum => $absStudPerClass) {
+                                                                        $ld++;
                                                                         $absStudsPerClass = json_decode($absStudPerClass, true);
                                                                         if(array_search($value["studid"], $absStudsPerClass)==false) {
                                                                             $tp++;
                                                                         }
                                                                     }
                                                                 }
-                                                                $ap = (($tp/$ld)*100)."%";
+                                                                $ap = ( round(($tp/$ld)*100))."%";
                                                             }
                                                             else {
                                                                 $ap = "0%";
