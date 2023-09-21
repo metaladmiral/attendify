@@ -3,6 +3,10 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
 $showReports = 0;
 
 $ut = $_SESSION['usertype'];
@@ -86,7 +90,22 @@ if(isset($_GET['batch'])) {
     $depidParam = $_GET['depid'];
     $semParam = $_GET['sem'];
 
-    $sql = "SELECT subjectid, subjectname FROM `subjects` WHERE `depid`='$depidParam' AND `subjectsem`='$semParam' "; 
+    $subjectTypes = array();
+    if(isset($_GET["lab"])) {
+        if($_GET["lab"])         {
+            array_push($subjectTypes, "1");
+        }
+    }
+    
+    if(isset($_GET["theory"])) {
+        if($_GET["theory"]) {
+            array_push($subjectTypes, "0");
+        }
+    }
+
+    $subjectTypes = "'".implode("', '", $subjectTypes)."'";
+
+    $sql = "SELECT subjectid, subjectname FROM `subjects` WHERE `depid`='$depidParam' AND `subjectsem`='$semParam' AND `lab` IN ($subjectTypes) "; 
       
     $sql = $conn->mconnect()->prepare($sql);
 
@@ -301,13 +320,13 @@ if(isset($_GET['batch'])) {
                                 <div class="card-body">
 
                                     <div class="col-12">
-                                        <form action="" class='dateSelectForm'>
+                                        <!-- <form action="" class='dateSelectForm'>
                                             <input type="hidden" name="batch" value="<?php echo $_GET['batch']; ?>">
                                             <input type="hidden" name="subject" value="<?php echo $_GET['subject']; ?>">
                                             <input type="hidden" name="section" value="<?php echo $_GET['section']; ?>">
                                             <b><label for="">Select Date Range:</label></b>
                                             <input type="text" class='attDateRange form-control' name="daterange">
-                                        </form>
+                                        </form> -->
                                     </div>
                                     <br>
                                     <div class="col-12">
@@ -534,7 +553,11 @@ if(isset($_GET['batch'])) {
     <script>
         $("#file-datatable1").DataTable({
             dom: "Bfrtip",
-            buttons: ['excel', 'pdf'],
+            buttons: ['excel', {
+                extend: 'pdf',
+                orienation: 'landscape',
+                pageSize: 'A2'
+            }],
             "bInfo": false,
             "pageLength": 23000,
             "bPaginate": false
