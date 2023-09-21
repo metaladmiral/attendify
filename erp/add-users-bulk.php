@@ -45,7 +45,7 @@ $conn = new Db;
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Bulk Upload</h1>
+                            <h1 class="page-title">Users Bulk Upload</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Bulk</a></li>
