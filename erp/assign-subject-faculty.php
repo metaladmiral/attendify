@@ -52,6 +52,9 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     <link rel="stylesheet" href="../assets/amsify/css/amsify.select.css" />
     <link href="../assets/switcher/demo.css" rel="stylesheet">
     <style>
+        .amsify-selection-area {
+            position:relative;
+        }
         .amsify-selection-list {
             position: relative !important;
         }
@@ -59,7 +62,12 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
             height: 40px;
             display: flex;
             align-items: center;
-            justify-content: right;
+            /* justify-content: right; */
+        }
+
+        .amsify-toggle-selection {
+            position: absolute;
+            right: 10px;
         }
     </style>
 </head>
@@ -399,14 +407,15 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
 
                                                 <select name="facultyId" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                     <option value="" disabled selected>Select Faculty</option>
+                                                    <option value="none">None</option>
                                                     <?php 
                                                     $sql = "SELECT uid, username, empid FROM `users` WHERE `usertype`='2' AND MATCH(`depid`) AGAINST ('$depidFT' IN BOOLEAN MODE) ";
                                                     $query = $conn->mconnect()->prepare($sql);
                                                     $query->execute();
                                                     $data= $query->fetchAll(PDO::FETCH_ASSOC);
                                                     foreach ($data as $key => $value) {
-                                                            if($assignedFacultyId==$value["uid"]) {
-                                                                $currFacultyusername = $value["username"];
+                                                        if($assignedFacultyId==$value["uid"]) {
+                                                            $currFacultyusername = $value["username"];
                                                                 $currFacultyEmpID = $value["empid"];
                                                                 ?>
                                                                  <option class='text-success' value="<?php echo $value['uid']; ?>"><?php echo $value['username']; ?> - <?php echo $value['empid']; ?> &#x2022;</option>
@@ -516,6 +525,18 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
     <script src="../assets/js/sweet-alert.js"></script>
 
     <?php
+    
+    if(isset($_SESSION['sufacultynone']))
+    {
+        if($_SESSION['sufacultynone']=="1")  {
+            ?>
+            <script>
+                swal('Hooray!', 'Faculty Successfully De-Assigned!', 'success');
+            </script>
+            <?php
+        }
+        unset($_SESSION['sufacultynone']);
+    }
     
     if(isset($_SESSION['sufaculty']))
     {
