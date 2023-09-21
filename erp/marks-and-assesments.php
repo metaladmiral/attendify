@@ -74,7 +74,7 @@ if(is_null($data) || count($data)==0) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Attendance Details</h1>
+                            <h1 class="page-title">Marks and Assesments</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Home</a></li>

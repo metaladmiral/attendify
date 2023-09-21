@@ -169,7 +169,7 @@ if(isset($_GET['batch'])) {
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Attendance Reports</h1>
+                            <h1 class="page-title">Consolidated Attendance Reports</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Superadmin</a></li>
