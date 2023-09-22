@@ -172,7 +172,7 @@ if(isset($_GET['batch'])) {
                             <h1 class="page-title">Consolidated Attendance Reports</h1>
                             <div>
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="#">Superadmin</a></li>
+                                    <li class="breadcrumb-item"><a href="#">Reports</a></li>
                                     <li class="breadcrumb-item active" aria-current="page">Attendance Reports</li>
                                 </ol>
                             </div>
@@ -266,13 +266,13 @@ if(isset($_GET['batch'])) {
                                                     <div class="row">
                                                         <div class="col-6">
                                                             <label class="custom-control custom-checkbox-lg">
-                                                                <input type="checkbox" class="custom-control-input" value="1" name="theory" checked>
+                                                                <input type="checkbox" class="custom-control-input" value="1" name="theory" <?php if(isset($_GET['theory'])) { if($_GET['theory']) {echo "checked";} } ?>>
                                                                 <span class="custom-control-label">Theory</span>
                                                             </label>
                                                         </div>
                                                         <div class="col-6">
                                                             <label class="custom-control custom-checkbox-lg">
-                                                                <input type="checkbox" class="custom-control-input" value="1" name="lab" checked>
+                                                                <input type="checkbox" class="custom-control-input" value="1" name="lab" <?php if(isset($_GET['lab'])) { if($_GET['lab']) {echo "checked";} } ?>>
                                                                 <span class="custom-control-label">Lab</span>
                                                             </label>
                                                         </div>
@@ -281,8 +281,7 @@ if(isset($_GET['batch'])) {
                                                 <div class="col-6">
                                                     <label for="" class="form-label">Subject Sem: </label>
                                                     <?php
-                                                    
-                                                    if(array_search("asdaqwe123", $depid)==false) {
+                                                    if(array_search("asdaqwe123", $depid)===false) {
                                                         $minSem = 3;
                                                         $maxSem = 8;
                                                     }
