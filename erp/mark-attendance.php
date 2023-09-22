@@ -468,7 +468,14 @@ if(is_null($data) || count($data)==0) {
                 
                 
                 for(const key in htmlData) {
-                    let rollno = (htmlData[key].uniroll) ? htmlData[key].uniroll : htmlData[key].classroll;
+                    let rollno;
+                    if(htmlData[key].uniroll && (htmlData[key].uniroll.toLowerCase())!="na") {
+                        rollno = htmlData[key].uniroll;
+                    }
+                    else {
+                        rollno = htmlData[key].classroll;
+                        
+                    }
                     html += `<tr>
                     <td>${rollno}</td>
                     <td>${htmlData[key].name}</td>
@@ -489,7 +496,14 @@ if(is_null($data) || count($data)==0) {
                 }
             }else {
                 for(const key in htmlData) {
-                    let rollno = (htmlData[key].uniroll) ? htmlData[key].uniroll : htmlData[key].classroll;
+                    let rollno;
+                    if(htmlData[key].uniroll && (htmlData[key].uniroll.toLowerCase())!="na") {
+                        rollno = htmlData[key].uniroll;
+                    }
+                    else {
+                        rollno = htmlData[key].classroll;
+                        
+                    }
                     html += `<tr>
                         <td>${rollno}</td>
                         <td>${htmlData[key].name}</td>
