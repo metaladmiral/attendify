@@ -28,7 +28,7 @@ if(isset($_GET['batch']) && isset($_GET['depid']) && isset($_GET['sem'])) {
     $subjects = $sqls->fetchAll(PDO::FETCH_KEY_PAIR);
 
     $tppDepId = "tpp765";
-    $sqls = "SELECT uid, username, empid FROM `users` WHERE MATCH(`depid`) AGAINST('$depidGet $tppDepId ') ";
+    $sqls = "SELECT uid, username, empid FROM `users` WHERE MATCH(`depid`) AGAINST('$depidFT OR $tppDepId ') AND `usertype`='2' ";
     $sqls = $conn->mconnect()->prepare($sqls);
     $sqls->execute();
     $facultyDetails = $sqls->fetchAll(PDO::FETCH_ASSOC);
