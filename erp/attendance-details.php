@@ -331,7 +331,14 @@ if(is_null($data) || count($data)==0) {
                 // let lAb = 0;
 
                 let studid = data["students"][key].studid;
-                let rollno = (data["students"][key].uniroll) ? data["students"][key].uniroll : data["students"][key].classroll;
+                let rollno;
+                if(data["students"][key].uniroll && (data["students"][key].uniroll.toLowerCase())!="na") {
+                    rollno = data["students"][key].uniroll;
+                }
+                else {
+                    rollno = data["students"][key].classroll;
+                    
+                }
                 html += `<tr>
                 <td>${rollno}</td>
                 <td>${data["students"][key].name}</td>

@@ -307,7 +307,15 @@ if(is_null($data) || count($data)==0) {
                 }
 
                 let studid = data[key].studid;
-                let rollno = (data[key].uniroll) ? data[key].uniroll : data[key].classroll;
+                let rollno;
+                if(data[key].uniroll && (data[key].uniroll.toLowerCase())!="na") {
+                    rollno = data[key].uniroll;
+                }
+                else {
+                    rollno = data[key].classroll;
+                    
+                }
+                
                 html += `<tr data-studid='${data[key].studid}'>
                 <td>${rollno}</td>
                 <td>${data[key].name}</td>
