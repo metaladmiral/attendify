@@ -186,6 +186,7 @@ $ut = $_SESSION['usertype'];
                                            <?php if($ut=="3") { ?>
                                             <li><a href="assign-class-counselor" class="slide-item"> Assign CC</a></li>
                                             <?php } ?>
+                                            <?php if($ut=="3") { ?><li><a href="analysis" class="slide-item"> Analysis</a></li> <?php } ?>
                                            <li><a href="assign-subject-faculty" class="slide-item"> Assign Subject Faculty</a></li>
                                            
                                             <!-- <l><a href="#" class="slide-item"> Faculty Dashboard</a></l i> -->
