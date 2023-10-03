@@ -214,7 +214,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     
                                                     <style>
                                                         #select2-subjectSelect-results {
-                                                            max-height: 300px !important;
+                                                            max-height: 450px !important;
                                                         }
                                                         strong.select2-results__group {
                                                             background: var(--gray-dark);
