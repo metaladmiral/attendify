@@ -259,8 +259,9 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                     `;
                                     for(let key in data) {
                                         let cr, ur;
-                                        if(data[key].classroll) {cr = data[key].classroll;}else {cr='NA';}
-                                        if(data[key].uniroll) {cr = data[key].uniroll;}else {ur='NA';}
+                                        // if(data[key].classroll=="" || data[key].classroll=="NA" || data[key].classroll=="undefined") {cr='NAasda';}else {cr='asdasd'}
+                                        if(data[key].classroll!="NA" && data[key].classroll!="undefined" && data[key].classroll!=undefined) {cr = data[key].classroll;}else {cr='NA';}
+                                        if(data[key].uniroll) {ur = data[key].uniroll;}else {ur='NA';}
                                         html += `
                                             <tr>
                                                 <td>${data[key].name}</td>
