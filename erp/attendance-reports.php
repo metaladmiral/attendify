@@ -85,7 +85,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
     <!-- INTERNAL Switcher css -->
     <link href="../assets/switcher/css/switcher.css" rel="stylesheet">
     <link href="../assets/switcher/demo.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="../assets/amsify/css/amsify.select.css" />
     
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <style>
@@ -140,7 +140,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                         
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-3">
+                                                <div class="col-4">
                                                     <label for="" class="form-label">Select Department: </label>
                                                     <select name="depid" id='depSelect' class="form-control form-select select2" data-placeholder="Choose One" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Department</option>
@@ -163,7 +163,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                             ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-4">
                                                     <label for="" class="form-label">Select Batch: <sup class="text-danger">(Select Department First)</sup></label>
                                                     <select name="batch" id="batchSelect" class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" disabled required>
                                                             <option value="" disabled selected>Select Batch</option>
@@ -186,7 +186,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                             ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-4">
                                                     <label for="" class="form-label">Select Section:</label>
                                                     <select name="section" class='form-control form-select select2' id="" required>
                                                         <option value="" disabled selected>Select Section</option>
@@ -206,17 +206,30 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     </select>
                                                 </div>
                                                
-                                                    <div class="col-3">
+                                            </div>
+                                            <br>
+                                            <div class="row">
+                                                <div class="col-12">
                                                     <label for="" class="form-label">Select Subject: <sup class="text-danger">(Select Department First)</sup> </label>
                                                     
-                                                    <select name="subject" id='subjectSelect'  class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required disabled>
+                                                    <style>
+                                                        #select2-subjectSelect-results {
+                                                            max-height: 300px !important;
+                                                        }
+                                                        strong.select2-results__group {
+                                                            background: var(--gray-dark);
+                                                            color: white;
+                                                        }
+                                                    </style>
+
+                                                    <select name="subject" id='subjectSelect'  class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required searchable disabled>
                                                         <option value="" selected disabled>Select Subject</option>
-                                                        
                                                     </select>
                                                 </div>
                                             </div>
+
                                         </div>
-                                        
+                                        <br>
                                         <div class="form-group">
                                             <button type="submit" class='btn btn-primary'>Generate Reports</button>
                                         </div>
@@ -517,7 +530,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
     }
     ?>
 
-<script>
+                        <script>
                             
                             $("#depSelect").change(function() {
                                 // alert('prakhar');
@@ -639,6 +652,16 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                     }
                                 }
                             }
+                            </script>
+
+                            <script>
+                                $(document).ready(function() {
+                                    // $('#subjectSelect').amsifySelect({
+                                    //     searchable :true
+                                    // });
+                                });
+                                
+
                             </script>
 
                         <!-- <script src="../assets/amsify/js/jquery.amsifyselect.js"></script>

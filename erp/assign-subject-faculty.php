@@ -119,7 +119,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                         
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-3">
+                                                <div class="col-4">
                                                     <label for="" class="form-label">Select Department:</label>
                                                     <select name="depid" id='depSelect' class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                             <option value="" disabled selected>Select Department</option>
@@ -142,14 +142,14 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                             ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-4">
                                                     <label for="" class="form-label">Select Batch: <sup class="text-danger">(Select Department First)</sup></label>
                                                     <select name="batch" id='batchSelect'  class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required disabled>
                                                             <option value="" disabled selected>Select Batch</option>
                                                             
                                                     </select>
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-4">
                                                     <label for="" class="form-label">Select Section:</label>
                                                     <select name="section[]" class='form-control form-select select2' id="" required multiple>
                                                         <?php
@@ -168,7 +168,20 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                     </select>
                                                 </div>
 
-                                                <div class="col-3">
+                                            </div>
+                                            <style>
+                                                #select2-subjectSelect-results {
+                                                    max-height: 450px !important;
+                                                }
+                                                strong.select2-results__group {
+                                                    background: var(--gray-dark);
+                                                    color: white;
+                                                }
+                                            </style>
+                                            <br>
+                                            <div class="row">
+                                                
+                                                <div class="col-12">
                                                     <label for="" class="form-label">Select Subject: <sup class="text-danger">(Select Department First)</sup> </label>
                                                     
                                                     <select name="subject" id='subjectSelect'  class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required disabled>
@@ -178,6 +191,7 @@ if(isset($_GET['batch']) && isset($_GET['section']) && isset($_GET['subject'])) 
                                                 </div>
 
                                             </div>
+
                                         </div>
                                         
                                         <div class="form-group">

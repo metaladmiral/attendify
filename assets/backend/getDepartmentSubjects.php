@@ -25,19 +25,24 @@ try {
 
         if($tpp) {
             if($tpp=="1") {
-                $sql = "SELECT subjectcode, subjectid, subjectname, subjectsem FROM `subjects` WHERE `depid`='$depid' AND `tpp`='1' ORDER BY `subjectsem` ASC "; 
+                $sql = "SELECT subjectcode, subjectid, subjectname, subjectsem FROM `subjects` WHERE `depid`='$depid' AND `tpp`='1' ORDER BY `subjectsem` ASC , `subjectname` ASC "; 
             }
             else {
-                $sql = "SELECT subjectcode, subjectid, subjectname, subjectsem FROM `subjects` WHERE `depid`='$depid' AND `tpp`!='1' ORDER BY `subjectsem` ASC "; 
+                $sql = "SELECT subjectcode, subjectid, subjectname, subjectsem FROM `subjects` WHERE `depid`='$depid' AND `tpp`!='1' ORDER BY `subjectsem` ASC, `subjectname` ASC  "; 
             }
         }
         else {
-            $sql = "SELECT subjectcode, subjectid, subjectname, subjectsem FROM `subjects` WHERE `depid`='$depid' ORDER BY `subjectsem` ASC "; 
+            $sql = "SELECT subjectcode, subjectid, subjectname, subjectsem FROM `subjects` WHERE `depid`='$depid' ORDER BY `subjectsem` ASC, `subjectname` ASC  "; 
         }
         
     }
     else {
-        $sql = "SELECT subjectcode, subjectid, subjectname, subjectsem FROM `subjects` ORDER BY `subjectsem` ASC "; 
+        if(isset($_POST['depid'])) {
+            $sql = "SELECT subjectcode, subjectid, subjectname, subjectsem FROM `subjects` WHERE `depid`='$depid' ORDER BY `subjectsem` ASC, `subjectname` ASC  "; 
+        }
+        else {
+            $sql = "SELECT subjectcode, subjectid, subjectname, subjectsem FROM `subjects` ORDER BY `subjectsem` ASC, `subjectname` ASC  "; 
+        }
     }
 
 

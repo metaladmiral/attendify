@@ -75,12 +75,45 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                             <a href="./xlformats/attendance-bulk-format.xlsx" id='downloadFormat' class='btn btn-primary' download>Download</a>
                                         </div>
                                     </div>
+                                    <style>
+                                        #select2-subjectSelect-results {
+                                            max-height: 450px !important;
+                                        }
+                                        strong.select2-results__group {
+                                            background: var(--gray-dark);
+                                            color: white;
+                                        }
+                                    </style>
                                     <form action="../assets/backend/add-studs-bulk.php" method="POST" id="studForm" enctype="multipart/form-data">
                                         <div class="card-body body1" style='display: block;'>
 
+                                                <div class="form-group col-md-12">
+                                                    <label for="" class="form-label">Select Department: </label>
+                                                    <select name="depid" id='depSelect' class="form-control form-select select2" data-placeholder="Choose One" tabindex="-1" aria-hidden="true" required>
+                                                            <option value="" disabled selected>Select Department</option>
+                                                            <?php 
+                                                            if($ut=="4" || $ut=="1") { 
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid`!='tpp765' ";
+                                                            }else {
+                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) AND a.`depid`!='tpp765' " ;
+                                                            }
+                                                            $query = $conn->mconnect()->prepare($sql);
+                                                            $query->execute();
+                                                            $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                            foreach ($data as $key => $value) {
+                                                                ?>
+                                                                <option value="<?php echo $value['depid']; ?>" 
+                                                                <?php if(isset($_GET['depid'])) { if($_GET['depid']==$value["depid"]) {echo "selected";} } ?>
+                                                                ><?php echo $value['depLabel']; ?> - <?php echo $value['clgLabel']; ?></option>
+                                                            <?php 
+                                                            }
+                                                            ?>
+                                                    </select>
+                                                </div>
+
                                             <div class="form-group col-md-12">
-                                                <b><label for="batch">Select a Batch:</label></b>
-                                                <select id='batch' class='form-control' name="batch" required>
+                                                <b><label for="batch">Select a Batch: <sup class="text-danger">(Select Department First)</sup></label></b>
+                                                <select id='batchSelect' class='form-control form-select select2' name="batch" required disabled>
                                                 <option value="" selected disabled>Select Batch</option>
                                                 <?php 
                                                     
@@ -94,9 +127,10 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                                 </select>
                                                 
                                                 <br>
+                                                <br>
 
                                                 <b><label for="batch">Select Section:</label></b>
-                                                <select id='section' class='form-control' name="section" required>
+                                                <select id='section' class='form-control form-select select2' name="section" required>
                                                 <option value="" selected disabled>Select Section</option>
                                                         <?php
                                                             for($i=65;$i<=73;$i++) {
@@ -114,14 +148,15 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                                 </select>
                                                 
                                                 <br>
+                                                <br>
                                                 
                                                 <button href="" class="btn-pill btn btn-info btn-sm" onclick="getAutoExcel();" type="button">Get Automated Student Excel</button>
                                                 
                                                 <br>
                                                 <br>
 
-                                                <b><label for="batch">Select Subject:</label></b>
-                                                <select id='subject' class='form-control' name="subject" required>
+                                                <b><label for="batch">Select Subject: <sup class="text-danger">(Select Department First)</sup></label></b>
+                                                <select id='subjectSelect' class='form-control form-select select2' name="subject" required disabled>
                                                 <option value="" selected disabled>Select Subject</option>
                                                 <?php 
                                                     
@@ -188,7 +223,7 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                         <script>
                             async function getAutoExcel() {
 
-                                let batch = $("#batch").val();
+                                let batch = $("#batchSelect").val();
                                 let section = $("#section").val();
 
                                 if(!batch || !section) {
@@ -361,9 +396,9 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
             e.preventDefault();
             const file = document.querySelector('.excelData').files[0];
             if(file) {
-                const batch = document.querySelector('#batch').value;
+                const batch = document.querySelector('#batchSelect').value;
                 const section = document.querySelector('#section').value;
-                const subject = document.querySelector('#subject').value;
+                const subject = document.querySelector('#subjectSelect').value;
                 $(".body1")[0].style.display = "none";
             $(".body2")[0].style.display = "block";
             
@@ -409,6 +444,130 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
             
         });
     </script>
+
+<script>
+                            
+                            $("#depSelect").change(function() {
+                                // alert('prakhar');
+                                let val = $(this).val();
+                                if(val) {
+                                    enableDep(val);
+                                }
+                                else {
+                                    $("#batchSelect").attr('disabled', '1');
+                                    // $("#depSelect").html("<option value='' selected disabled>Select Department</option>");
+                                }
+                            });
+                            async function enableDep(depid) {
+                                let fd = new FormData();
+                                fd.set('depid', depid);
+                                let resp = await fetch(`../assets/backend/getBatchesByDepartment`, {
+                                    method: "POST",
+                                    body: fd,
+                                });
+                                if(resp.ok) {
+                                    const data = await resp.text();
+                                    if(data=="0") {
+                                        swal({
+                                            title: "Alert",
+                                            text: "Maintainance Required! Contact Admin",
+                                            type: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Exit'
+                                        });
+                                        $("#depSelect").attr('disabled', '1');
+                                    }
+                                    else {
+                                        let batchData = JSON.parse(data);
+                                        let html = "<option value='' selected disabled>Select Batch</option>";
+                                        $("#batchSelect").text('');
+
+                                        for(let key in batchData) {
+                                            <?php if(isset($_GET['batch'])) { 
+                                                ?>
+                                                if(batchData[key].batchid=="<?php echo $_GET['batch'] ?>") {
+                                                    html += `
+                                                        <option value="${batchData[key].batchid}" selected>${batchData[key].batchLabel}</option>
+                                                    `;
+                                                    continue;
+                                                }
+                                                <?php
+                                             } ?>
+                                            html += `
+                                                <option value="${batchData[key].batchid}" >${batchData[key].batchLabel}</option>
+                                                `;
+                                            }
+                                        if(html) {
+                                                getDepartmentSubjects(depid);
+                                            $("#batchSelect").removeAttr('disabled');
+                                            $("#batchSelect").html(html);
+                                        }
+                                        else {$("#batchSelect").attr('disabled', '1');}
+                                    }
+                                }
+                                else {
+                                    $("#batchSelect").attr('disabled', '1');
+                                    swal({
+                                        title: "Alert",
+                                        text: "Maintainance Required! Contact Admin",
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Exit'
+                                    });
+                                }
+                            }
+                        </script>
+
+                            <script>
+                            async function getDepartmentSubjects(depid) {
+                                let fd = new FormData();
+                                fd.set('depid', depid);
+                                <?php if($ut=="4") { ?>
+                                    fd.set('tpp', "1");
+                                <?php } ?>
+                                let resp = await fetch(`../assets/backend/getDepartmentSubjects`, {
+                                    method: "POST",
+                                    body: fd,
+                                });
+                                if(resp.ok) {
+                                    const data = await resp.text();
+                                    if(data) {
+                                        let subjectData = JSON.parse(data);
+                                        console.log(subjectData);
+                                        let html = "<option value='' selected disabled>Select Subjects:</option>";
+                                        $("#subjectSelect").text('');
+
+                                        let sem = "0";
+
+                                        for(let key in subjectData) {
+                                            if(subjectData[key].subjectsem != sem) {
+                                                html += `</optgroup>`;
+                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '`;
+                                                sem = subjectData[key].subjectsem;
+                                            }
+                                            <?php if(isset($_GET['subject'])) { 
+                                                ?>
+                                                if(subjectData[key].subjectid=="<?php echo $_GET['subject'] ?>") {
+                                                    html += `
+                                                        <option value="${subjectData[key].subjectid}" selected>${subjectData[key].subjectname} - ${subjectData[key].subjectcode}</option>
+                                                    `;
+                                                    continue;
+                                                }
+                                                <?php
+                                             } ?>
+                                            html += `
+                                                <option value="${subjectData[key].subjectid}" >${subjectData[key].subjectname} - ${subjectData[key].subjectcode}</option>
+                                                `;
+                                            }
+                                        if(html) {
+                                            $("#subjectSelect").removeAttr('disabled');
+                                            $("#subjectSelect").html(html);
+                                        }
+                                        else {$("#subjectSelect").attr('disabled', '1');}
+                                    }
+                                }
+                            }
+                            </script>
 
 </body>
 </html>
