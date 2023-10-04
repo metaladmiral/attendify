@@ -65,7 +65,11 @@ else {
                     $currCoordinante = $cell->getCoordinate();
                     $studidCellCoordinate = preg_replace('/[A-Z]+/', 'B', $currCoordinante);
                     $studid = $worksheet->getCell($studidCellCoordinate)->getValue();
-                    array_push($absStuds[$currentDate], $studid);
+                    if(!is_null($studid) && $studid) {
+                        array_push($absStuds[$currentDate], $studid);
+                    }else {
+                        continue;
+                    }
                 }
 
             }
