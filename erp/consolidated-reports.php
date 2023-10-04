@@ -39,23 +39,25 @@ if(isset($_GET['batch'])) {
     
     try {
 
-        if(isset($_GET['daterange']) && !empty($_GET['daterange'])) {
-            $dateRange = explode(' - ', $_GET['daterange']);
-            $startDate = strtotime($dateRange[0]);
+        // if(isset($_GET['daterange']) && !empty($_GET['daterange'])) {
+        //     $dateRange = explode(' - ', $_GET['daterange']);
+        //     $startDate = strtotime($dateRange[0]);
             
-            $endDate = strtotime($dateRange[1]);
-        }
-        else {
-            $startDate = strtotime("today -1 month");
+        //     $endDate = strtotime($dateRange[1]);
+        // }
+        // else {
+        //     $startDate = strtotime("today -1 month");
             
-            $endDate = strtotime("today");
-        }
+        //     $endDate = strtotime("today");
+        // }
         if(isset($_GET['section'])) {
             $sectionID = $_GET['section'];
-            $sql = "SELECT sectionid, date, absentStudents,subjectid FROM `att_$batch` WHERE `sectionid`='$sectionID' AND `date` BETWEEN $startDate AND $endDate";
+            // $sql = "SELECT sectionid, date, absentStudents,subjectid FROM `att_$batch` WHERE `sectionid`='$sectionID' AND `date` BETWEEN $startDate AND $endDate";
+            $sql = "SELECT sectionid, date, absentStudents,subjectid FROM `att_$batch` WHERE `sectionid`='$sectionID' AND `date`";
         }
         else {
-            $sql = "SELECT sectionid, date, absentStudents,subjectid FROM `att_$batch` WHERE `date` BETWEEN $startDate AND $endDate ";
+            // $sql = "SELECT sectionid, date, absentStudents,subjectid FROM `att_$batch` WHERE `date` BETWEEN $startDate AND $endDate ";
+            $sql = "SELECT sectionid, date, absentStudents,subjectid FROM `att_$batch` WHERE `date`";
         }
 
  
