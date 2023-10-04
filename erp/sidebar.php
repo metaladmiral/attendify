@@ -154,6 +154,7 @@ $ut = $_SESSION['usertype'];
                                            <li><a href="<?php echo $superadminURLS[0]; ?>" class="slide-item"> Manage Batches</a></li>
                                            <li><a href="<?php echo $superadminURLS[1]; ?>" class="slide-item"> Manage Faculties</a></li>
                                            <li><a href="manage-subjects" class="slide-item"> Manage Subjects</a></li>
+                                           <li><a href="analysis" class="slide-item"> Analysis</a></li>
                                            <li><a href="college-department" class="slide-item"> College & Departments IDs</a></li>
                                            
                                             <!-- <l><a href="#" class="slide-item"> Faculty Dashboard</a></l i> -->
@@ -186,7 +187,7 @@ $ut = $_SESSION['usertype'];
                                            <?php if($ut=="3") { ?>
                                             <li><a href="assign-class-counselor" class="slide-item"> Assign CC</a></li>
                                             <?php } ?>
-                                            <?php if($ut=="3") { ?><li><a href="analysis" class="slide-item"> Analysis</a></li> <?php } ?>
+                                            <?php if($ut=="3" || $ut=="4" || $ut=="1") { ?><li><a href="analysis" class="slide-item"> Analysis</a></li> <?php } ?>
                                            <li><a href="assign-subject-faculty" class="slide-item"> Assign Subject Faculty</a></li>
                                            
                                             <!-- <l><a href="#" class="slide-item"> Faculty Dashboard</a></l i> -->

@@ -4,7 +4,7 @@ require_once 'conn.php';
 $conn = new Db;
 
 $ut = $_SESSION['usertype'];
-if($ut=="3") {
+if($ut=="3" || $ut=="4") {
     $collegeid = $_SESSION['collegeid'];
     $depid = json_decode($_SESSION['depid'], true);
     $depidFT = implode(" OR ", $depid);
@@ -23,12 +23,33 @@ if(isset($_GET['batch']) && isset($_GET['depid']) && isset($_GET['sem'])) {
     $faculty = $sql->fetch(PDO::FETCH_COLUMN);
     $faculty = json_decode($faculty, true);
 
-    $sqls = $conn->mconnect()->prepare(" SELECT subjectid, subjectname FROM `subjects` WHERE `depid`='$depidGet' AND `subjectsem`='$sem' ");
+    $tppDepId = "tpp765";
+    if($ut=="4") {
+        $sqls = $conn->mconnect()->prepare(" SELECT subjectid, subjectname FROM `subjects` WHERE `depid`='$depidGet' AND `tpp`='1' AND `subjectsem`='$sem' ");
+    }
+    if($ut=="3") {
+        $sqls = $conn->mconnect()->prepare(" SELECT subjectid, subjectname FROM `subjects` WHERE `depid`='$depidGet' AND `subjectsem`='$sem' ");
+    }
+    if($ut=="1") {
+        $sqls = $conn->mconnect()->prepare(" SELECT subjectid, subjectname FROM `subjects` WHERE (`depid`='$depidGet' OR `depid`='asdaqwe123') AND `subjectsem`='$sem' ");
+    }
+    // if($ut=="1") {
+    //     $sqls = $conn->mconnect()->prepare(" SELECT subjectid, subjectname FROM `subjects` WHERE `subjectsem`='$sem' ");
+    // }
     $sqls->execute();
     $subjects = $sqls->fetchAll(PDO::FETCH_KEY_PAIR);
 
-    $tppDepId = "tpp765";
-    $sqls = "SELECT uid, username, empid FROM `users` WHERE MATCH(`depid`) AGAINST('$depidFT OR $tppDepId ') AND `usertype`='2' ";
+    // IF($ut=="4") {
+    //     $sqls = "SELECT uid, username, empid FROM `users` WHERE MATCH(`depid`) AGAINST('$tppDepId ') AND `usertype`='2' ";
+    // }
+    // else {
+        if($ut=="1") {
+            $sqls = "SELECT uid, username, empid FROM `users` WHERE MATCH(`depid`) AGAINST('$depidGet OR $tppDepId ') AND `usertype`='2' ";
+        }
+        else {
+            $sqls = "SELECT uid, username, empid FROM `users` WHERE MATCH(`depid`) AGAINST('$depidFT OR $tppDepId ') AND `usertype`='2' ";
+        }
+    // }
     $sqls = $conn->mconnect()->prepare($sqls);
     $sqls->execute();
     $facultyDetails = $sqls->fetchAll(PDO::FETCH_ASSOC);
@@ -37,13 +58,18 @@ if(isset($_GET['batch']) && isset($_GET['depid']) && isset($_GET['sem'])) {
         $facultyDetails_[$value["uid"]] = array($value["username"], $value["empid"]);
     }
 
-    $sql = $conn->mconnect()->prepare(" SELECT subjectid,sectionid,count(*) as c FROM `att_$batchid` GROUP BY `subjectid`, `sectionid` ");
-    $sql->execute();
-    $lectureDetails = $sql->fetchAll(PDO::FETCH_ASSOC);
+    // var_dump($facultyDetails_);
+
     $ld = array();
-    foreach ($lectureDetails as $key => $value) {
-        $ld[$value["subjectid"]][$value["sectionid"]] = $value["c"];
+    try{
+        $sql = $conn->mconnect()->prepare(" SELECT subjectid,sectionid,count(*) as c FROM `att_$batchid` GROUP BY `subjectid`, `sectionid` ");
+        $sql->execute();
+        $lectureDetails = $sql->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($lectureDetails as $key => $value) {
+            $ld[$value["subjectid"]][$value["sectionid"]] = $value["c"];
+        }
     }
+    catch(PDOException $e) {}
 
 }
 
@@ -167,13 +193,19 @@ if(isset($_GET['batch']) && isset($_GET['depid']) && isset($_GET['sem'])) {
                                                 <div class="col-4">
                                                     <label for="" class="form-label">Select Semester:</label>
                                                     <?php
-                                                    if(array_search("asdaqwe123", $depid)===false) {
-                                                        $minSem = 3;
-                                                        $maxSem = 8;
+                                                    if($ut!="1") {
+                                                        if(gettype(array_search("asdaqwe123", $depid))=="integer") { //applied science
+                                                            $minSem = 1;
+                                                            $maxSem = 2;
+                                                        }
+                                                        else {
+                                                            $minSem = 3;
+                                                            $maxSem = 8;
+                                                        }
                                                     }
                                                     else {
                                                         $minSem = 1;
-                                                        $maxSem = 2;
+                                                        $maxSem = 8;
                                                     }
 
                                                     ?>
@@ -230,6 +262,9 @@ if(isset($_GET['batch']) && isset($_GET['depid']) && isset($_GET['sem'])) {
                                                                     $sectionName = chr($sectionId[0]+64).$sectionId[2];
                                                                     if(isset($facultyUid[$subjectId])) {
                                                                         $facultyName = $facultyDetails_[$facultyUid[$subjectId]][0]." - ".$facultyDetails_[$facultyUid[$subjectId]][1];
+                                                                        if(trim($facultyName) == "-") {
+                                                                            $facultyName = "<span class='text-danger'>Not Assigned</span>";
+                                                                        }
                                                                     }
                                                                     else {
                                                                         $facultyName = "<span class='text-danger'>Not Assigned</span>";
