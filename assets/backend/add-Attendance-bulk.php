@@ -2,7 +2,9 @@
 
 require '../vendor/autoload.php';
 include './conn.php';
-
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -42,16 +44,26 @@ else {
             foreach ($cellIterator as $key=>$cell) {
                 if($key==1) {
                     $date = $cell->getValue();
-                    $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date);
-                    $date = json_decode(json_encode($date), true);
-                    $date= strtotime($date['date']);
+                    if(!$date) {
+                        break;
+                    }
+                    if(\PhpOffice\PhpSpreadsheet\Shared\Date::isDateTime($cell)) {
+                        $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date);
+                        $date = json_decode(json_encode($date), true);
+                        $date= strtotime($date['date']);
+                    }
+                    else {
+                        $date = $cell->getValue();
+                        $date= strtotime($date);
+                    }
                     $absStuds[$date] = array();
                     $currentDate = $date;
                     continue;
                 }
                 
                 if($cell->getValue() == "A") { //absent Present
-                    $studidCellCoordinate = preg_replace('/[A-Z]/', 'B', $cell->getCoordinate());
+                    $currCoordinante = $cell->getCoordinate();
+                    $studidCellCoordinate = preg_replace('/[A-Z]+/', 'B', $currCoordinante);
                     $studid = $worksheet->getCell($studidCellCoordinate)->getValue();
                     array_push($absStuds[$currentDate], $studid);
                 }
