@@ -222,6 +222,7 @@ $ut = $_SESSION['usertype'];
                                            <li><a href="add-users-bulk" class="slide-item"> Add Faculties</a></li>
                                            <li><a href="add-subjects-bulk" class="slide-item"> Add Subjects</a></li>
                                            <li><a href="add-attendance-bulk" class="slide-item"> Add Attendance</a></li>
+                                           <li><a href="add-marks-bulk" class="slide-item"> Add Marks</a></li>
                                            
                                             <!-- <l><a href="#" class="slide-item"> Faculty Dashboard</a></l i> -->
                                             <!-- <li><a href="<?php echo $superadminURLS[2]; ?>" class="slide-item"> Add Counseller</a></li> -->
