@@ -7,7 +7,12 @@ $conn = new Db;
 
 
 if(isset($_POST['autoExcel'])) {
-    $sql = $conn->mconnect()->prepare("SELECT studid, name, classroll, uniroll FROM `students` WHERE `batchid`='".$_POST['batchid']."' AND `sectionid`='".$_POST['sectionid']."' ");
+    if(isset($_POST['sectionid'])) {
+        $sql = $conn->mconnect()->prepare("SELECT studid, name, classroll, uniroll FROM `students` WHERE `batchid`='".$_POST['batchid']."' AND `sectionid`='".$_POST['sectionid']."' ");
+    }
+    else {
+        $sql = $conn->mconnect()->prepare("SELECT studid, name, sectionid, classroll, uniroll FROM `students` WHERE `batchid`='".$_POST['batchid']."' ");
+    }
     $sql->execute();
     $data = $sql->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($data, JSON_FORCE_OBJECT);
