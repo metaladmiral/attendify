@@ -2,5 +2,6 @@
 !/assets/backend/
 !/assets/js/
 !/assets/plugins/datatable/
+!/assets/plugins/edit-table/
 *_ignore*
 erp/addstud.txt
