@@ -123,15 +123,68 @@ if(is_null($data) || count($data)==0) {
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id='<?php echo $randId; ?>_dt'>
+                                                                <table class="table table-bordered text-nowrap border-bottom key-buttons file-datatable" id='<?php echo $randId; ?>_dt' data-subjectid="<?php echo $subjectDetails[0]; ?>">
                                                                     <thead>
                                                                         <tr class='dates-table-row'>
                                                                             <th>Roll No.</th>
                                                                             <th>Name</th>
-                                                                            <th>MST 1</th>
-                                                                            <th>Assgn. 1</th>
-                                                                            <th>MST 2</th>
-                                                                            <th>Assgn. 2</th>
+                                                                            <th>
+                                                                                <span> MST 1 (24) </span>
+                                                                                &nbsp;
+                                                                                &nbsp;
+                                                                                <button id="cbEdit" data-col-edit="mst1" type="button" class="btn btn-sm btn-primary"><span class="fe fe-edit" > </span></button>
+                                                                                
+                                                                                <button id="cbAcep" data-col-edit="mst1" type="button" class="btn  btn-sm btn-primary" style="display:none;">
+                                                                                    <span class="fe fe-check-circle" > </span>
+                                                                                </button>
+
+                                                                                <button id="cbCanc" data-col-edit="mst1" type="button" class="btn  btn-sm btn-danger" style="display:none;">
+                                                                                    <span class="fe fe-x-circle" > </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th>
+                                                                                Assgn. 1 (10)
+                                                                                &nbsp;
+                                                                                &nbsp;
+                                                                                <button id="cbEdit" data-col-edit="assgn1" type="button" class="btn btn-sm btn-primary"><span class="fe fe-edit" > </span></button>
+
+                                                                                <button id="cbAcep" data-col-edit="assgn1" type="button" class="btn  btn-sm btn-primary" style="display:none;">
+                                                                                    <span class="fe fe-check-circle" > </span>
+                                                                                </button>
+
+                                                                                <button id="cbCanc" data-col-edit="assgn1" type="button" class="btn  btn-sm btn-danger" style="display:none;">
+                                                                                    <span class="fe fe-x-circle" > </span>
+                                                                                </button>
+
+                                                                            </th>
+                                                                            <th>
+                                                                                MST 2 (24)
+                                                                                &nbsp;
+                                                                                &nbsp;
+                                                                                <button id="cbEdit" data-col-edit="mst2" type="button" class="btn btn-sm btn-primary"><span class="fe fe-edit" > </span></button>
+
+                                                                                <button id="cbAcep" data-col-edit="mst2" type="button" class="btn  btn-sm btn-primary" style="display:none;">
+                                                                                    <span class="fe fe-check-circle" > </span>
+                                                                                </button>
+
+                                                                                <button id="cbCanc" data-col-edit="mst2" type="button" class="btn  btn-sm btn-danger" style="display:none;">
+                                                                                    <span class="fe fe-x-circle" > </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th>
+                                                                                Assgn. 2 (10)
+                                                                                &nbsp;
+                                                                                &nbsp;
+                                                                                <button id="cbEdit" data-col-edit="assgn2" type="button" class="btn btn-sm btn-primary"><span class="fe fe-edit" > </span></button>
+
+                                                                                <button id="cbAcep" data-col-edit="assgn2" type="button" class="btn  btn-sm btn-primary" style="display:none;">
+                                                                                    <span class="fe fe-check-circle" > </span>
+                                                                                </button>
+
+                                                                                <button id="cbCanc" data-col-edit="assgn2" type="button" class="btn  btn-sm btn-danger" style="display:none;">
+                                                                                    <span class="fe fe-x-circle" > </span>
+                                                                                </button>
+                                                                            </th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class='student-table-body'>
@@ -306,6 +359,11 @@ if(is_null($data) || count($data)==0) {
                     };
                 }
 
+                if(!marks.mst1) { marks.mst1 = "NA"; }
+                if(!marks.assgn1) { marks.assgn1 = "NA"; }
+                if(!marks.mst2) { marks.mst2 = "NA"; }
+                if(!marks.assgn2) { marks.assgn2 = "NA"; }
+
                 let studid = data[key].studid;
                 let rollno;
                 if(data[key].uniroll && (data[key].uniroll.toLowerCase())!="na") {
@@ -357,7 +415,9 @@ if(is_null($data) || count($data)==0) {
                     updateStudentMarks(studid, mst1, assgn1, mst2, assgn2, subjectid);
 
                 },
-
+                onColEdit: function(data, colType, subjectid) {
+                    updateStudMarksWrtExamType(data, colType, subjectid);
+                },
                 advanced: { // Do not override advanced unless you know what youre doing
                     columnLabel: 'Actions',
                     buttonHTML: `<div class="btn-list">
@@ -421,6 +481,39 @@ if(is_null($data) || count($data)==0) {
         formData.append('assgn1', assgn1);
         formData.append('mst2', mst2);
         formData.append('assgn2', assgn2);
+  
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const responseData = await response.text();
+                if(responseData!="1") {
+                    swal({
+                        title: "Oops!",
+                        text: "An error occured. Please contact admin!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: 'Exit'
+                    });
+                }
+            } else {
+                console.error('Request failed with status:', response.status);
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    }
+    async function updateStudMarksWrtExamType(data, colType, subjectid) {
+        const url = '../assets/backend/setStudentMarks'; // Replace with the actual URL
+        
+        // Create a new FormData object and append the required fields
+        const formData = new FormData();
+        formData.append('subjectid', subjectid);
+        formData.append('data', JSON.stringify(data));
+        formData.append('colType', colType);
   
         try {
             const response = await fetch(url, {
