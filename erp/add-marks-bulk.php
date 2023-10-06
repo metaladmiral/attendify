@@ -236,8 +236,8 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                     let maxMarks = "";
                                     if(forType=="mst1") {forType = "MST 1"; maxMarks ="24"; }
                                     if(forType=="mst2") {forType = "MST 2"; maxMarks ="24"; }
-                                    if(forType=="ass1") {forType = "ASSGN 1"; maxMarks ="10"; }
-                                    if(forType=="ass2") {forType = "ASSGN 2"; maxMarks ="10"; }
+                                    if(forType=="assgn1") {forType = "ASSGN 1"; maxMarks ="10"; }
+                                    if(forType=="assgn2") {forType = "ASSGN 2"; maxMarks ="10"; }
                                     $(".cardBody")[0].innerHTML = `
                                     <table class="table table-bordered text-nowrap border-bottom recordTable">
                                         <thead>
