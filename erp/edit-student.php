@@ -376,7 +376,7 @@ $studid = $pdata["studid"];
                                     </div>
 
                                     <div class="col-2">
-                                       <button onclick="deleteStudent();" class="btn btn-danger col-12">Delete Student</button>
+                                       <button onclick="deleteStudent();" class="btn btn-danger col-12" type="button">Delete Student</button>
                                     </div>
                                        
                                  </div>

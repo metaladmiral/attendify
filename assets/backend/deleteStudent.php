@@ -25,6 +25,7 @@ try{
     header('Location: ../../erp/index.php');
     
 }catch(PDOException $e){
+    // echo $e->getMessage();
     $_SESSION['delSucc'] = "0";
     header('Location: '.$_SERVER['HTTP_REFERER']);
 }
