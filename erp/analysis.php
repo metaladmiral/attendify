@@ -248,6 +248,7 @@ if(isset($_GET['batch']) && isset($_GET['depid']) && isset($_GET['sem'])) {
                                                                 <td>Section</td>
                                                                 <td>Faculty</td>
                                                                 <td>LD</td>
+                                                                <td>Actions</td>
                                                                 
                                                             </tr>
                                                         </thead>
@@ -277,6 +278,7 @@ if(isset($_GET['batch']) && isset($_GET['depid']) && isset($_GET['sem'])) {
                                                                         <td><?php echo $sectionName; ?></td>
                                                                         <td><?php echo $facultyName; ?></td>
                                                                         <td><?php echo (isset($ld[$subjectId][$sectionId])) ? $ld[$subjectId][$sectionId] : "0"; ?></td>
+                                                                        <td><button id="bDel" type="button" class="btn  btn-sm btn-danger" onclick="deleteAttendance('<?php echo $subjectId; ?>', '<?php echo $sectionId;  ?>');"> <span class="fe fe-trash-2"> </span> </button></td>
                                                                     </tr>
                                                                     <?php
                                                                 $count++;
@@ -285,6 +287,14 @@ if(isset($_GET['batch']) && isset($_GET['depid']) && isset($_GET['sem'])) {
                                                         ?>
 
                                                         </tbody>
+                                                        <script>
+                                                            function deleteAttendance(subjectid, section) {
+                                                                if(!confirm("Are you sure to the attendance for the selected subject and section?")) {
+                                                                    return ;
+                                                                }
+                                                                window.location = "../assets/backend/deleteAttendance?batchid=<?php echo $_GET['batch']; ?>&subjectid="+subjectid+"&section="+section;
+                                                            }
+                                                        </script>
                                                     </table>
                                                     </div>
                                                 </div>
