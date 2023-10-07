@@ -28,7 +28,7 @@ else {
         // $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($filename, [\PhpOffice\PhpSpreadsheet\IOFactory::READER_XLS]);
         $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($filename);
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
-        $reader->setReadDataOnly(TRUE);
+        $reader->setReadDataOnly(FALSE);
         $spreadsheet = $reader->load($filename);
         $worksheet = $spreadsheet->getActiveSheet();
         
