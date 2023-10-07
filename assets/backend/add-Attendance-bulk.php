@@ -38,6 +38,8 @@ else {
         $studCount = 0;
         $dateCount = 0;
 
+        $currentDate = "";
+        $dateRepeat = 0;
         foreach ($worksheet->getColumnIterator() as $key=>$col) {
             if($key=='A' || $key=='C' || $key=="D") {
                 continue;
@@ -55,7 +57,8 @@ else {
             }
             $cellIterator = $col->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(FALSE); 
-            $currentDate = "";
+            $currentIndex = 0;
+
             foreach ($cellIterator as $key=>$cell) {
                 if($key==1) {
                     $date = $cell->getValue();
@@ -71,9 +74,23 @@ else {
                         $date = $cell->getValue();
                         $date= strtotime($date);
                     }
-                    $absStuds[$date] = array();
-                    $currentDate = $date;
+                    
+                    if($currentDate != $date) {
+                        $absStuds[$date][0] = array();
+                        $currentIndex = 0;
+                        $currentDate = $date;
+                        // $dateRepeat = false;
+                    }
+                    else {
+                        $dateRepeat = 1;
+                    }
                     $dateCount++;
+                    
+                    if($dateRepeat) {
+                        $currentIndex = ((int) array_push($absStuds[$currentDate], array()))-1;
+                        $dateRepeat = 0;
+                    }
+
                     continue;
                 }
                 
@@ -81,12 +98,22 @@ else {
                     $currCoordinante = $cell->getCoordinate();
                     $studidCellCoordinate = preg_replace('/[A-Z]+/', 'B', $currCoordinante);
                     $studid = $worksheet->getCell($studidCellCoordinate)->getValue();
+
                     if(!is_null($studid) && $studid) {
-                        array_push($absStuds[$currentDate], $studid);
+                        array_push($absStuds[$currentDate][$currentIndex], $studid);
                     }else {
-                        continue;
+                        break;
                     }
                 }
+                // else {
+                //     $currCoordinante = $cell->getCoordinate();
+                //     $studidCellCoordinate = preg_replace('/[A-Z]+/', 'B', $currCoordinante);
+                //     $studid = $worksheet->getCell($studidCellCoordinate)->getValue();
+
+                //     if(is_null($studid) || !$studid) {
+                //         break;
+                //     }
+                // }
 
             }
         }
@@ -120,7 +147,16 @@ else {
         $queryParam = "";
         foreach ($absStuds as $key => $value) {
             $date=$key;
-            $absStudIds = json_encode($value);
+            $absStudIds = "";
+            foreach($value as $key_ => $value_) {
+                if(count($value)==$key_+1) {
+                    $absStudIds .= json_encode($value_);
+                }
+                else {
+                    $absStudIds .= json_encode($value_)."-";
+                }
+            }
+            // $absStudIds = json_encode($value);
             if($key == array_key_last($absStuds) ){
                 $queryParam .= "('$section', '$subject', '$date', '$absStudIds')";
             }
@@ -134,6 +170,7 @@ else {
         $query->execute();
         
         sleep(2);
+        // echo json_encode($queryParam);
         echo json_encode(array("statusCode"=>1, "studCount"=>$studCount, "dateCount"=>$dateCount, "subjectLabel"=>$subjectLabel, "batchLabel"=>$batchLabel ));
         unlink($filename);
     }
