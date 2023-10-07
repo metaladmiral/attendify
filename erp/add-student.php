@@ -89,15 +89,28 @@ input::-webkit-inner-spin-button {
                                        <form action="../assets/backend/addstud_script.php" method="POST" class='addStudForm'>
                                           <div class="form-group">
                                              <label class="form-label">Batch</label>
-                                             <select name="batch" class="form-control" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
+                                             <select name="batch" class="form-control form-select select2" data-placeholder="Choose one" tabindex="-1" aria-hidden="true" required>
                                                 <option value="" disabled selected>Select Batch</option>
 
                                                 <?php
-                                                $batchAssigned = json_decode($userDetails["CC"], true);
-                                                foreach ($batchAssigned as $key => $value) {
-                                                   ?>
-                                                      <option value="<?php echo $key; ?>"><?php echo $batchData[$key]; ?></option>      
-                                                   <?php
+                                                if($_SESSION['usertype']=="1") {
+                                                   $sql = "SELECT batchid, batchLabel FROM `batches` ";
+                                                   $query = $conn->mconnect()->prepare($sql);
+                                                   $query->execute();
+                                                   $rows = $query->fetchAll(PDO::FETCH_KEY_PAIR);
+                                                   foreach ($rows as $key => $value) {
+                                                      ?>
+                                                         <option value="<?php echo $key; ?>"><?php echo $value; ?></option>      
+                                                      <?php
+                                                   }
+                                                }
+                                                else {
+                                                   $batchAssigned = json_decode($userDetails["CC"], true);
+                                                   foreach ($batchAssigned as $key => $value) {
+                                                      ?>
+                                                         <option value="<?php echo $key; ?>"><?php echo $batchData[$key]; ?></option>      
+                                                      <?php
+                                                   }
                                                 }
                                                 ?>
 

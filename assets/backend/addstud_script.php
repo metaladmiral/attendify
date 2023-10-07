@@ -58,11 +58,11 @@ $sql = "INSERT INTO `students`(studid, batchid, sectionid, name, semester, blood
 $query = $conn->mconnect()->prepare($sql);
 $query->execute(array( $studid,$_POST['batch'],$_POST['section'],$name,"1",$_POST['bloodgrp'],$_POST['dob'],"1","1",$_POST['classroll'],$_POST['uniroll'],$_POST['studemail'],$_POST['paremail'],$_POST['fname'],$_POST['mname'],$_POST['category'],$mno,$amno,$wano,$_POST['permaddr'], $_POST['localaddr'], $_POST['state'], $_POST['district'], $hostelDetails, $parentWorkDetails, $loanDetails, $_POST['uhhabits'], $marksinschool, $_POST['aimoe'], $_POST['personaltraits'], $natureofstudent, $_POST['commskilladm'] ));
 
-$sql = "INSERT INTO `history`(mess,time, uid) VALUES(?, ?, ?) ";
-$query = $conn->mconnect()->prepare($sql);
-$mess = "has added a student with ID - ".$studid;
-$time = strtotime("now");
-$query->execute([$mess, $time, $_SESSION['uid']]);
+// $sql = "INSERT INTO `history`(mess,time, uid) VALUES(?, ?, ?) ";
+// $query = $conn->mconnect()->prepare($sql);
+// $mess = "has added a student with ID - ".$studid;
+// $time = strtotime("now");
+// $query->execute([$mess, $time, $_SESSION['uid']]);
 
 if(!isset($_POST['custom'])) {
     $_SESSION['message'] = "1";
