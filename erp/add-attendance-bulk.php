@@ -557,7 +557,7 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                         for(let key in subjectData) {
                                             if(subjectData[key].subjectsem != sem) {
                                                 html += `</optgroup>`;
-                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '`;
+                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '>`;
                                                 sem = subjectData[key].subjectsem;
                                             }
                                             <?php if(isset($_GET['subject'])) { 

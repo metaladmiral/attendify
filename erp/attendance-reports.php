@@ -618,7 +618,6 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                     const data = await resp.text();
                                     if(data) {
                                         let subjectData = JSON.parse(data);
-                                        console.log(subjectData);
                                         let html = "<option value='' selected disabled>Select Subjects:</option>";
                                         $("#subjectSelect").text('');
 
@@ -627,7 +626,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                         for(let key in subjectData) {
                                             if(subjectData[key].subjectsem != sem) {
                                                 html += `</optgroup>`;
-                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '`;
+                                                html += `<optgroup label='Sem: ${subjectData[key].subjectsem} '>`;
                                                 sem = subjectData[key].subjectsem;
                                             }
                                             <?php if(isset($_GET['subject'])) { 
@@ -645,6 +644,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                 `;
                                             }
                                         if(html) {
+                                            console.log(html);
                                             $("#subjectSelect").removeAttr('disabled');
                                             $("#subjectSelect").html(html);
                                         }
