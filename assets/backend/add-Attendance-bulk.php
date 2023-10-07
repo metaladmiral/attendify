@@ -22,6 +22,8 @@ else {
     $batch = $data['batchid'];
     $section = $data['sectionid'];
     $subject = $data['subjectid'];
+    $subjectLabel = $data['subjectLabel'];
+    $batchLabel = $data['batchLabel'];
 
     try {
         /**  Verify that $inputFileName really is an Xls file **/
@@ -33,9 +35,22 @@ else {
         $worksheet = $spreadsheet->getActiveSheet();
         
         $absStuds = array();
+        $studCount = 0;
+        $dateCount = 0;
 
         foreach ($worksheet->getColumnIterator() as $key=>$col) {
-            if($key=='A' || $key=='B' || $key=='C' || $key=="D") {
+            if($key=='A' || $key=='C' || $key=="D") {
+                continue;
+            }
+            if($key=='B') {
+                $cellIterator = $col->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(FALSE); 
+                foreach ($cellIterator as $key=>$cell) {
+                    if($key==1) { continue; }
+                    $val = $cell->getValue();
+                    if(!$val) { break; }
+                    $studCount++;
+                }
                 continue;
             }
             $cellIterator = $col->getCellIterator();
@@ -58,6 +73,7 @@ else {
                     }
                     $absStuds[$date] = array();
                     $currentDate = $date;
+                    $dateCount++;
                     continue;
                 }
                 
@@ -118,12 +134,12 @@ else {
         $query->execute();
         
         sleep(2);
-        echo "1";
+        echo json_encode(array("statusCode"=>1, "studCount"=>$studCount, "dateCount"=>$dateCount, "subjectLabel"=>$subjectLabel, "batchLabel"=>$batchLabel ));
         unlink($filename);
     }
     catch (\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
         // File isn't actually an Xls file, even though it has an xls extension 
-        echo json_encode(array("StatusCode"=>0, "msg"=>"File uploaded is not a XLS.", "msg2"=>$e->getMessage()));
+        echo json_encode(array("statusCode"=>0, "msg"=>"File uploaded is not a XLS.", "msg2"=>$e->getMessage()));
     }
 
 }

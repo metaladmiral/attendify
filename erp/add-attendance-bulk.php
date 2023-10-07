@@ -189,6 +189,7 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                                             </div>
                                             <br>
                                             <span style='text-weight:bold;display: none;' class="text-success sedone">Students From Excel are successfully added.</span>
+                                            <span style='text-weight:bold;display: none;' class="text-success sedoneAnal">Students From Excel are successfully added.</span>
                                             <span style='text-weight:bold;display: none;' class="text-danger sefail">Process failed! Contact administrator.</span>
                                         </div>
                                     </form>
@@ -398,8 +399,10 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
             const file = document.querySelector('.excelData').files[0];
             if(file) {
                 const batch = document.querySelector('#batchSelect').value;
+                const batchLabel = $('#batchSelect option:selected').text();
                 const section = document.querySelector('#section').value;
                 const subject = document.querySelector('#subjectSelect').value;
+                const subjectLabel = $('#subjectSelect option:selected').text();
                 $(".body1")[0].style.display = "none";
             $(".body2")[0].style.display = "block";
             
@@ -428,14 +431,25 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                     clearInterval(progressInterval);
                     $(".prg")[0].setAttribute('style', 'width: 100%');
                     $(".prg")[0].innerHTML = "100 %";
-                    if(ef.data=="1"){
+                    let resp = JSON.parse(ef.data);
+                    if(resp.statusCode=="1"){
+                        $(".sedone")[0].innerHTML = `Students From Excel are successfully added in the Batch <b>"${resp.batchLabel}"</b> for the Subject <b>"${resp.subjectLabel}"</b>`;
                         $(".sedone")[0].style.display = "block";
+
+                        $(".sedoneAnal")[0].innerHTML = `
+                        <br>
+                        <br>
+                         Total Students in Excel: <b>${resp.studCount}</b>
+                         <br> 
+                         Total Dates in Excel: <b>${resp.dateCount}</b>
+                         `;
+                         $(".sedoneAnal")[0].style.display = "block";
                     }else {
                         $(".sefail")[0].style.display = "block";
                     }
                 }
 
-                let data = {xlname: tmpXLName ,batchid:batch, sectionid:section, subjectid:subject };
+                let data = {xlname: tmpXLName ,batchid:batch, sectionid:section, subjectid:subject, subjectLabel:subjectLabel, batchLabel: batchLabel };
                 worker.postMessage(JSON.stringify(data));
 
             }
