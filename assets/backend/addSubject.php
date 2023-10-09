@@ -14,11 +14,35 @@ if(isset($_POST['submit'])){
             $name = $_POST['name'];
             $id = (String) uniqid();
             $sem = $_POST['sem'];
-            
-            $sql = "INSERT INTO `subjects`(subjectcode, subjectname, subjectid, subjectsem, collegeid, depid) VALUES (?, ?, ?, ?, ? ,?)";
-            $query = $conn->mconnect()->prepare($sql);
-            $query->execute(array($code, $name, $id, $sem, $collegeid, $depid));
+            if(isset($_POST['tpp'])) {
+                $tpp = $_POST['tpp'];
+                if($tpp=="on") {
+                    $tpp = "1";
+                }
+                else {
+                    $tpp = "0";
+                }
+            }
+            else {
+                $tpp = "0";
+            }
 
+            if(isset($_POST['lab'])) {
+                $lab = $_POST['lab'];
+                if($lab=="on") {
+                    $lab = "1";
+                }
+                else {
+                    $lab = "0";
+                }
+            }
+            else {
+                $lab = "0";
+            }
+            
+            $sql = "INSERT INTO `subjects`(subjectcode, subjectname, subjectid, subjectsem, collegeid, depid, tpp, lab) VALUES (?, ?, ?, ?, ? ,?, ?, ?)";
+            $query = $conn->mconnect()->prepare($sql);
+            $query->execute(array($code, $name, $id, $sem, $collegeid, $depid, $tpp, $lab));
 
             $_SESSION['message']="1";
             header('location:../../erp/manage-subjects.php');

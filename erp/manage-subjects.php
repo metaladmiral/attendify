@@ -130,6 +130,29 @@ $depDetails = $query->fetchAll(PDO::FETCH_KEY_PAIR);
                                                 <option value="8">8</option>
                                             </select>
                                         </div>
+
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="exampleInputPassword1" class="form-label">TPP: </label>
+                                                    <p><small>Whether the Subject is a TPP Subject?</small></p>
+                                                    <label class="custom-control custom-checkbox-md">
+                                                        <input type="checkbox" class="custom-control-input" name="tpp">
+                                                        <span class="custom-control-label"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="exampleInputPassword1" class="form-label">LAB: </label>
+                                                    <p><small>Whether the Subject is a Lab Subject?</small></p>
+                                                    <label class="custom-control custom-checkbox-md">
+                                                        <input type="checkbox" class="custom-control-input" name="lab">
+                                                        <span class="custom-control-label"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
                                         
                                     </div>
                                     <button class="btn btn-primary mt-4 mb-0" type="submit" name="submit">Add Subject</button>
