@@ -55,11 +55,11 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                     <div class="main-container container-fluid">
                         <!-- PAGE-HEADER -->
                         <div class="page-header">
-                            <h1 class="page-title">Attendance Bulk Upload</h1>
+                            <h1 class="page-title">Marks Bulk Upload</h1>
                             <div>
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="#">Bulk Uploads</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Add Attendance</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Add Marks</li>
                                 </ol>
                             </div>
                         </div>
@@ -70,7 +70,7 @@ $dataSubjects= $query->fetchAll(PDO::FETCH_ASSOC);
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h3 class="card-title">Upload Attendance in Bulk</h3>
+                                        <h3 class="card-title">Upload Marks in Bulk</h3>
                                         <div class="card-options">
                                             <!-- <a href="./xlformats/marks-bulk-format.xlsx" id='downloadFormat' class='btn btn-primary' download>Download</a> -->
                                         </div>
