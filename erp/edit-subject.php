@@ -106,6 +106,29 @@ header('Location: ../404.php');
                                                 <option value="8" <?php echo ($row['subjectsem']=="8") ? "selected" : "" ; ?> >8</option>
                                             </select>
                                         </div>
+
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="exampleInputPassword1" class="form-label">TPP: </label>
+                                                    <p><small>Whether the Subject is a TPP Subject?</small></p>
+                                                    <label class="custom-control custom-checkbox-md">
+                                                        <input type="checkbox" class="custom-control-input" name="tpp" <?php echo ($row['tpp']=="1") ? "checked" : ""; ?> >
+                                                        <span class="custom-control-label"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="exampleInputPassword1" class="form-label">LAB: </label>
+                                                    <p><small>Whether the Subject is a Lab Subject?</small></p>
+                                                    <label class="custom-control custom-checkbox-md">
+                                                        <input type="checkbox" class="custom-control-input" name="lab" <?php echo ($row['lab']=="1") ? "checked" : ""; ?> >
+                                                        <span class="custom-control-label"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
                                         
                                     </div>
                                     <button class="btn btn-primary mt-4 mb-0" type="submit" name="submit">Update Subject Details</button>
@@ -196,7 +219,7 @@ header('Location: ../404.php');
                 type: "success",
                 timer: 3500,
                 showCancelButton: false
-            }, function(){window.location='manage-subjects.php'});
+            });
 
             </script>
             <?php
@@ -208,7 +231,7 @@ header('Location: ../404.php');
                     text: "Updation was unsuccessfull! Please contact administrator",
                     type: "warning",
                     showCancelButton: false
-                }, function(){window.location='manage-subjects.php'});
+                });
                 </script>
             <?php
         }

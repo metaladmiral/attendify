@@ -10,10 +10,36 @@ if(isset($_POST['submit'])){
             $name = $_POST['name'];
             $sem = $_POST['sem'];
             $code = $_POST['code'];
+
+            if(isset($_POST['tpp'])) {
+                $tpp = $_POST['tpp'];
+                if($tpp=="on") {
+                    $tpp = "1";
+                }
+                else {
+                    $tpp = "0";
+                }
+            }
+            else {
+                $tpp = "0";
+            }
+
+            if(isset($_POST['lab'])) {
+                $lab = $_POST['lab'];
+                if($lab=="on") {
+                    $lab = "1";
+                }
+                else {
+                    $lab = "0";
+                }
+            }
+            else {
+                $lab = "0";
+            }
             
-            $sql = "UPDATE `subjects` SET `subjectname`=?, `subjectsem`=?,  `subjectcode`=? WHERE `subjectid`='$id' ";
+            $sql = "UPDATE `subjects` SET `subjectname`=?, `subjectsem`=?,  `subjectcode`=?, `tpp`=?, `lab`=? WHERE `subjectid`='$id' ";
             $query = $conn->mconnect()->prepare($sql);
-            $query->execute([$name,$sem, $code]);
+            $query->execute([$name,$sem, $code, $tpp, $lab]);
         
             $_SESSION['message']="1";
             header('Location: '.$_SERVER['HTTP_REFERER']);
