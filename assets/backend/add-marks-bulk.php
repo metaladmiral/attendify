@@ -27,12 +27,12 @@ else {
         // $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($filename, [\PhpOffice\PhpSpreadsheet\IOFactory::READER_XLS]);
         $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($filename);
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
-        $reader->setReadDataOnly(TRUE);
+        $reader->setReadDataOnly(FALSE);
         $spreadsheet = $reader->load($filename);
         $worksheet = $spreadsheet->getActiveSheet();
 
         foreach ($worksheet->getColumnIterator() as $key=>$col) {
-            if($key=='A' || $key=='B' || $key=='C' || $key=="D" || $key=="E") {
+            if($key!="F") {
                 continue;
             }
             $cellIterator = $col->getCellIterator();
@@ -44,11 +44,18 @@ else {
             $updateQuery = $pdoWTransaction->prepare($sql);
             try {
                 $pdoWTransaction->beginTransaction();
-                foreach ($cellIterator as $key=>$cell) {
-                               
+                $count_ = 0;
+                foreach ($cellIterator as $key_=>$cell) {
+                    if($key_==1) {
+                        continue;
+                    }
                     $studidCellCoordinate = preg_replace('/[A-Z]/', 'B', $cell->getCoordinate());
                     $studid = $worksheet->getCell($studidCellCoordinate)->getValue();
     
+                    if($studid=='CEaan651be583238e2') {
+                        continue;
+                    }
+
                     $sql = "SELECT marks FROM `students` WHERE `studid`='$studid'";
                     $query = $db->mconnect()->prepare($sql);
                     $query->execute();
@@ -63,12 +70,13 @@ else {
                         $marks[$subject] = array("mst1"=>"", "mst2"=>"", "assgn1"=>"", "assgn2"=>"");
                     }
     
-                    $marks[$subject][$forType] = $cell->getValue();
+                    $currCellMarks = (String) $cell->getValue();
+
+                    $marks[$subject][$forType] = $currCellMarks;
                     $newMarks = json_encode($marks);
-    
-                    
                     $updateQuery->execute([$newMarks, $studid]);
-    
+
+                    
                 }
                 $pdoWTransaction->commit();
             }
