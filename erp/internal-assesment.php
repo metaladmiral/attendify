@@ -327,7 +327,10 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                     }
 
                                                     $attPercentage = ( ( $sectionWiseLectureCount[$value["sectionid"]] - $studAbsentCount[$studid]["totalAbsent"]) / $sectionWiseLectureCount[$value["sectionid"]]) * 100;
+                                                    $attPercentage = number_format((float)$attPercentage, 2, '.', '');
                                                     
+                                                    $attPercentage = $attPercentage."%";
+
                                                     $marksForAtt = 0;
                                                     if($attPercentage>75) {
                                                         $marksForAtt = ceil(( ($attPercentage - 75) / 5 ) + 1);

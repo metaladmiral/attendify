@@ -73,13 +73,12 @@ $ut = $_SESSION['usertype'];
                 <?php } ?> -->
 
 
-                <?php if($ut=="1") { ?>
+                <?php if($ut=="1" || $ut=="3" || $ut=="4") { ?>
                     <li class="slide">
                         <a class="side-menu__item has-link" data-bs-toggle="slide" href="internal-assesment"><i class="side-menu__icon lnr lnr-pie-chart"></i>
                         <span class="side-menu__label">Internal Assesment</span>
                     </a>
                 </li>
-
                 <?php } ?>
 
 
