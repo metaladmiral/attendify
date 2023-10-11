@@ -318,13 +318,15 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                         else {
                                                             $avgMst = 0;
                                                         }
-
-                                                        $assgn1 = $marks["assgn1"] / 2;
+                                                        
+                                                        $assgn1 = 0;
+                                                        $assgn2 = 0;
                                                         if(!is_null($marks["assgn1"]) && !empty($marks["assgn1"]) && $marks["assgn1"]) {
-                                                            $assgn2 = $marks["assgn1"] / 2;
+                                                            $assgn1 = ((int) $marks["assgn1"])/2;
+                                                            // echo $assgn1 = $marks["assgn1"] / 2;
                                                         }
                                                         if(!is_null($marks["assgn2"]) && !empty($marks["assgn2"]) && $marks["assgn2"]) {
-                                                            $assgn2 = $marks["assgn2"] / 2;
+                                                            $assgn2 = ((int) $marks["assgn2"])/2;
                                                         }
 
                                                     }else {
@@ -351,9 +353,6 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                         $marksForAtt = 0;
                                                         $attPercentage = "(Not Uploaded)";
                                                     }
-
-                                                    
-
 
                                                     if(!$isSubmitted) {
                                                         $totalMarks = 0;
