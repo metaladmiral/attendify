@@ -3,6 +3,10 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $showReports = 0;
 
 $ut = $_SESSION['usertype'];
@@ -54,11 +58,12 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
             $sectionWiseLectureCount[$value["sectionid"]] += 1;
 
             foreach ($absStudsList as $key__ => $studid) {
-                $studAbsentCount[$studid]["totalAbsent"] += 1;
+                if(isset($studAbsentCount[$studid])) {
+                    $studAbsentCount[$studid]["totalAbsent"] += 1;
+                }
             }
         }
     }
-
 }
 
 ?>
@@ -302,6 +307,7 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
 
                                                     $marks = json_decode($value["marks"], true);
                                                     if(isset( $marks[$_GET['subject']] )) {
+                                                        $isSubmitted=true;
                                                         $marks = $marks[$_GET['subject']];
                                                         $mst1 = $marks["mst1"];
                                                         $mst2 = $marks["mst2"];
@@ -314,7 +320,12 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                         }
 
                                                         $assgn1 = $marks["assgn1"] / 2;
-                                                        $assgn2 = $marks["assgn2"] / 2;
+                                                        if(!is_null($marks["assgn1"]) && !empty($marks["assgn1"]) && $marks["assgn1"]) {
+                                                            $assgn2 = $marks["assgn1"] / 2;
+                                                        }
+                                                        if(!is_null($marks["assgn2"]) && !empty($marks["assgn2"]) && $marks["assgn2"]) {
+                                                            $assgn2 = $marks["assgn2"] / 2;
+                                                        }
 
                                                     }else {
                                                         $isSubmitted=false;
@@ -326,15 +337,23 @@ if(isset($_GET['batch']) && isset($_GET['subject'])) {
                                                         $assgn2 = 0;
                                                     }
 
-                                                    $attPercentage = ( ( $sectionWiseLectureCount[$value["sectionid"]] - $studAbsentCount[$studid]["totalAbsent"]) / $sectionWiseLectureCount[$value["sectionid"]]) * 100;
-                                                    $attPercentage = number_format((float)$attPercentage, 2, '.', '');
-                                                    
-                                                    $attPercentage = $attPercentage."%";
-
-                                                    $marksForAtt = 0;
-                                                    if($attPercentage>75) {
-                                                        $marksForAtt = ceil(( ($attPercentage - 75) / 5 ) + 1);
+                                                    if( isset($sectionWiseLectureCount[$value["sectionid"]]) && isset($studAbsentCount[$value["studid"]]) ) {
+                                                        // $attPercentage = $sectionWiseLectureCount[$value["sectionid"]]." ".$studAbsentCount[$value["studid"]]["totalAbsent"];
+                                                        $attPercentage = ( ( $sectionWiseLectureCount[$value["sectionid"]] - $studAbsentCount[$value["studid"]]["totalAbsent"]) / $sectionWiseLectureCount[$value["sectionid"]]) * 100;
+                                                        $attPercentage = number_format((float)$attPercentage, 2, '.', '');
+                                                        $marksForAtt = 0;
+                                                        if($attPercentage>75 && $attPercentage) {
+                                                            $marksForAtt = ceil(( ($attPercentage - 75) / 5 ) + 1);
+                                                        }
+                                                        $attPercentage = $attPercentage."%";
                                                     }
+                                                    else {
+                                                        $marksForAtt = 0;
+                                                        $attPercentage = "(Not Uploaded)";
+                                                    }
+
+                                                    
+
 
                                                     if(!$isSubmitted) {
                                                         $totalMarks = 0;
