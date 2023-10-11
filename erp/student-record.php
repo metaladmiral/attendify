@@ -3,6 +3,10 @@ session_start();
 require_once 'conn.php';
 $conn = new Db;
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $ut = $_SESSION['usertype'];
 if($ut=="3") {
     $collegeid = $_SESSION['collegeid'];
@@ -11,6 +15,19 @@ if($ut=="3") {
     $depidin = "'".implode("', '", $depid)."'";
 }
 
+if($ut=="2") {
+    $uid = $_SESSION['uid'];
+    $sql = "SELECT CC FROM `users` WHERE `uid`='$uid' ";
+    $query = $conn->mconnect()->prepare($sql);
+    $query->execute();
+    $cc = $query->fetch(PDO::FETCH_COLUMN);
+    $cc = json_decode($cc, true);
+    $batchids = array();
+    foreach ($cc as $key => $value) {
+        array_push($batchids, $key);
+    }
+    $batchids = implode("', '", $batchids);
+}
 
 ?>
 <!doctype html>
@@ -82,88 +99,137 @@ if($ut=="3") {
                                             <input type="hidden" value="1" name="tpp">
                                         <?php } ?>
                                         
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-3">
-                                                    <label for="" class="form-label">Select Department: </label>
-                                                    <select name="depid" id='depSelect' class="form-control form-select select2" data-placeholder="Choose One" tabindex="-1" aria-hidden="true" required>
-                                                            <option value="" disabled selected>Select Department</option>
-                                                            <?php 
-                                                            if($ut=="4" || $ut=="1") { 
-                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid`!='tpp765'";
-                                                            }else{
-                                                                $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) AND a.`depid`!='tpp765'" ;
-                                                            }
-                                                            $query = $conn->mconnect()->prepare($sql);
-                                                            $query->execute();
-                                                            $data= $query->fetchAll(PDO::FETCH_ASSOC);
-                                                            foreach ($data as $key => $value) {
-                                                                ?>
-                                                                <option value="<?php echo $value['depid']; ?>" 
-                                                                <?php if(isset($_GET['depid'])) { if($_GET['depid']==$value["depid"]) {echo "selected";} } ?>
-                                                                ><?php echo $value['depLabel']; ?> - <?php echo $value['clgLabel']; ?></option>
-                                                            <?php 
-                                                            }
-                                                            ?>
-                                                    </select>
-                                                </div>
-                                                <div class="col-3">
-                                                    <label for="" class="form-label">Select Batch: <sup class="text-danger">(Select Department First)</sup></label>
-                                                    <select name="batch" id='batchid' class="form-control form-select select2" data-placeholder="Choose One" tabindex="-1" required disabled>
-                                                            <option value="" disabled selected>Select Batch</option>
-                                                            <?php 
-                                                            if($ut!="3") { 
-                                                                $sql = "SELECT * FROM `batches`";
-                                                            }else {
-                                                                $sql = "SELECT * FROM `batches` WHERE `depid` IN ($depidin) " ;
-                                                            }
-                                                            $query = $conn->mconnect()->prepare($sql);
-                                                            $query->execute();
-                                                            $data= $query->fetchAll(PDO::FETCH_ASSOC);
-                                                            foreach ($data as $key => $value) {
-                                                                ?>
-                                                                <option value="<?php echo $value['batchid']; ?>" 
-                                                                <?php if(isset($_GET['batch'])) { if($_GET['batch']==$value["batchid"]) {echo "selected";} } ?>
-                                                                ><?php echo $value['batchLabel']; ?></option>
-                                                            <?php 
-                                                            }
-                                                            ?>
-                                                    </select>
-                                                </div>
-                                                <div class="col-3">
-                                                    <label for="" class="form-label">Select Section:</label>
-                                                    <select name="section" id='sectionid' class='form-control form-select select2' id="">
-                                                        <option value="" selected disabled>Select Section</option>
-                                                        <?php
-                                                            for($i=65;$i<=74;$i++) {
-                                                                $p = 1;
-                                                                while($p<=2) {
-                                                                    ?>
-                                                                    <option value="<?php echo $i-64; ?>-<?php echo $p; ?>"
-                                                                    <?php if(isset($_GET['section'])) { if(  $_GET['section']==(($i-64)."-".$p) ) {echo "selected";} } ?>
-                                                                    ><?php echo chr($i); ?><?php echo $p; ?></option>
-                                                                <?php
-                                                                    $p++;
+                                        <?php if($ut!="2") { ?>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <label for="" class="form-label">Select Department: </label>
+                                                        <select name="depid" id='depSelect' class="form-control form-select select2" data-placeholder="Choose One" tabindex="-1" aria-hidden="true" required>
+                                                                <option value="" disabled selected>Select Department</option>
+                                                                <?php 
+                                                                if($ut=="4" || $ut=="1") { 
+                                                                    $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid`!='tpp765'";
+                                                                }else{
+                                                                    $sql = "SELECT a.`label` as depLabel, b.`label` as clgLabel, a.`depid` as depid FROM `departments` a INNER JOIN `colleges` b ON a.`collegeid`=b.`collegeid` WHERE a.`depid` IN ($depidin) AND a.`depid`!='tpp765'" ;
                                                                 }
-                                                            }
-                                                        ?>
-                                                    </select>
-                                                </div>
-                                                <div class="col-3">
-                                                    <label for="" class="form-label">Select Semester:</label>
-                                                    <select name="sem" id='sem' class='form-control form-select select2' id="">
-                                                        <option value="" selected disabled>Select Semester</option>
-                                                        <?php
-                                                            for($i=1;$i<=8;$i++) {
+                                                                $query = $conn->mconnect()->prepare($sql);
+                                                                $query->execute();
+                                                                $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                                foreach ($data as $key => $value) {
+                                                                    ?>
+                                                                    <option value="<?php echo $value['depid']; ?>" 
+                                                                    <?php if(isset($_GET['depid'])) { if($_GET['depid']==$value["depid"]) {echo "selected";} } ?>
+                                                                    ><?php echo $value['depLabel']; ?> - <?php echo $value['clgLabel']; ?></option>
+                                                                <?php 
+                                                                }
                                                                 ?>
-                                                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                                                                <?php
-                                                            }
-                                                        ?>
-                                                    </select>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label for="" class="form-label">Select Batch: <sup class="text-danger">(Select Department First)</sup></label>
+                                                        <select name="batch" id='batchid' class="form-control form-select select2" data-placeholder="Choose One" tabindex="-1" required disabled>
+                                                                <option value="" disabled selected>Select Batch</option>
+                                                                <?php 
+                                                                if($ut!="3") { 
+                                                                    $sql = "SELECT * FROM `batches`";
+                                                                }else {
+                                                                    $sql = "SELECT * FROM `batches` WHERE `depid` IN ($depidin) " ;
+                                                                }
+                                                                $query = $conn->mconnect()->prepare($sql);
+                                                                $query->execute();
+                                                                $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                                foreach ($data as $key => $value) {
+                                                                    ?>
+                                                                    <option value="<?php echo $value['batchid']; ?>" 
+                                                                    <?php if(isset($_GET['batch'])) { if($_GET['batch']==$value["batchid"]) {echo "selected";} } ?>
+                                                                    ><?php echo $value['batchLabel']; ?></option>
+                                                                <?php 
+                                                                }
+                                                                ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label for="" class="form-label">Select Section:</label>
+                                                        <select name="section" id='sectionid' class='form-control form-select select2' id="">
+                                                            <option value="" selected disabled>Select Section</option>
+                                                            <?php
+                                                                for($i=65;$i<=74;$i++) {
+                                                                    $p = 1;
+                                                                    $maxSections = 2;
+                                                                    if($i==65 || $i==66) { $maxSections = 3; }
+                                                                    while($p<=$maxSections) {
+                                                                        ?>
+                                                                        <option value="<?php echo $i-64; ?>-<?php echo $p; ?>"
+                                                                        <?php if(isset($_GET['section'])) { if(  $_GET['section']==(($i-64)."-".$p) ) {echo "selected";} } ?>
+                                                                        ><?php echo chr($i); ?><?php echo $p; ?></option>
+                                                                    <?php
+                                                                        $p++;
+                                                                    }
+                                                                }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <label for="" class="form-label">Select Semester:</label>
+                                                        <select name="sem" id='sem' class='form-control form-select select2' id="">
+                                                            <option value="" selected disabled>Select Semester</option>
+                                                            <?php
+                                                                for($i=1;$i<=8;$i++) {
+                                                                    ?>
+                                                                    <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                                                    <?php
+                                                                }
+                                                            ?>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php }else { ?>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <label for="" class="form-label">Select Batch: <sup class="text-danger">(Select Department First)</sup></label>
+                                                        <select name="batch" id='batchid' class="form-control form-select select2" data-placeholder="Choose One" tabindex="-1" required>
+                                                                <option value="" disabled selected>Select Batch</option>
+                                                                <?php 
+                                                                $sql = "SELECT * FROM `batches` WHERE `batchid` IN ('$batchids') " ;
+                                                                $query = $conn->mconnect()->prepare($sql);
+                                                                $query->execute();
+                                                                $data= $query->fetchAll(PDO::FETCH_ASSOC);
+                                                                foreach ($data as $key => $value) {
+                                                                    ?>
+                                                                    <option value="<?php echo $value['batchid']; ?>" 
+                                                                    <?php if(isset($_GET['batch'])) { if($_GET['batch']==$value["batchid"]) {echo "selected";} } ?>
+                                                                    ><?php echo $value['batchLabel']; ?></option>
+                                                                <?php 
+                                                                }
+                                                                ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <label for="" class="form-label">Select Section:</label>
+                                                        <select name="section" id='sectionid' class='form-control form-select select2' id="">
+                                                            <option value="" selected disabled>Select Section</option>
+                                                            <?php
+                                                                for($i=65;$i<=74;$i++) {
+                                                                    $p = 1;
+                                                                    $maxSections = 2;
+                                                                    if($i==65 || $i==66) { $maxSections = 3; }
+                                                                    while($p<=$maxSections) {
+                                                                        ?>
+                                                                        <option value="<?php echo $i-64; ?>-<?php echo $p; ?>"
+                                                                        <?php if(isset($_GET['section'])) { if(  $_GET['section']==(($i-64)."-".$p) ) {echo "selected";} } ?>
+                                                                        ><?php echo chr($i); ?><?php echo $p; ?></option>
+                                                                    <?php
+                                                                        $p++;
+                                                                    }
+                                                                }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
                                         
                                         <div class="form-group">
                                             <button type="submit" class='btn btn-primary'>Get Student Records</button>
@@ -296,28 +362,36 @@ if($ut=="3") {
             
             let subjectDetails;
 
-            let fd2 = new FormData();
-            fd2.set('sem', $("select[name='sem']")[0].value);
-            fd2.set("batchid", batchid);
-            <?php if($ut=="4") { ?>
-                fd2.set("tpp", "1");
+            <?php if($ut!="2") { ?>
+                let fd2 = new FormData();
+                fd2.set('sem', $("select[name='sem']")[0].value);
+                fd2.set("batchid", batchid);
+                <?php if($ut=="4") { ?>
+                    fd2.set("tpp", "1");
+                <?php } ?>
+                let resp = await fetch('../assets/backend/getSubjects', {
+                    method: 'POST',
+                    body: fd2
+                });
+                if(resp.ok) {
+                    let data = await resp.text();
+                    subjectDetails = data;
+                }
             <?php } ?>
-            let resp = await fetch('../assets/backend/getSubjects', {
-                method: 'POST',
-                body: fd2
-            });
             
-            if(resp.ok) {
-                let data = await resp.text();
-                subjectDetails = data;
-            }
             
             let fd = new FormData();
             fd.set("offset", studentDetailsOffset);
             fd.set("batchid", batchid);
             fd.set("sectionid", sectionid);
 
-            fetch('../assets/backend/getStudentRecords?subjects=true', {
+            <?php if($ut!="2") { ?>
+                let url = "../assets/backend/getStudentRecords?subjects=true";
+            <?php }else { ?>
+                let url = "../assets/backend/getStudentRecords";
+            <?php } ?>
+
+            fetch(url, {
                 method: 'POST',
                 body: fd
             })
@@ -328,7 +402,11 @@ if($ut=="3") {
                 throw new Error('Network response was not OK');
             })
             .then(function (data_) {
-                processStudentDetails(data_, subjectDetails);
+                <?php if($ut!="2") { ?>
+                    processStudentDetails(data_, subjectDetails);
+                <?php }else { ?>
+                    processStudentDetails(data_);
+                <?php } ?>
             })
             .catch(function (error) {
                 console.error('Error:', error);
@@ -336,8 +414,7 @@ if($ut=="3") {
 
         }
         
-        function processStudentDetails(data, subjectDetails) {
-            console.log(data);
+        function processStudentDetails(data, subjectDetails=null) {
             data = JSON.parse(data);
             if(subjectDetails!==0 && subjectDetails!==undefined) {
                 subjectDetails = JSON.parse(subjectDetails);
@@ -345,10 +422,57 @@ if($ut=="3") {
             else {
                 subjectDetails = [];   
             }
-            showStudentDetails(data, subjectDetails);
+            if(subjectDetails) {
+                showStudentDetailsWithSubjects(data, subjectDetails);
+            }
+            else {
+                showStudentDetails(data);
+            }
         }
 
-        function showStudentDetails(data, subjectDetails) {
+        function showStudentDetails(data) {
+            $("#file-datatable").remove();
+            $(".table-responsive")[0].innerHTML = `
+            <table id='file-datatable' data-init="0" class="table table-bordered text-nowrap key-buttons border-bottom">
+                <thead>
+                    <tr class='cols'>
+                        
+                    </tr>
+                </thead>
+                <tbody class='student-table-body'>
+                </tbody>
+            </table>`;
+
+
+            let colsHTML = `<th width="1">Actions</th><th width="1">Name</th>`;
+
+            $(".cols")[0].innerHTML = colsHTML;
+
+            let html = "";
+            for(const key in data) {
+                let studDetails = data[key];
+                html += `<tr>
+                <td><i onclick="window.location = 'edit-student.php?sid=${data[key].studid} ' " class="fa fa-edit" data-bs-toggle="tooltip" title="fa fa-edit" style='font-size: 16px;cursor:pointer;'></i></td>
+                <td>${data[key].name}</td>
+                `;
+                html += `</tr>`;
+            }
+            $(".loader")[0].style.display = "none";
+            $(".data-records")[0].style.display = "block";
+            $(".student-table-body")[0].innerHTML += html;
+            if($("#file-datatable").attr('data-init')=="0") {
+                console.log($("#file-datatable").html());
+                $("#file-datatable").DataTable( {
+                    dom: 'Bfrtip',
+                    buttons: ['excel', 'pdf'],
+                    "bInfo": false,
+                    "pageLength": 50
+                } );
+                $("#file-datatable").attr('data-init', '1');
+            }
+        }
+
+        function showStudentDetailsWithSubjects(data, subjectDetails) {
             
             $("#file-datatable").remove();
             $(".table-responsive")[0].innerHTML = `<table id='file-datatable' data-init="0" class="table table-bordered text-nowrap key-buttons border-bottom">
