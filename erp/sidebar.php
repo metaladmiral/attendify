@@ -81,6 +81,14 @@ $ut = $_SESSION['usertype'];
                 </li>
                 <?php } ?>
 
+                <?php if($ut=="2") { ?>
+                    <li class="slide">
+                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="student-record"><i class="side-menu__icon lnr lnr-pie-chart"></i>
+                        <span class="side-menu__label">Student Record</span>
+                    </a>
+                </li>
+                <?php } ?>
+
 
                 <?php if($ut=="1" || $ut=="3" || $ut=="4") { ?>
                 <li class="slide">
