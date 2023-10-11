@@ -30,13 +30,12 @@ if(isset($_GET['batch']) && isset($_GET['section'])) {
     $assignHistory = json_decode($assignHistory, true);
 
     $assignedCCId = null;
+    $sectionAssigned = 0;
     if(isset($assignHistory[$section])) {
-        $sectionAssigned = 1;
         $assignedCCId = $assignHistory[$section];
-
-    }else {
-        $sectionAssigned = 0;
-
+        if($assignedCCId) {
+            $sectionAssigned = 1;
+        }
     }
     
 }
