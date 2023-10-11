@@ -73,6 +73,16 @@ $ut = $_SESSION['usertype'];
                 <?php } ?> -->
 
 
+                <?php if($ut=="1") { ?>
+                    <li class="slide">
+                        <a class="side-menu__item has-link" data-bs-toggle="slide" href="internal-assesment"><i class="side-menu__icon lnr lnr-pie-chart"></i>
+                        <span class="side-menu__label">Internal Assesment</span>
+                    </a>
+                </li>
+
+                <?php } ?>
+
+
                 <?php if($ut=="1" || $ut=="3" || $ut=="4") { ?>
                 <li class="slide">
                    <a class="side-menu__item" data-bs-toggle="slide" <?php echo ($ut=="1" || $ut=="3" || $ut=="4") ? "href='javascript:void(0)'" : "onclick='accDenied();return false;' href='#' disabled"; ?>><i class="side-menu__icon fe fe-database"></i>
@@ -99,6 +109,7 @@ $ut = $_SESSION['usertype'];
                    <?php } ?>
                 </li>
                 <?php } ?> 
+                
 
                 <?php if($ut=="2") { ?>
                 <li class="slide">
